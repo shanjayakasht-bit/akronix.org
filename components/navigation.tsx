@@ -177,9 +177,6 @@ export default function Navigation() {
             </div>
           ) : (
             <>
-              <Link href="/login" className="btn-ghost text-sm">
-                Sign In
-              </Link>
               <Link href="/contact" className="btn-primary text-sm py-2 px-5">
                 Start a Project
               </Link>
@@ -246,7 +243,6 @@ export default function Navigation() {
                   </>
                 ) : (
                   <>
-                    <Link href="/login" className="btn-secondary w-full text-center">Sign In</Link>
                     <Link href="/contact" className="btn-primary w-full text-center">Start a Project</Link>
                   </>
                 )}
