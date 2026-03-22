@@ -1,87 +1,45 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import {
-  sendLeadNotificationEmail,
-  sendLeadConfirmationEmail,
-} from "@/lib/email";
- 
+import { z } from "zod";
+
 const leadSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
   phone: z.string().optional(),
   company: z.string().optional(),
-  message: z.string().min(1, "Message is required"),
+  message: z.string().min(10),
+  serviceType: z.any().optional(), // Using any for enum flexibility
   budget: z.string().optional(),
-  source: z.string().optional(),
 });
- 
-export async function POST(req: NextRequest) {
+
+export async function POST(req: Request) {
   try {
-    // 1. Parse body — if body isn't valid JSON, catch it cleanly
-    let body: unknown;
-    try {
-      body = await req.json();
-    } catch {
+    const body = await req.json();
+    const validated = leadSchema.safeParse(body);
+
+    if (!validated.success) {
       return NextResponse.json(
-        { error: "Invalid request body — expected JSON." },
+        { error: "Invalid form data", details: validated.error.format() },
         { status: 400 }
       );
     }
- 
-    // 2. Validate input
-    const parsed = leadSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Validation failed", issues: parsed.error.flatten().fieldErrors },
-        { status: 422 }
-      );
-    }
- 
-    const data = parsed.data;
- 
-    // 3. Save lead to database
-    // const lead = await db.lead.create({
-    //   data: {
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     email: data.email,
-    //     phone: data.phone ?? null,
-    //     company: data.company ?? null,
-    //     message: data.message,
-    //     budget: data.budget ?? null,
-    //     source: data.source ?? "contact-page",
-    //     status: "NEW",
-    //   },
-    // });
- 
-    const lead = { id: "test-123" };
 
-    // 4. Send emails (non-blocking — don't fail the request if email fails)
-    const emailPayload = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      company: data.company,
-      message: data.message,
-      source: data.source,
-    };
- 
-    await Promise.allSettled([
-      sendLeadNotificationEmail(emailPayload),
-      sendLeadConfirmationEmail({ firstName: data.firstName, email: data.email }),
-    ]);
- 
+    const lead = await db.lead.create({
+      data: {
+        ...validated.data,
+        status: "NEW",
+      },
+    });
+
     return NextResponse.json(
-      { success: true, leadId: lead.id },
+      { message: "Lead captured successfully", id: lead.id },
       { status: 201 }
     );
   } catch (error) {
-    console.error("[POST /api/leads] Unhandled error:", error);
+    console.error("LEAD_API_ERROR", error);
     return NextResponse.json(
-      { error: "Something went wrong. Please try again later." },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

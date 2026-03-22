@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock } from "lucide-react";
@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
- 
+
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
@@ -17,9 +17,9 @@ const formSchema = z.object({
   budget: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
- 
+
 type FormData = z.infer<typeof formSchema>;
- 
+
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -30,7 +30,7 @@ export default function ContactPage() {
       serviceType: "saas-development",
     }
   });
- 
+
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
@@ -39,10 +39,7 @@ export default function ContactPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
- 
-      const result = await response.json();
-      console.log("API RESPONSE:", response.status, result);
- 
+
       if (response.ok) {
         toast({
           title: "Message Sent!",
@@ -50,30 +47,25 @@ export default function ContactPage() {
         });
         reset();
       } else {
-        toast({
-          title: "Error",
-          description: result?.error || result?.detail || "Something went wrong.",
-          variant: "destructive",
-        });
+        throw new Error("Failed to send message");
       }
-    } catch (err) {
-      console.error("FETCH ERROR:", err);
+    } catch {
       toast({
         title: "Error",
-        description: String(err),
+        description: "Something went wrong. Please try again later.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
- 
+
   return (
     <div className="pt-32 pb-24 relative overflow-hidden">
       {/* Background Orbs */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-fuchsia-950/10 blur-[120px] rounded-full -z-10 translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-fuchsia-950/10 blur-[120px] rounded-full -z-10 -translate-x-1/2 translate-y-1/2" />
- 
+
       <div className="container-xl">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left Column: Info */}
@@ -89,10 +81,10 @@ export default function ContactPage() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Let&apos;s build something <span className="gradient-text-primary">extraordinary</span>.
             </h1>
-            <p className="text-lg text-white/60 mb-12 max-w-lg leading-relaxed">
+ bitumen            <p className="text-lg text-white/60 mb-12 max-w-lg leading-relaxed">
               Have a visionary project in mind? Our team of experts is ready to help you architect, build, and scale your next big idea.
             </p>
- 
+
             <div className="grid sm:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -136,7 +128,7 @@ export default function ContactPage() {
               </div>
             </div>
           </motion.div>
- 
+
           {/* Right Column: Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -165,7 +157,7 @@ export default function ContactPage() {
                   {errors.lastName && <p className="text-xs text-red-400 mt-1 ml-1">{errors.lastName.message}</p>}
                 </div>
               </div>
- 
+
               <div className="space-y-2">
                 <label className="text-sm font-medium text-white/70 ml-1">Email Address</label>
                 <input
@@ -175,7 +167,7 @@ export default function ContactPage() {
                 />
                 {errors.email && <p className="text-xs text-red-400 mt-1 ml-1">{errors.email.message}</p>}
               </div>
- 
+
               <div className="grid sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-white/70 ml-1">Service Required</label>
@@ -203,7 +195,7 @@ export default function ContactPage() {
                   </select>
                 </div>
               </div>
- 
+
               <div className="space-y-2">
                 <label className="text-sm font-medium text-white/70 ml-1">How can we help?</label>
                 <textarea
@@ -214,7 +206,7 @@ export default function ContactPage() {
                 />
                 {errors.message && <p className="text-xs text-red-400 mt-1 ml-1">{errors.message.message}</p>}
               </div>
- 
+
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -236,4 +228,3 @@ export default function ContactPage() {
     </div>
   );
 }
- 

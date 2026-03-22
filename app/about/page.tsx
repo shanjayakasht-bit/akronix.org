@@ -3,7 +3,8 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion } from "framer-motion";
-import { Rocket, Heart, Users, Target, Shield, Zap } from "lucide-react";
+import { Rocket, Heart, Users, Target, Shield, Zap, Activity } from "lucide-react";
+import { LiveIndicator } from "@/components/ui/live-indicator";
 import Image from "next/image";
 
 export default function AboutPage() {
@@ -34,11 +35,11 @@ export default function AboutPage() {
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div {...animations.fadeRight}>
                 <span className="badge mb-6 inline-flex">About Akronix</span>
-                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-8">
-                  We build the <span className="gradient-text-primary">architectural bedrock</span> of the future.
+                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
+                  Where <span className="gradient-text-primary">Dual Rays</span> Shape a Single Vision.
                 </h1>
                 <p className="text-xl text-white/50 leading-relaxed mb-10 max-w-xl">
-                  Akronix was born from a simple observation: most software is built for today, not tomorrow. We partner with visionaries to build digital products that aren&apos;t just functional, but legendary.
+                  Akronix is part of a high-performance ecosystem alongside <span className="text-white">Mediatrix</span> and <span className="text-white">Gritscape</span>. Together, we provide the full spectrum of startup growth — from engineering bedrock to global marketing scale.
                 </p>
                 
                 <div className="grid sm:grid-cols-2 gap-6">
@@ -54,7 +55,7 @@ export default function AboutPage() {
                       transition={{ delay: 0.1 * i }}
                       className="card p-6 border-white/5 bg-white/[0.02]"
                     >
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4"
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 animate-realtime-glow"
                         style={{ background: `${item.color}15`, color: item.color, border: `1px solid ${item.color}30` }}>
                         <item.icon size={20} />
                       </div>
@@ -82,6 +83,9 @@ export default function AboutPage() {
                 />
                 
                 {/* Overlay Elements */}
+                <div className="absolute top-8 right-8 z-20">
+                  <LiveIndicator label="Engineering Live" />
+                </div>
                 <div className="absolute bottom-8 left-8 z-20">
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -92,10 +96,10 @@ export default function AboutPage() {
                     <div className="flex items-center gap-3">
                       <div className="flex -space-x-2">
                         {[1, 2, 3].map(i => (
-                          <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-fuchsia-900/20" />
+                          <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-indigo-500/20" />
                         ))}
                       </div>
-                      <span className="text-sm font-bold text-white/80">World-class Engineers</span>
+                      <span className="text-sm font-bold text-white/80">60+ Global Engineers</span>
                     </div>
                   </motion.div>
                 </div>
@@ -128,7 +132,7 @@ export default function AboutPage() {
                   transition={{ delay: 0.1 * i }}
                   className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-colors"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-fuchsia-900/10 flex items-center justify-center text-cyan-700 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6 animate-realtime-glow">
                     <value.icon size={24} />
                   </div>
                   <h3 className="text-xl font-bold mb-4">{value.title}</h3>

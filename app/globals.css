@@ -6,35 +6,35 @@
 
 @layer base {
   :root {
-    /* ── Core Palette ─────────────────────────────── */
-    --c-bg:        #0B0B0F;
-    --c-surface:   #111118;
-    --c-card:      #151521;
-    --c-border:    #1E1E2E;
-    --c-border-hi: #2A2A40;
+    /* ── Core Palette (Polaris Tech) ───────────────── */
+    --c-bg:        #020205;
+    --c-surface:   #080812;
+    --c-card:      #0C0C1A;
+    --c-border:    #151525;
+    --c-border-hi: #202035;
 
     /* Brand */
-    --c-brand:     #5B4DFF;
-    --c-brand-hi:  #7B6FFF;
-    --c-accent:    #F08A8A;
-    --c-sky:       #7DD3FC;
+    --c-brand:     #00F0FF;
+    --c-brand-hi:  #3DFAFF;
+    --c-accent:    #9D5BFF;
+    --c-sky:       #A5B4FC;
 
     /* Text */
-    --c-text:      #FFFFFF;
-    --c-muted:     #9CA3AF;
-    --c-subtle:    #4B5563;
+    --c-text:      #F8FAFC;
+    --c-muted:     #94A3B8;
+    --c-subtle:    #475569;
 
     /* Gradients */
-    --g-brand:   linear-gradient(135deg, #5B4DFF 0%, #9B73FF 100%);
-    --g-hero:    linear-gradient(135deg, #0B0B0F 0%, #12102A 50%, #1A0F2E 100%);
-    --g-card:    linear-gradient(135deg, rgba(91,77,255,0.06) 0%, rgba(91,77,255,0.01) 100%);
-    --g-text:    linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.7) 100%);
-    --g-primary: linear-gradient(135deg, #5B4DFF 0%, #9B73FF 100%);
+    --g-brand:   linear-gradient(135deg, #00F0FF 0%, #9D5BFF 100%);
+    --g-hero:    linear-gradient(135deg, #020205 0%, #08081A 50%, #0F0F2E 100%);
+    --g-card:    linear-gradient(135deg, rgba(0,240,255,0.06) 0%, rgba(157,91,255,0.02) 100%);
+    --g-text:    linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+    --g-primary: linear-gradient(135deg, #00F0FF 0%, #9D5BFF 100%);
 
     /* Glows */
-    --glow-brand:  0 0 60px rgba(91,77,255,0.25), 0 0 120px rgba(91,77,255,0.1);
-    --glow-accent: 0 0 40px rgba(240,138,138,0.2);
-    --glow-sky:    0 0 40px rgba(125,211,252,0.2);
+    --glow-brand:  0 0 50px rgba(0,240,255,0.3), 0 0 100px rgba(157,91,255,0.15);
+    --glow-accent: 0 0 40px rgba(157,91,255,0.25);
+    --glow-sky:    0 0 40px rgba(165,180,252,0.2);
 
     /* Shadows */
     --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3);
@@ -265,14 +265,14 @@
   }
 
   .gradient-text-primary {
-    background: linear-gradient(135deg, #9B8FFF 0%, #5B4DFF 100%);
+    background: linear-gradient(135deg, #00F0FF 0%, #9D5BFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gradient-text-accent {
-    background: linear-gradient(135deg, #F08A8A 0%, #FF6B9D 100%);
+    background: linear-gradient(135deg, #9D5BFF 0%, #7B6FFF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -479,4 +479,12 @@
   .bg-surface   { background: var(--c-surface); }
   .bg-card-ui   { background: var(--c-card); }
   .bg-elevated  { background: var(--c-border); }
+
+  @keyframes realtime-glow {
+    0%, 100% { filter: drop-shadow(0 0 5px currentColor); opacity: 0.8; }
+    50% { filter: drop-shadow(0 0 15px currentColor); opacity: 1; }
+  }
+  .animate-realtime-glow {
+    animation: realtime-glow 3s ease-in-out infinite;
+  }
 }
