@@ -7,6 +7,14 @@ import { Layers, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
+/* ── Variants ─────────────────────────────────────────────────── */
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 28 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] as const },
+});
+
 export default function SaaSDevelopmentPage() {
   return (
     <>
@@ -18,10 +26,6 @@ export default function SaaSDevelopmentPage() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-4xl"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-fuchsia-900/10 border border-fuchsia-900/20 text-xs font-bold uppercase tracking-widest text-cyan-700 mb-8">
-              <Layers size={14} />
-              <span>Full Scale SaaS</span>
-            </div>
             <h1 className="text-4xl md:text-7xl font-black mb-8 leading-tight">
               Enterprise-grade <span className="gradient-text-primary">SaaS Systems</span> built for global scale.
             </h1>
@@ -61,18 +65,42 @@ export default function SaaSDevelopmentPage() {
                   src="/blog-cloud.png" 
                   alt="SaaS Platform"
                   fill
-                  className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+                  className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 mix-blend-screen"
+                  style={{ maskImage: 'radial-gradient(circle at center, black 40%, transparent 95%)' }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent/20 to-transparent pointer-events-none" />
              </div>
           </div>
           
-          <div className="glass-card p-12 rounded-3xl border-white/10 text-center">
-             <h2 className="text-3xl font-bold mb-6">Ready to launch your platform?</h2>
-             <Link href="/contact?service=saas" className="btn-primary px-8 py-4 inline-flex items-center gap-2 mx-auto">
-                Schedule a Deep Dive <ArrowRight size={18} />
-             </Link>
-          </div>
+          <section className="relative py-32 overflow-hidden">
+             {/* Nebula Backdrop */}
+             <div className="absolute inset-0 pointer-events-none -z-10">
+                <motion.div 
+                   animate={{ x: [0, -60, 60, 0], y: [0, 40, -40, 0], rotate: [360, 0], scale: [1, 1.3, 1] }}
+                   transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+                   className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-[180px] opacity-20 bg-cyan-500/10"
+                />
+                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+             </div>
+
+             <div className="max-w-5xl mx-auto px-4">
+                <motion.div 
+                   {...fadeUp()}
+                   className="p-16 md:p-24 rounded-[50px] border border-white/10 bg-gradient-to-b from-white/[0.03] to-transparent relative overflow-hidden group text-center"
+                >
+                   {/* Top Glowing Edge */}
+                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all duration-700 group-hover:w-64" />
+                   
+                   <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tight">Ready to launch your <span className="gradient-text-primary">platform</span>?</h2>
+                   <p className="text-xl mb-12 max-w-lg mx-auto font-medium leading-relaxed text-white/50">
+                      Our architecture is designed to handle users from 1 to 1 million without a sweat.
+                   </p>
+                   <Link href="/contact?service=saas" className="px-12 py-5 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-sm transition-all hover:bg-white/90 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)] inline-flex items-center gap-2">
+                      Schedule a Deep Dive <ArrowRight size={18} />
+                   </Link>
+                </motion.div>
+             </div>
+          </section>
         </div>
       </main>
       <Footer />

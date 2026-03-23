@@ -14,11 +14,11 @@ export default function RegisterPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex items-center justify-center mb-10 group">
           <Image
-            src="/logo.png"
+            src="/logo.jpeg"
             alt="Akronix Logo"
             width={160}
             height={50}
-            className="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-110"
+            className="h-12 w-auto object-contain transition-all duration-300 group-hover:scale-110 mix-blend-screen"
             priority
           />
         </Link>

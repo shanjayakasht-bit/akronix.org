@@ -16,10 +16,10 @@ const brands = [
   {
     id: "akronix",
     name: "Akronix",
-    logo: "/akronix_logo.png.jpeg",
-    color: "#5B4DFF",
-    glow: "rgba(91, 77, 255, 0.5)",
-    description: "Akronix builds scalable SaaS platforms, powerful networking solutions, and growth-focused digital marketing systems that help businesses launch, scale, and dominate digitally."
+    logo: "/logo.jpeg",
+    color: "#00F0FF",
+    glow: "rgba(0, 240, 255, 0.5)",
+    description: "The technological powerhouse behind the ecosystem, Akronix architects and builds the high-performance platforms that power modern digital giants."
   },
   {
     id: "mediatrix",
@@ -32,12 +32,38 @@ const brands = [
 ];
 
 export const BrandEcosystem = () => {
-  const [activeBrand, setActiveBrand] = useState(brands[1]);
+  const [activeBrand, setActiveBrand] = useState(brands[0]);
   const [mounted, setMounted] = useState(false);
+
+  const playSound = () => {
+    if (typeof window === 'undefined' || !mounted) return;
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(660, audioCtx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.03);
+
+      gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.03);
+    } catch (e) {}
+  };
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (mounted) playSound();
+  }, [activeBrand, mounted]);
 
   const stars = useMemo(() => {
     return Array.from({ length: 250 }).map((_, i) => ({
@@ -221,7 +247,7 @@ export const BrandEcosystem = () => {
             className="text-center"
           >
             <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-medium max-w-3xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-              "{activeBrand.description}"
+              &quot;{activeBrand.description}&quot;
             </p>
           </motion.div>
         </AnimatePresence>

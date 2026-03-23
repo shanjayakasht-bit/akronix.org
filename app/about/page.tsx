@@ -34,7 +34,7 @@ export default function AboutPage() {
           <div className="container-xl">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div {...animations.fadeRight}>
-                <span className="badge mb-6 inline-flex">About Akronix</span>
+
                 <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
                   Where <span className="gradient-text-primary">Dual Rays</span> Shape a Single Vision.
                 </h1>
@@ -83,9 +83,7 @@ export default function AboutPage() {
                 />
                 
                 {/* Overlay Elements */}
-                <div className="absolute top-8 right-8 z-20">
-                  <LiveIndicator label="Engineering Live" />
-                </div>
+
                 <div className="absolute bottom-8 left-8 z-20">
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -94,9 +92,15 @@ export default function AboutPage() {
                     className="glass-card px-6 py-4 rounded-2xl border-white/10"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex -space-x-2">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-indigo-500/20" />
+                      <div className="flex -space-x-3">
+                        {[
+                          { src: "/team-shanjay.png", alt: "Shanjay" },
+                          { src: "/team-vishal.png", alt: "Vishal" },
+                          { src: "/team-bharath.png", alt: "Bharath" }
+                        ].map((img, i) => (
+                          <div key={i} className="w-10 h-10 rounded-full border-2 border-black relative overflow-hidden bg-white/10 ring-2 ring-black">
+                             <Image src={img.src} alt={img.alt} fill className="object-cover" />
+                          </div>
                         ))}
                       </div>
                       <span className="text-sm font-bold text-white/80">60+ Global Engineers</span>
@@ -108,40 +112,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Culture / Values Section */}
-        <section className="py-24 bg-white/[0.01] border-y border-white/5">
-          <div className="container-xl">
-            <div className="text-center mb-16">
-              <motion.h2 {...animations.fadeUp} className="text-3xl md:text-5xl font-black mb-6">Our Core <span className="gradient-text-primary">Values</span></motion.h2>
-              <motion.p {...animations.fadeUp} className="text-white/40 max-w-2xl mx-auto italic font-medium">
-                &quot;Excellence is not an act, but a habit.&quot;
-              </motion.p>
-            </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { icon: Zap, title: "Velocity", desc: "We ship at startup speed without compromising on security or architecture." },
-                { icon: Shield, title: "Integrity", desc: "Transparent communication and unbreakable commitments to our partners." },
-                { icon: Target, title: "Precision", desc: "Meticulous attention to detail in every line of code and pixel of design." },
-              ].map((value, i) => (
-                <motion.div 
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 * i }}
-                  className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-colors"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6 animate-realtime-glow">
-                    <value.icon size={24} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-4">{value.title}</h3>
-                  <p className="text-sm text-white/40 leading-relaxed">{value.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
       <Footer />
     </>

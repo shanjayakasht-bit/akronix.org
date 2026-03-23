@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Zap, Twitter, Github, Linkedin, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { Zap, Twitter, Instagram, Linkedin, ArrowRight } from "lucide-react";
 
 const footerLinks = {
   Services: [
@@ -10,8 +11,8 @@ const footerLinks = {
   ],
   Company: [
     { label: "About", href: "/about" },
-    { label: "Case Studies", href: "/case-studies" },
-    { label: "Blog", href: "/blog" },
+    { label: "Policies", href: "/policies" },
+    { label: "Team", href: "/blog" },
     { label: "Careers", href: "/careers" },
   ],
   Resources: [
@@ -29,50 +30,30 @@ const footerLinks = {
 
 const socials = [
   { icon: Twitter, href: "https://twitter.com/akronix", label: "Twitter" },
-  { icon: Github, href: "https://github.com/akronix", label: "GitHub" },
+  { icon: Instagram, href: "https://instagram.com/akronix", label: "Instagram" },
   { icon: Linkedin, href: "https://linkedin.com/company/akronix", label: "LinkedIn" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="border-t" style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(15, 10, 60, 0.6)" }}>
-      {/* Newsletter Section */}
-      <div className="border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-        <div className="container-xl py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-xl font-bold mb-1">Stay ahead of the curve</h3>
-              <p className="text-sm text-white/50">
-                Get insights on building & scaling digital products — no spam.
-              </p>
-            </div>
-            <form className="flex gap-2 w-full md:w-auto">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="input w-full md:w-64"
-              />
-              <button type="submit" className="btn-primary whitespace-nowrap">
-                Subscribe <ArrowRight size={14} />
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+    <footer className="relative overflow-hidden" style={{ background: "linear-gradient(to bottom, #000, rgba(15, 10, 60, 0.9))" }}>
+      {/* Top Blend Gradient */}
+      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-black to-transparent pointer-events-none" />
 
       {/* Main Footer Grid */}
-      <div className="container-xl py-12">
+      <div className="container-xl py-20 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {/* Brand */}
           <div className="col-span-2">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: "var(--gradient-primary)" }}
-              >
-                <Zap size={16} className="text-white fill-white" />
-              </div>
-              <span className="text-lg font-bold tracking-tight">
+            <Link href="/" className="flex items-center gap-4 mb-6 group">
+              <Image
+                src="/logo.jpeg"
+                alt="Akronix Logo"
+                width={120}
+                height={40}
+                className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-110 mix-blend-screen"
+              />
+              <span className="text-2xl font-black tracking-tighter uppercase transition-colors group-hover:text-cyan-400">
                 Akron<span className="gradient-text-primary">ix</span>
               </span>
             </Link>

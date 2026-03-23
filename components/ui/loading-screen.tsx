@@ -7,12 +7,24 @@ import Image from "next/image";
 export default function LoadingScreen() {
   const [loading, setLoading] = useState(true);
   const [phase, setPhase] = useState<"init" | "logo" | "done">("init");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("logo"), 600);
-    const t2 = setTimeout(() => setLoading(false), 3000);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    setMounted(true);
+
+    const t1 = setTimeout(() => setPhase("logo"), 300);
+    const t2 = setTimeout(() => {
+      setLoading(false);
+    }, 2200);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
+
+  // Don't render on server or if not mounted yet
+  if (!mounted || !loading) return null;
 
   return (
     <AnimatePresence mode="wait">
@@ -21,9 +33,9 @@ export default function LoadingScreen() {
           key="loading"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-          style={{ background: "var(--c-bg, #0B0B0F)" }}
+          style={{ background: "var(--c-bg, #020205)" }}
         >
           {/* Ambient glow */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -38,7 +50,7 @@ export default function LoadingScreen() {
             className="relative z-10 flex flex-col items-center gap-6"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: phase === "logo" ? 1 : 0, y: phase === "logo" ? 0 : 16 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Logo image */}
             <div className="relative">
@@ -51,7 +63,7 @@ export default function LoadingScreen() {
                 alt="Akronix"
                 width={88}
                 height={88}
-                className="relative w-22 h-22 rounded-2xl border border-white/10 object-contain"
+                className="relative rounded-2xl border border-white/10 object-contain"
                 priority
               />
             </div>
@@ -70,9 +82,13 @@ export default function LoadingScreen() {
               >
                 AKRONIX
               </p>
-              <p className="text-xs text-white/30 uppercase tracking-[0.4em] mt-1">
+              <motion.p
+                className="text-xs text-white/30 uppercase tracking-[0.4em] mt-1"
+                animate={{ opacity: [0.3, 0.8, 0.3] }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+              >
                 Loading
-              </p>
+              </motion.p>
             </div>
           </motion.div>
 
@@ -82,9 +98,9 @@ export default function LoadingScreen() {
               <motion.div
                 className="h-full rounded-full"
                 style={{ background: "linear-gradient(90deg, #5B4DFF, #9B8FFF, #F08A8A)" }}
-                initial={{ width: "0%", x: "-5%" }}
-                animate={{ width: "100%", x: "0%" }}
-                transition={{ duration: 2.4, ease: "easeInOut" }}
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 1.8, ease: "easeInOut" }}
               />
             </div>
           </div>

@@ -20,9 +20,9 @@ const navLinks = [
       { label: "Landing Pages", href: "/services/landing-pages", desc: "Convert visitors to clients" },
     ],
   },
-  { label: "Case Studies", href: "/case-studies" },
+  { label: "Policies", href: "/policies" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Blog", href: "/blog" },
+  { label: "Team", href: "/blog" },
 ];
 
 export default function Navigation() {
@@ -59,7 +59,7 @@ export default function Navigation() {
             alt="Akronix Logo"
             width={120}
             height={40}
-            className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+            className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-105 mix-blend-screen"
             priority
           />
         </Link>
