@@ -10,24 +10,18 @@ const brands = [
     name: "Gritscape",
     logo: "/gritscape_logo.png",
     color: "#006B3F",
-    glow: "rgba(0, 107, 63, 0.5)",
-    description: "Gritscape transforms innovative ideas into real startups through expert mentorship, strategic guidance, investor connections, and hands-on startup programs."
-  },
-  {
-    id: "akronix",
-    name: "Akronix",
-    logo: "/logo.jpeg",
-    color: "#00F0FF",
-    glow: "rgba(0, 240, 255, 0.5)",
-    description: "The technological powerhouse behind the ecosystem, Akronix architects and builds the high-performance platforms that power modern digital giants."
+    glow: "rgba(0, 107, 63, 0.6)",
+    description: "Gritscape transforms innovative ideas into real startups through expert mentorship, strategic guidance, and hands-on startup programs.",
+    tags: ["MENTORSHIP", "STARTUP ACCELERATOR", "INVESTOR NETWORK"]
   },
   {
     id: "mediatrix",
     name: "Mediatrix",
     logo: "/mediatrix_logo.png",
     color: "#FFD700",
-    glow: "rgba(255, 215, 0, 0.5)",
-    description: "Mediatrix is a performance-driven digital marketing agency helping brands grow through strategic campaigns, creative storytelling, and data-driven marketing."
+    glow: "rgba(255, 215, 0, 0.6)",
+    description: "Mediatrix is a performance-driven digital marketing agency helping brands grow through strategic storytelling and data-driven marketing.",
+    tags: ["PERFORMANCE MARKETING", "CONTENT STRATEGY", "SEO/SEM"]
   }
 ];
 
@@ -159,78 +153,95 @@ export const BrandEcosystem = () => {
         </h2>
       </motion.div>
 
-      {/* Logos Container */}
-      <div className="relative z-20 flex flex-wrap justify-center items-center gap-12 md:gap-24 px-4 w-full max-w-6xl mb-20">
-        {brands.map((brand) => (
+      {/* Binary System Hub Animation */}
+      <div className="relative z-20 flex flex-col md:flex-row justify-center items-center gap-20 md:gap-60 px-4 w-full max-w-7xl mb-16 h-[400px]">
+        
+        {/* The Connection Path - Kinetic Pipeline */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-[2px] hidden md:block">
+           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+           {/* Pulsing Light Stream */}
+           <motion.div 
+             animate={{ x: ["-100%", "200%"] }}
+             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+             className="absolute inset-y-0 w-80 bg-gradient-to-r from-transparent via-white/20 to-transparent blur-sm"
+           />
+           {/* Nano-Packets */}
+           {[...Array(3)].map((_, j) => (
+             <motion.div 
+               key={j}
+               animate={{ x: ["-50%", "150%"] }}
+               transition={{ duration: 1.5, repeat: Infinity, ease: "linear", delay: j * 0.5 }}
+               className="absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-white shadow-[0_0_15px_white]"
+             />
+           ))}
+        </div>
+
+        {brands.map((brand, i) => (
           <div key={brand.id} className="relative flex flex-col items-center">
-            {/* Hub label above Akronix logo */}
-            {brand.id === 'akronix' && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute -top-16 whitespace-nowrap z-30"
-              >
-                <div className="flex flex-col items-center">
+            {/* Technical Node Labels */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`absolute -top-24 whitespace-nowrap z-30 flex flex-col items-center transition-all duration-700 ${activeBrand.id === brand.id ? 'opacity-100' : 'opacity-40 blur-[2px]'}`}
+            >
+               <div className="text-[10px] font-black uppercase tracking-[0.6em] text-white/40 mb-2">SYSTEM_NODE_{String(i + 1).padStart(2, '0')}</div>
+               <div className="h-[2px] w-20 bg-white/10 relative overflow-hidden">
                   <motion.div 
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.8] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="text-[10px] font-black uppercase tracking-[0.2em] text-[#00F0FF] bg-[#00F0FF]/10 px-4 py-1.5 rounded-full border border-[#00F0FF]/30 shadow-[0_0_15px_rgba(0,240,255,0.3)]"
-                  >
-                    The Hub that connects
-                  </motion.div>
-                  <motion.div 
-                    animate={{ height: [24, 32, 24] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-px bg-gradient-to-b from-[#00F0FF] to-transparent mt-2" 
+                    animate={{ x: ["-100%", "200%"] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 bg-white shadow-[0_0_10px_white]"
                   />
-                </div>
-              </motion.div>
-            )}
+               </div>
+            </motion.div>
 
             <motion.div
               onMouseEnter={() => setActiveBrand(brand)}
-              whileHover={{ scale: 1.15 }}
-              className={`relative w-32 h-32 md:w-44 md:h-44 rounded-full border-2 transition-all duration-700 flex items-center justify-center overflow-hidden bg-black group cursor-pointer ${
-                activeBrand.id === brand.id ? "border-white scale-110 shadow-[0_0_60px_rgba(255,255,255,0.1)]" : "border-white/10"
+              whileHover={{ scale: 1.1 }}
+              className={`relative w-40 h-40 md:w-56 md:h-56 rounded-full border border-white/10 transition-all duration-700 flex items-center justify-center overflow-hidden bg-black group cursor-pointer ${
+                activeBrand.id === brand.id ? "scale-105 shadow-[0_0_80px_rgba(255,255,255,0.05)] border-white/40" : "grayscale opacity-50 hover:grayscale-0 hover:opacity-100"
               }`}
               style={{
                 boxShadow: activeBrand.id === brand.id 
-                  ? `0 0 50px ${brand.glow}, inset 0 0 40px ${brand.glow}` 
-                  : `0 0 15px rgba(255,255,255,0.02)`
+                  ? `0 0 70px ${brand.glow}, inset 0 0 60px ${brand.glow}` 
+                  : `0 0 20px rgba(0,0,0,0.8)`
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none z-10" />
               
-              <div className="relative w-full h-full p-0 flex items-center justify-center">
+              <div className="relative w-full h-full p-4 flex items-center justify-center">
                  <Image 
                     src={brand.logo} 
                     alt={brand.name} 
                     fill 
-                    className={`object-cover transition-transform duration-700 ${activeBrand.id === brand.id ? 'scale-105' : 'scale-100 opacity-60'}`}
+                    className={`object-cover transition-all duration-1000 ${activeBrand.id === brand.id ? 'scale-105' : 'scale-100'}`}
                   />
               </div>
 
-              <div 
-                className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none ${activeBrand.id === brand.id ? 'opacity-20' : ''}`}
-                style={{ background: brand.color }}
+              {/* HUD Target Lock */}
+              <motion.div 
+                animate={{ rotate: activeBrand.id === brand.id ? 180 : 0 }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className={`absolute inset-0 border-[2px] border-dashed border-white/5 rounded-full transition-opacity duration-700 ${activeBrand.id === brand.id ? 'opacity-40' : 'opacity-0'}`}
               />
             </motion.div>
             
-            {activeBrand.id === brand.id && (
-              <motion.div 
-                layoutId="active-ring"
-                className="absolute inset-[-20px] rounded-full border border-white/10 pointer-events-none"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6 }}
-              >
-                 <motion.div 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 rounded-full border-[1px] border-t-white/30 border-r-transparent border-b-transparent border-l-transparent"
-                 />
-              </motion.div>
-            )}
+            {/* Active Tag HUD */}
+            <AnimatePresence>
+              {activeBrand.id === brand.id && (
+                <motion.div 
+                  initial={{ opacity: 0, x: i === 0 ? -40 : 40 }}
+                  animate={{ opacity: 1, x: i === 0 ? -240 : 240 }}
+                  exit={{ opacity: 0, x: i === 0 ? -40 : 40 }}
+                  className={`absolute top-0 hidden xl:flex flex-col gap-2 w-48 text-${i === 0 ? 'right' : 'left'}`}
+                >
+                   {brand.tags?.map((tag) => (
+                     <div key={tag} className="text-[9px] font-black text-white/30 uppercase tracking-[0.4em] bg-white/[0.03] px-3 py-1.5 rounded-lg border border-white/5 whitespace-nowrap">
+                        {tag}
+                     </div>
+                   ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ))}
       </div>
