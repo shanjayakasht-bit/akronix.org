@@ -100,7 +100,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-white/40 mb-1">Email us</p>
-                    <a href="mailto:hello@akronix.io" className="text-white hover:text-cyan-700 transition-colors">hello@akronix.io</a>
+                    <a href="mailto:hello@akronix.io" className="text-white hover:text-cyan-700 transition-colors">akronix.in@gmail.com</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -109,7 +109,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-white/40 mb-1">Call us</p>
-                    <a href="tel:+1234567890" className="text-white hover:text-cyan-700 transition-colors">+1 (234) 567-890</a>
+                    <a href="tel:+1234567890" className="text-white hover:text-cyan-700 transition-colors">9360745895</a>
                   </div>
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-white/40 mb-1">Visit us</p>
-                    <p className="text-white">Silicon Valley, CA<br />Digital Nomad Team</p>
+                    <p className="text-white">Chennai</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
