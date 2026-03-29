@@ -21,7 +21,11 @@ const navLinks = [
     ],
   },
   { label: "Policies", href: "/policies" },
-  { label: "Pricing", href: "/pricing" },
+  { label: "Pricing", href: "/pricing" 
+   ,
+    dropdown: [
+    { label: "Testimonials", href: "/pricing/testimonials", desc: "See what our clients say" },
+  ],},
   { label: "Team", href: "/blog" },
 ];
 
