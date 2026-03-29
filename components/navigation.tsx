@@ -24,7 +24,7 @@ const navLinks = [
   { label: "Pricing", href: "/pricing" 
    ,
     dropdown: [
-    { label: "Pricing", href: "/pricing", desc: "See what our clients say" },
+    { label: "Pricing", href: "/pricing"},
     { label: "Testimonials", href: "/pricing/testimonials", desc: "See what our clients say" },
   ],},
   { label: "Team", href: "/blog" },
