@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 import {
@@ -48,6 +48,49 @@ const stats = [
   { value: "12d", label: "Avg. First Deploy", icon: Zap },
 ];
 
+const heroStars = [
+  { top: "15%", left: "20%", size: 1.5, delay: 0 },
+  { top: "25%", left: "75%", size: 2, delay: 1 },
+  { top: "45%", left: "10%", size: 1, delay: 2 },
+  { top: "65%", left: "85%", size: 2.5, delay: 0.5 },
+  { top: "80%", left: "30%", size: 1.5, delay: 1.5 },
+  { top: "10%", left: "60%", size: 1, delay: 2.5 },
+  { top: "35%", left: "40%", size: 2, delay: 0.8 },
+  { top: "55%", left: "65%", size: 1.5, delay: 1.2 },
+  { top: "75%", left: "15%", size: 1, delay: 2.2 },
+  { top: "85%", left: "70%", size: 2.5, delay: 0.3 },
+  { top: "20%", left: "90%", size: 1.5, delay: 1.8 },
+  { top: "50%", left: "95%", size: 1, delay: 0.7 },
+  { top: "70%", left: "50%", size: 2, delay: 2.1 },
+  { top: "30%", left: "5%", size: 1.5, delay: 1.1 },
+  { top: "90%", left: "8%", size: 1, delay: 0.4 },
+  { top: "5%", left: "45%", size: 2, delay: 1.6 },
+  { top: "40%", left: "25%", size: 1.5, delay: 2.4 },
+  { top: "60%", left: "55%", size: 1, delay: 0.9 },
+  { top: "95%", left: "40%", size: 2.5, delay: 1.7 },
+  { top: "80%", left: "90%", size: 1.5, delay: 1.4 },
+];
+
+/* ── Capability Backgrounds ──────────────────────────────────────── */
+function CapabilityBackground({ index, color }: { index: number; color: string }) {
+  switch (index) {
+    case 0: // Founder Mentorship (Nodes)
+      return <div className="absolute inset-0 opacity-60 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, ${color}30 1.5px, transparent 1px)`, backgroundSize: "20px 20px" }} />;
+    case 1: // Visual Narrative (Light Beam)
+      return (
+        <div className="absolute inset-0 opacity-40 pointer-events-none overflow-hidden blur-[40px]">
+           <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-gradient-to-bl origin-top-right transform scale-150 rotate-12" style={{ backgroundImage: `linear-gradient(to bottom left, ${color}50, transparent 40%)` }} />
+        </div>
+      );
+    case 2: // Venture Intelligence (Data Grid)
+      return <div className="absolute inset-0 opacity-60 pointer-events-none" style={{ backgroundImage: `linear-gradient(to right, ${color}15 1px, transparent 1px), linear-gradient(to bottom, ${color}15 1px, transparent 1px)`, backgroundSize: "32px 32px" }} />;
+    case 3: // Ecosystem Scaling (Velocity Diagonal Lines)
+      return <div className="absolute inset-0 opacity-50 pointer-events-none mix-blend-screen" style={{ backgroundImage: `repeating-linear-gradient(45deg, ${color}10, ${color}10 2px, transparent 2px, transparent 18px)` }} />;
+    default:
+      return null;
+  }
+}
+
 /* ── Animated Counter ─────────────────────────────────────────── */
 function AnimatedStat({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
   const ref = useRef(null);
@@ -71,41 +114,79 @@ function AnimatedStat({ value, label, icon: Icon }: { value: string; label: stri
 
 /* ── Component ────────────────────────────────────────────────── */
 export default function HomePage() {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
+  const [selectedCapability, setSelectedCapability] = useState<number | null>(null);
   const axisScaleY = useSpring(
     useTransform(scrollYProgress, [0.3, 0.85], [0, 1]),
     { damping: 25, stiffness: 80 }
   );
 
+  // Minimal interactive spotlight
+  const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
+  const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
+  const springX = useSpring(mouseX, { stiffness: 30, damping: 15 });
+  const springY = useSpring(mouseY, { stiffness: 30, damping: 15 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
   return (
     <div ref={containerRef} className="overflow-hidden bg-[#020205]">
 
       {/* ── HERO ────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-16 px-4 overflow-hidden">
-        {/* Background layers */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-60 left-1/4 w-[900px] h-[900px] rounded-full blur-[180px] opacity-15"
-            style={{ background: "radial-gradient(circle, #00F0FF, transparent 70%)" }} />
-          <div className="absolute top-1/2 right-0 w-[600px] h-[600px] rounded-full blur-[140px] opacity-10"
-            style={{ background: "radial-gradient(circle, #9D5BFF, transparent 70%)" }} />
-        </div>
-        <div className="absolute inset-0 grid-bg opacity-[0.04] pointer-events-none" />
-
-        {/* Floating orbs */}
-        {[...Array(4)].map((_, i) => (
+      <section 
+        className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-16 px-4 overflow-hidden"
+        onMouseMove={handleMouseMove}
+      >
+        {/* Minimal Background Layer */}
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          {/* Central subtle breathing core */}
           <motion.div
-            key={i}
-            animate={{ y: [0, -20, 0], opacity: [0.06, 0.15, 0.06] }}
-            transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 1.5 }}
-            className="absolute rounded-full blur-[70px] pointer-events-none"
-            style={{
-              width: 200 + i * 60, height: 200 + i * 60,
-              background: i % 2 === 0 ? "rgba(0,240,255,0.2)" : "rgba(157,91,255,0.2)",
-              left: `${[10, 70, 20, 80][i]}%`, top: `${[20, 30, 70, 65][i]}%`,
-            }}
+            animate={{ opacity: [0.06, 0.12, 0.06], scale: [0.9, 1.05, 0.9] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute w-[80vw] h-[60vh] max-w-[1000px] rounded-[100%] blur-[140px]"
+            style={{ background: "radial-gradient(ellipse, #00F0FF, transparent 65%)" }}
           />
-        ))}
+        </div>
+
+        {/* Small glowing blobs / stars */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {heroStars.map((star, i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full bg-cyan-100"
+              style={{
+                top: star.top,
+                left: star.left,
+                width: star.size,
+                height: star.size,
+                boxShadow: "0 0 10px 2px rgba(0,240,255,0.3)"
+              }}
+              animate={{ opacity: [0.1, 0.6, 0.1] }}
+              transition={{ duration: 3 + star.delay, repeat: Infinity, ease: "easeInOut", delay: star.delay }}
+            />
+          ))}
+        </div>
+        
+        {/* Faint static grid */}
+        <div className="absolute inset-0 grid-bg opacity-[0.03] pointer-events-none" />
+
+        {/* Cursor interactive spotlight */}
+        <motion.div
+          className="absolute top-0 left-0 pointer-events-none w-[600px] h-[600px] rounded-full blur-[90px]"
+          style={{
+            background: "radial-gradient(circle, rgba(157,91,255,0.18), transparent 70%)",
+            x: springX,
+            y: springY,
+            translateX: "-50%",
+            translateY: "-50%",
+            zIndex: 1
+          }}
+        />
 
         <div className="container-xl relative z-10 text-center">
           {/* Hero word mark */}
@@ -113,9 +194,16 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="h-32 sm:h-44 md:h-56 mb-6"
+            className="relative h-32 sm:h-44 md:h-56 mb-6"
           >
-            <InteractiveHeroText />
+            {/* Constant light blob behind the title */}
+            <div 
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] max-w-[700px] h-[180px] rounded-[100%] blur-[80px] pointer-events-none z-0"
+              style={{ background: "radial-gradient(ellipse, rgba(0,240,255,0.65), transparent 70%)" }}
+            />
+            <div className="relative z-10 w-full h-full">
+              <InteractiveHeroText />
+            </div>
           </motion.div>
 
           {/* Sub-label */}
@@ -186,50 +274,122 @@ export default function HomePage() {
             </motion.p>
           </div>
 
-          {/* Capability cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {capabilities.map(({ icon: Icon, title, desc, color, tag }, i) => (
-              <motion.div
-                key={title}
-                {...fadeUp(i * 0.08)}
-                className="group relative p-7 rounded-3xl bg-white/[0.02] border border-white/[0.05] overflow-hidden flex flex-col justify-between min-h-[280px] transition-all duration-500 hover:border-white/10 hover:bg-white/[0.035] cursor-pointer"
-              >
-                {/* Hover sweep */}
-                <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+          {/* Capability cards - Infinite Auto Carousel */}
+          <div className="relative w-[100vw] left-1/2 -ml-[50vw] mt-12 overflow-hidden">
+            {/* Fade edges */}
+            <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-[#020205] to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-[#020205] to-transparent z-10 pointer-events-none" />
+            
+            <motion.div 
+               animate={{ x: ["0%", "-50%"] }}
+               transition={{ duration: 40, ease: "linear", repeat: Infinity }}
+               className="flex gap-6 w-max py-8 pb-12 px-6"
+            >
+              {[...capabilities, ...capabilities, ...capabilities, ...capabilities].map(({ icon: Icon, title, desc, color, tag }, idx) => {
+                const realIndex = idx % capabilities.length;
+                return (
                   <motion.div
-                    animate={{ x: ["-120%", "220%"] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/[0.03] to-transparent skew-x-[-20deg]"
-                  />
-                </div>
-                {/* Glow dot */}
-                <motion.div
-                  animate={{ opacity: [0.3, 0.8, 0.3] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
-                  className="absolute top-6 right-6 w-1.5 h-1.5 rounded-full"
-                  style={{ background: color, boxShadow: `0 0 10px ${color}` }}
-                />
-
-                <div className="relative z-10">
-                  <div
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110"
-                    style={{ background: `${color}10`, border: `1px solid ${color}25` }}
+                    key={`${title}-${idx}`}
+                    onClick={() => setSelectedCapability(realIndex)}
+                    whileHover={{ scale: 1.02, y: -5 }}
+                    className="shrink-0 w-[85vw] max-w-[340px] group relative p-8 rounded-[32px] bg-[#0A0A14] border border-white/[0.05] overflow-hidden flex flex-col justify-between shadow-[0_20px_40px_rgba(0,0,0,0.5)] cursor-pointer hover:border-white/[0.15] hover:bg-[#0c0c18] transition-colors duration-300 min-h-[380px]"
                   >
-                    <Icon size={20} style={{ color }} />
-                  </div>
-                  <h3 className="text-lg font-black mb-2.5 tracking-tight uppercase italic text-white/85">{title}</h3>
-                  <p className="text-[13px] leading-relaxed text-white/30 group-hover:text-white/55 transition-colors duration-500 font-medium">
-                    {desc}
-                  </p>
-                </div>
+                    {/* Hover sweep */}
+                    <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                      <motion.div
+                        animate={{ x: ["-120%", "220%"] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                        className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/[0.03] to-transparent skew-x-[-20deg]"
+                      />
+                    </div>
+                    {/* Glow dot */}
+                    <motion.div
+                      animate={{ opacity: [0.3, 0.8, 0.3] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: realIndex * 0.5 }}
+                      className="absolute top-8 right-8 w-1.5 h-1.5 rounded-full"
+                      style={{ background: color, boxShadow: `0 0 12px ${color}` }}
+                    />
 
-                <div className="relative z-10 flex items-center justify-between mt-6">
-                  <span className="text-[9px] font-black text-white/10 uppercase tracking-widest">{tag}</span>
-                  <div className="w-8 h-px bg-white/10 group-hover:w-14 transition-all duration-500" style={{ '--tw-shadow-color': color } as React.CSSProperties} />
-                </div>
-              </motion.div>
-            ))}
+                    <CapabilityBackground index={realIndex} color={color} />
+
+                    <div className="relative z-10 w-full flex-grow pt-10">
+                      <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic text-white/95">{title}</h3>
+                      <p className="text-[15px] leading-relaxed text-white/40 group-hover:text-white/60 transition-colors duration-500 font-medium">
+                        {desc}
+                      </p>
+                    </div>
+
+                    <div className="relative z-10 flex items-center justify-between mt-8 w-full border-t border-white/[0.05] pt-6">
+                      <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{tag}</span>
+                      <span className="text-xs text-white/20 uppercase tracking-widest font-black group-hover:text-white flex items-center gap-2 transition-colors duration-300">
+                        Explore <div className="w-3 h-3 rounded-full bg-white/20 group-hover:bg-white flex items-center justify-center transition-colors"><div className="w-1 h-1 bg-black rounded-full" /></div>
+                      </span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </div>
+
+          {/* Centered Overlay Popup */}
+          <AnimatePresence>
+            {selectedCapability !== null && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                onClick={() => setSelectedCapability(null)}
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-black/40 backdrop-blur-sm cursor-pointer"
+              >
+                {(() => {
+                  const { icon: Icon, title, desc, color, tag } = capabilities[selectedCapability];
+                  return (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="relative w-full max-w-2xl bg-[#0d0d16] p-10 sm:p-14 rounded-[36px] border border-white/20 flex flex-col justify-between shadow-[0_50px_100px_rgba(0,0,0,0.8),inset_0_1px_30px_rgba(255,255,255,0.05)] cursor-default overflow-hidden"
+                    >
+                      {/* Close button */}
+                      <button 
+                        onClick={() => setSelectedCapability(null)}
+                        className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-colors text-white/60 hover:text-white z-50"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                      </button>
+
+                      {/* Ambient modal glow */}
+                      <div 
+                        className="absolute -top-32 -left-32 w-[300px] h-[300px] rounded-full blur-[100px] opacity-20 pointer-events-none"
+                        style={{ background: color }}
+                      />
+
+                      <CapabilityBackground index={selectedCapability} color={color} />
+
+                      <div className="relative z-10 w-full mb-10 mt-16">
+                        <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tighter uppercase italic text-white">{title}</h3>
+                        <p className="text-base sm:text-lg leading-relaxed text-white/50 font-medium max-w-lg">
+                          {desc}
+                          <br/><br/>
+                          This is an expanded view. By leveraging our deeply integrated ecosystem approach, we map these specific capabilities directly into your project's technical architecture, ensuring flawless scale and absolute market superiority.
+                        </p>
+                      </div>
+
+                      <div className="relative z-10 flex items-center justify-between w-full border-t border-white/10 pt-8 mt-4">
+                        <span className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">{tag}</span>
+                        <Link href="/contact" className="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest bg-white/10 hover:bg-white text-white hover:text-black transition-colors border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                          Initiate Sequence
+                        </Link>
+                      </div>
+                    </motion.div>
+                  );
+                })()}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
