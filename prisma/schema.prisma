@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
@@ -121,6 +121,7 @@ model User {
   subscriptions     Subscription[]
   messages          Message[]    @relation("UserMessages")
   sentMessages      Message[]    @relation("SentMessages")
+  testimonials      Testimonial[]
   
   @@map("users")
 }
@@ -407,6 +408,9 @@ model Testimonial {
   isPublished Boolean  @default(true)
   isFeatured  Boolean  @default(false)
   
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   

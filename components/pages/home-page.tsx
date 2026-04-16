@@ -71,26 +71,6 @@ const heroStars = [
   { top: "80%", left: "90%", size: 1.5, delay: 1.4 },
 ];
 
-/* ── Capability Backgrounds ──────────────────────────────────────── */
-function CapabilityBackground({ index, color }: { index: number; color: string }) {
-  switch (index) {
-    case 0: // Founder Mentorship (Nodes)
-      return <div className="absolute inset-0 opacity-60 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, ${color}30 1.5px, transparent 1px)`, backgroundSize: "20px 20px" }} />;
-    case 1: // Visual Narrative (Light Beam)
-      return (
-        <div className="absolute inset-0 opacity-40 pointer-events-none overflow-hidden blur-[40px]">
-           <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-gradient-to-bl origin-top-right transform scale-150 rotate-12" style={{ backgroundImage: `linear-gradient(to bottom left, ${color}50, transparent 40%)` }} />
-        </div>
-      );
-    case 2: // Venture Intelligence (Data Grid)
-      return <div className="absolute inset-0 opacity-60 pointer-events-none" style={{ backgroundImage: `linear-gradient(to right, ${color}15 1px, transparent 1px), linear-gradient(to bottom, ${color}15 1px, transparent 1px)`, backgroundSize: "32px 32px" }} />;
-    case 3: // Ecosystem Scaling (Velocity Diagonal Lines)
-      return <div className="absolute inset-0 opacity-50 pointer-events-none mix-blend-screen" style={{ backgroundImage: `repeating-linear-gradient(45deg, ${color}10, ${color}10 2px, transparent 2px, transparent 18px)` }} />;
-    default:
-      return null;
-  }
-}
-
 /* ── Animated Counter ─────────────────────────────────────────── */
 function AnimatedStat({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
   const ref = useRef(null);
@@ -310,7 +290,10 @@ export default function HomePage() {
                       style={{ background: color, boxShadow: `0 0 12px ${color}` }}
                     />
 
-                    <CapabilityBackground index={realIndex} color={color} />
+                    {/* Watermark Icon — centered background */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.06] pointer-events-none transition-all duration-700 group-hover:opacity-[0.12]">
+                      <Icon size={200} style={{ color }} />
+                    </div>
 
                     <div className="relative z-10 w-full flex-grow pt-10">
                       <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic text-white/95">{title}</h3>
@@ -367,7 +350,10 @@ export default function HomePage() {
                         style={{ background: color }}
                       />
 
-                      <CapabilityBackground index={selectedCapability} color={color} />
+                      {/* Watermark Icon */}
+                      <div className="absolute -bottom-16 -right-16 opacity-[0.04] pointer-events-none -rotate-12">
+                        <Icon size={500} style={{ color }} />
+                      </div>
 
                       <div className="relative z-10 w-full mb-10 mt-16">
                         <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tighter uppercase italic text-white">{title}</h3>

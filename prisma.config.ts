@@ -1,6 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '.env' });
+
 export default {
   schema: 'prisma/schema.prisma',
-  datasource: {
-    url: 'postgresql://postgres:postgres@localhost:5432/akronix?schema=public',
-  },
 }

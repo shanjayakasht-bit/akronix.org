@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 
-const testimonials = [
+const fallbackTestimonials = [
   {
     id: 1,
     content:
@@ -60,6 +60,15 @@ const testimonials = [
   },
 ];
 
+const gradientPool = [
+  "from-blue-500/20 to-purple-500/20",
+  "from-emerald-500/20 to-cyan-500/20",
+  "from-orange-500/20 to-red-500/20",
+  "from-pink-500/20 to-rose-500/20",
+  "from-indigo-500/20 to-blue-500/20",
+  "from-violet-500/20 to-fuchsia-500/20"
+];
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -70,12 +79,30 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: any = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-export default function TestimonialsPage() {
+export default function TestimonialsPage({ 
+  testimonialsData = [] 
+}: { 
+  testimonialsData?: { id: string | number; content: string; authorName: string; authorTitle: string; rating: number; company: string; }[] 
+}) {
+  const dynamicTestimonials = testimonialsData.map((t, index) => ({
+    id: t.id,
+    content: t.content,
+    author: t.authorName,
+    role: `${t.authorTitle}, ${t.company}`,
+    rating: t.rating,
+    gradient: gradientPool[index % gradientPool.length],
+  }));
+
+  // Combine dynamic with static fallbacks
+  const displayTestimonials = dynamicTestimonials.length > 0 
+    ? [...dynamicTestimonials, ...fallbackTestimonials.slice(0, 6 - dynamicTestimonials.length)]
+    : fallbackTestimonials;
+
   return (
     <div className="min-h-screen pt-32 pb-20 relative overflow-hidden">
       {/* Background gradients */}
@@ -111,7 +138,7 @@ export default function TestimonialsPage() {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {testimonials.map((testimonial) => (
+          {displayTestimonials.map((testimonial) => (
             <motion.div
               key={testimonial.id}
               variants={itemVariants}

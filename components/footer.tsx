@@ -30,7 +30,7 @@ const footerLinks = {
 
 const socials = [
   { icon: Twitter, href: "https://twitter.com/akronix", label: "Twitter" },
-  { icon: Instagram, href: "https://instagram.com/akronix", label: "Instagram" },
+  { icon: Instagram, href: "https://www.instagram.com/akronix_org?igsh=ZHVsZzg0dmxqZG1i", label: "Instagram" },
   { icon: Linkedin, href: "https://linkedin.com/company/akronix", label: "LinkedIn" },
 ];
 

@@ -2,142 +2,245 @@
 
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
-import { motion } from "framer-motion";
-import { Globe, CheckCircle, ArrowRight } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRef } from "react";
 
-/* ── Variants ─────────────────────────────────────────────────── */
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 28 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] as const },
-});
+/* ─── Data ──────────────────────────────────────────────────────── */
+const features = [
+  { title: "Psychology-Led Design",   desc: "Using advanced visual cues and cognitive hierarchy to guide users to action with zero friction." },
+  { title: "Blazing Fast Performance", desc: "Sub-second load times engineered to capture every single visitor without drop-off." },
+  { title: "A/B Testing Ready",       desc: "Built with a technical framework to easily test headlines, CTAs, and complex layouts." },
+  { title: "Fully Responsive",        desc: "A flawless, high-contrast experience across desktop, ultra-wide, and mobile devices." },
+];
 
+/* ─── Parallax image panel ───────────────────────────────────────── */
+function ParallaxImagePanel() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const rawY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const y = useSpring(rawY, { stiffness: 60, damping: 20 });
+
+  return (
+    <div ref={ref} className="relative aspect-square lg:order-2">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full h-full relative rounded-[3rem] overflow-hidden border border-white/10
+                   bg-black/40 backdrop-blur-3xl group shadow-[0_0_100px_rgba(0,0,0,0.5)]"
+      >
+        <motion.div style={{ y }} className="absolute inset-0 scale-110">
+          <Image
+            src="/blog-design.png"
+            alt="Landing Pages"
+            fill
+            className="object-cover opacity-40 grayscale group-hover:grayscale-0
+                       group-hover:scale-110 transition-all duration-[2000ms] mix-blend-screen"
+          />
+        </motion.div>
+        <motion.div
+           animate={{ top: ["-100%", "200%"] }}
+           transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+           className="absolute inset-x-0 h-1/2 bg-gradient-to-b from-fuchsia-400/0 via-fuchsia-400/10
+                      to-transparent opacity-0 group-hover:opacity-100"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent/20 to-transparent" />
+        <div className="absolute top-8 left-8 w-4 h-4 border-t-2 border-l-2 border-white/20 group-hover:border-fuchsia-500/50 transition-colors" />
+        <div className="absolute bottom-8 right-8 w-4 h-4 border-b-2 border-r-2 border-white/20 group-hover:border-fuchsia-500/50 transition-colors" />
+      </motion.div>
+    </div>
+  );
+}
+
+/* ─── Workflow Wave Section ─────────────────────────────────────── */
+function WorkflowSection() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const lineProgress = useTransform(scrollYProgress, [0.1, 0.6], [0, 1]);
+
+  const wavePath = "M0 50 C100 50 130 75 220 75 C310 75 360 25 450 25 C540 25 590 75 670 75 C760 75 800 25 880 25 C950 25 1000 25 1000 25";
+
+  const nodes = [
+    { cx: 220, cy: 75, num: 1, label: "Hook",            desc: "Grab attention with high-impact visuals and powerful headlines.",             color: "#00F0FF", above: false },
+    { cx: 450, cy: 25, num: 2, label: "Explain",         desc: "Clarify value and solve user pain points with precise copy.",                 color: "#9D5BFF", above: true  },
+    { cx: 670, cy: 75, num: 3, label: "Trust",           desc: "Establish authority with social proof and technical reliability.",             color: "#00F0FF", above: false },
+    { cx: 880, cy: 25, num: 4, label: "Convert",         desc: "Drive action with friction-less forms and persuasive CTAs.",                  color: "#9D5BFF", above: true  },
+  ];
+
+  return (
+    <section ref={ref} className="relative z-10 py-20">
+      <div className="container-xl px-6">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-3 mb-14"
+        >
+          <div className="h-px w-7 bg-fuchsia-500" />
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">
+            How It Works
+          </span>
+        </motion.div>
+
+        <div className="relative w-full" style={{ height: "160px" }}>
+          <svg viewBox="0 0 1000 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
+            <defs>
+              <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stopColor="#00F0FF" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#9D5BFF" stopOpacity="0.9" />
+              </linearGradient>
+            </defs>
+            <path d={wavePath} stroke="rgba(255,255,255,0.07)" strokeWidth="1.5" strokeDasharray="7 6" fill="none" />
+            <motion.path d={wavePath} stroke="url(#waveGrad)" strokeWidth="2" fill="none" strokeLinecap="round" pathLength={1} style={{ pathLength: lineProgress }} />
+          </svg>
+
+          {nodes.map(({ cx, cy, num, label, desc, color, above }) => {
+            const solidBg   = color === "#00F0FF" ? "#00282e" : "#1a0a2e";
+            const glowColor = color === "#00F0FF" ? "rgba(0,240,255,0.25)" : "rgba(157,91,255,0.25)";
+            return (
+              <div key={num} className="absolute group" style={{ left: `${cx / 10}%`, top: `${cy}%`, transform: "translate(-50%, -50%)", zIndex: 20 }}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: (num - 1) * 0.12 + 0.2 }}
+                  whileHover={{ scale: 1.12 }}
+                  className="flex items-center justify-center cursor-pointer font-black text-lg select-none"
+                  style={{ width: "52px", height: "52px", borderRadius: "50%", background: solidBg, border: `2px solid ${color}`, color: color, boxShadow: `0 0 20px ${glowColor}` }}
+                >
+                  {num}
+                </motion.div>
+                <div className={`absolute left-1/2 -translate-x-1/2 w-44 ${above ? "bottom-full mb-3" : "top-full mt-3"} p-4 rounded-2xl border border-white/[0.08] bg-[#0c0c18]/95 backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.9)] opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100 pointer-events-none z-50 transition-all duration-200 ease-out`}>
+                  <div className="w-full h-px mb-3 rounded-full" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+                  <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1" style={{ color }}>Step {num}</p>
+                  <h4 className="text-sm font-black text-white/90 mb-1.5 leading-snug">{label}</h4>
+                  <p className="text-[11px] text-white/40 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Drifting BG orbs ──────────────────────────────────────────── */
+function BgOrbs() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref });
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -140]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  return (
+    <div ref={ref} className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      <motion.div style={{ y: orb1Y }} className="absolute top-[8%] left-[20%] w-[550px] h-[550px] rounded-full bg-fuchsia-500/[0.04] blur-[150px]" />
+      <motion.div style={{ y: orb2Y }} className="absolute top-[55%] right-[10%] w-[450px] h-[450px] rounded-full bg-cyan-500/[0.04] blur-[130px]" />
+      <motion.div animate={{ opacity: [0.025, 0.055, 0.025] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0" style={{ backgroundImage: "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+    </div>
+  );
+}
+
+/* ─── Page ──────────────────────────────────────────────────────── */
 export default function LandingPagesPage() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: pageRef });
+  const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -50]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.22], [1, 0]);
+
   return (
     <>
       <Navigation />
-      <main className="bg-[#020205] text-white pt-40 pb-24 relative overflow-hidden">
-        {/* Cinematic Background Layer */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <motion.div 
-            animate={{ opacity: [0.03, 0.08, 0.03] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0"
-            style={{ 
-              backgroundImage: "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)", 
-              backgroundSize: "60px 60px" 
-            }} 
-          />
-          <div className="absolute top-0 right-0 w-full h-[800px] bg-fuchsia-500/10 blur-[160px]" />
-          <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/5 blur-[140px]" />
-        </div>
+      <main ref={pageRef} className="bg-[#020205] text-white relative overflow-hidden">
+        <BgOrbs />
 
-        <div className="container-xl relative z-10 px-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="max-w-5xl mb-32"
-          >
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: "160px" }}
-              className="h-px bg-fuchsia-500/50 mb-10"
-            />
-            <h1 className="text-5xl md:text-8xl lg:text-9xl font-black mb-10 leading-[0.85] tracking-tighter uppercase italic text-white/90">
-              High-Converting <span className="gradient-text-primary">Engines</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-white/40 max-w-2xl leading-relaxed font-medium uppercase tracking-widest">
-              Designing psychological-led digital experiences that drive ROI.
-            </p>
-          </motion.div>
+        {/* Hero */}
+        <section className="relative pt-32 pb-16 z-10">
+          <div className="container-xl px-6">
+            <motion.div style={{ y: heroY, opacity: heroOpacity }} className="max-w-5xl">
+              <div className="flex items-center gap-3 mb-8">
+                <motion.div initial={{ width: 0 }} animate={{ width: "48px" }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} className="h-px bg-fuchsia-500" />
+                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">Landing Pages</motion.span>
+              </div>
 
-          <div className="grid lg:grid-cols-2 gap-20 items-center mb-40">
-             <div className="space-y-12 order-2 lg:order-1">
-                {[
-                  { title: "Psychology-Led Design", desc: "Using advanced visual cues and cognitive hierarchy to guide users to action with zero friction." },
-                  { title: "Blazing Fast Performance", desc: "Sub-second load times engineered to capture every single visitor without drop-off." },
-                  { title: "A/B Testing Ready", desc: "Built with a technical framework to easily test headlines, CTAs, and complex layouts." },
-                  { title: "Fully Responsive", desc: "A flawless, high-contrast experience across desktop, ultra-wide, and mobile devices." },
-                ].map((item, i) => (
-                  <motion.div 
-                    key={i}
-                    {...fadeUp(i * 0.1)}
-                    className="group relative flex gap-6 p-6 rounded-3xl transition-all duration-500 hover:bg-white/[0.02] border border-transparent hover:border-white/[0.05]"
-                  >
-                     <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:border-fuchsia-500/50 transition-all duration-500 shadow-2xl">
-                        <CheckCircle size={20} className="text-fuchsia-400" />
-                     </div>
-                     <div>
-                        <h3 className="font-black text-xl mb-2 text-white/90 group-hover:text-white transition-colors">{item.title}</h3>
-                        <p className="text-sm md:text-base text-white/30 group-hover:text-white/50 leading-relaxed transition-colors">{item.desc}</p>
-                     </div>
-                     <div className="absolute right-6 top-6 text-[8px] font-black text-white/5 group-hover:text-white/10 opacity-0 group-hover:opacity-100 uppercase tracking-widest">
-                        Engine_0{i+1}
-                     </div>
+              <div className="overflow-visible mb-8">
+                <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tighter uppercase italic text-white/90 whitespace-nowrap">
+                  High-Converting <span className="gradient-text-primary">Engines</span>
+                </motion.h1>
+              </div>
+
+              <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.6, ease: [0.22, 1, 0.36, 1] }} className="text-base md:text-lg text-white/35 max-w-xl leading-relaxed font-medium uppercase tracking-widest">
+                Designing psychological-led digital experiences that drive ROI.
+              </motion.p>
+
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 1 }} className="mt-14 flex items-center gap-4">
+                <motion.div animate={{ y: [0, 7, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} className="w-4 h-7 border border-white/10 rounded-full flex items-start justify-center pt-1">
+                  <div className="w-0.5 h-1.5 bg-white/20 rounded-full" />
+                </motion.div>
+                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">Scroll to explore</span>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Features + Image */}
+        <section className="relative z-10 pb-20">
+          <div className="container-xl px-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-12">
+              <div className="h-px w-7 bg-fuchsia-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">Core Capabilities</span>
+            </motion.div>
+
+            <div className="grid lg:grid-cols-2 gap-20 items-center">
+              <div className="space-y-4 order-2 lg:order-1">
+                {features.map((item, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }} className="group relative flex gap-6 p-6 rounded-3xl transition-all duration-500 hover:bg-white/[0.02] border border-transparent hover:border-white/[0.05]">
+                    <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:border-fuchsia-500/50 transition-all duration-500 shadow-2xl">
+                      <CheckCircle size={20} className="text-fuchsia-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-black text-xl mb-2 text-white/90 group-hover:text-white transition-colors">{item.title}</h3>
+                      <p className="text-sm md:text-base text-white/30 group-hover:text-white/50 leading-relaxed transition-colors">{item.desc}</p>
+                    </div>
+                    <div className="absolute right-6 top-6 text-[8px] font-black text-white/5 group-hover:text-white/10 opacity-0 group-hover:opacity-100 uppercase tracking-widest transition-all">Engine_0{i + 1}</div>
                   </motion.div>
                 ))}
-             </div>
-             <div className="relative aspect-square lg:order-2">
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full h-full relative rounded-[3rem] overflow-hidden border border-white/10 bg-black/40 backdrop-blur-3xl group shadow-[0_0_100px_rgba(0,0,0,0.5)]"
-                >
-                   <Image 
-                     src="/blog-design.png" 
-                     alt="Landing Pages"
-                     fill
-                     className="object-cover opacity-20 grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[2000ms] mix-blend-screen"
-                   />
-                   
-                   {/* Scanline HUD Overlay */}
-                   <motion.div 
-                      animate={{ top: ["-100%", "200%"] }}
-                      transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-x-0 h-1/2 bg-gradient-to-b from-fuchsia-400/0 via-fuchsia-400/10 to-transparent opacity-0 group-hover:opacity-100"
-                   />
-                   
-                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent/20 to-transparent" />
-                   
-                   {/* Decorative HUD corners */}
-                   <div className="absolute top-8 left-8 w-4 h-4 border-t-2 border-l-2 border-white/20 group-hover:border-fuchsia-500/50 transition-colors" />
-                   <div className="absolute bottom-8 right-8 w-4 h-4 border-b-2 border-r-2 border-white/20 group-hover:border-fuchsia-500/50 transition-colors" />
-                </motion.div>
-             </div>
+              </div>
+              <ParallaxImagePanel />
+            </div>
           </div>
-          
-          <section className="relative py-40">
-             <div className="max-w-6xl mx-auto px-4">
-                <motion.div 
-                   {...fadeUp()}
-                   className="p-16 md:p-32 rounded-[5rem] border border-white/[0.04] bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur-3xl relative overflow-hidden group text-center"
-                >
-                   {/* Kinetic Edge Glow */}
-                   <motion.div 
-                      animate={{ x: ["-100%", "200%"] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                      className="absolute top-0 left-0 w-80 h-[2px] bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" 
-                   />
-                   
-                   <h2 className="text-4xl md:text-7xl lg:text-8xl font-black mb-12 leading-[0.9] tracking-tighter italic uppercase text-white/90">
-                     Boost your <span className="gradient-text-primary">Conversions</span>
-                   </h2>
-                   <p className="text-xl md:text-2xl mb-16 max-w-2xl mx-auto font-medium leading-relaxed text-white/30 uppercase tracking-widest">
-                      We guide your product strategy at every layer to ensure maximum engagement.
-                   </p>
-                   <Link href="/contact?service=landing" className="px-14 py-6 rounded-full bg-white text-black font-black uppercase tracking-[0.2em] text-sm transition-all hover:bg-fuchsia-600 hover:text-white hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)] inline-flex items-center gap-3">
-                      Calculate ROI <ArrowRight size={20} />
-                   </Link>
-                </motion.div>
-             </div>
-          </section>
-        </div>
+        </section>
+
+        {/* Workflow */}
+        <WorkflowSection />
+
+        {/* CTA */}
+        <section className="relative z-10 py-32">
+          <div className="max-w-4xl mx-auto px-6">
+            <motion.div initial={{ opacity: 0, y: 36 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} className="p-12 md:p-20 rounded-[4rem] border border-white/[0.05] bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur-3xl relative overflow-hidden text-center">
+              <motion.div animate={{ x: ["-100%", "200%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }} className="absolute top-0 left-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" />
+              <motion.div animate={{ x: ["200%", "-100%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear", delay: 1.75 }} className="absolute bottom-0 right-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }} className="text-3xl md:text-6xl lg:text-7xl font-black mb-8 leading-[0.9] tracking-tighter italic uppercase text-white/90">
+                Boost your <span className="gradient-text-primary">Conversions</span>
+              </motion.h2>
+
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="text-base md:text-lg mb-12 max-w-xl mx-auto font-medium leading-relaxed text-white/30 uppercase tracking-widest">
+                We guide your product strategy at every layer to ensure maximum engagement.
+              </motion.p>
+
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 }}>
+                <Link href="/contact?service=landing" className="px-12 py-5 rounded-full bg-white text-black font-black uppercase tracking-[0.2em] text-sm transition-all hover:bg-fuchsia-600 hover:text-white hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)] inline-flex items-center gap-3">
+                  Calculate ROI <ArrowRight size={18} />
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>

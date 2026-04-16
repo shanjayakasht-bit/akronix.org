@@ -50,9 +50,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <head>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-      </head>
+      <head />
       <body className="antialiased">
         <LoadingScreen />
         <Providers>{children}</Providers>
