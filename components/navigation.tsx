@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useSession, signOut } from "next-auth/react";
 
 const navLinks = [
+  { label:"Home",href:"/"},
   { label: "Services", href: "/services" },
   { label: "About", href: "/about" },
   {
