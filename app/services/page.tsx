@@ -3,43 +3,59 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion } from "framer-motion";
-import { Code2, Rocket, Globe, Terminal, ChevronRight, Activity, ArrowRight } from "lucide-react";
-import { LiveIndicator } from "@/components/ui/live-indicator";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 const services = [
   {
-    icon: Code2,
     title: "SaaS Development",
-    desc: "Architecting multi-tenant platforms with enterprise-grade auth and billing systems.",
+    desc: "Multi-tenant platforms with enterprise-grade auth, billing, and analytics built for 1M+ users.",
     href: "/services/saas-development",
     bg: "/blog-cloud.png",
     color: "#00F0FF",
   },
   {
-    icon: Rocket,
+    title: "AI Solutions",
+    desc: "Custom AI chatbots, automation workflows, and intelligent business assistants that 10x operations.",
+    href: "/services/ai-automation",
+    bg: "/blog-ai.png",
+    color: "#00F0FF",
+  },
+  {
     title: "MVP Development",
-    desc: "Rapid engineering to transform your vision into a production-ready market leader.",
+    desc: "Investor-grade products from idea to production in under 30 days. Rapid. Reliable. Revenue-ready.",
     href: "/services/mvp-development",
     bg: "/blog-engineering.png",
     color: "#9D5BFF",
   },
   {
-    icon: Globe,
-    title: "Growth Engines",
-    desc: "Data-driven marketing systems and conversion-optimized performance layers.",
-    href: "/services/landing-pages",
-    bg: "/blog-design.png",
-    color: "#A5B4FC",
+    title: "Digital Marketing",
+    desc: "SEO, performance marketing, funnel optimization, and branding that drives real revenue growth.",
+    href: "/services/digital-marketing",
+    bg: "/blog-marketing.png",
+    color: "#FF3366",
   },
   {
-    icon: Terminal,
-    title: "Custom Systems",
-    desc: "Tailor-made technical solutions for complex operational intelligence.",
-    href: "/services/custom-web-app",
-    bg: "/blog-strategy.png",
-    color: "#00F0FF",
+    title: "Business Networking",
+    desc: "BNI-style strategic ecosystem helping businesses connect, generate referrals, and scale together.",
+    href: "/services/business-networking",
+    bg: "/blog-networking.png",
+    color: "#3399FF",
+  },
+  {
+    title: "Automation Systems",
+    desc: "HRMS, CRM, school ERP, clinic management, restaurant systems built to replace manual chaos.",
+    href: "/services/automation",
+    bg: "/blog-automation.png",
+    color: "#9D5BFF",
+  },
+  {
+    title: "Landing Pages",
+    desc: "High-converting, psychological-led digital experiences designed to maximize your ROI.",
+    href: "/services/landing-pages",
+    bg: "/blog-landing.png",
+    color: "#A5B4FC",
   },
 ];
 
@@ -53,7 +69,6 @@ export default function ServicesPage() {
 
         <div className="container-xl relative z-10">
           <div className="text-center mb-16">
-
             <motion.h1 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -73,9 +88,8 @@ export default function ServicesPage() {
             </motion.p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {services.map((service, i) => {
-              const Icon = service.icon;
               return (
                 <Link key={i} href={service.href} className="group h-full">
                   <motion.div
@@ -91,7 +105,7 @@ export default function ServicesPage() {
                          src={service.bg} 
                          alt={service.title}
                          fill
-                         className="object-cover opacity-15 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
+                         className="object-cover opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
                        />
                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                        
@@ -104,19 +118,7 @@ export default function ServicesPage() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="relative z-10 p-8 h-full flex flex-col pt-32">
-                      {/* Premium Icon Container */}
-                      <div className="mb-8 relative">
-                        <motion.div 
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                          className="absolute inset-[-12px] border border-white/5 rounded-full"
-                        />
-                        <div className="w-16 h-16 rounded-2xl bg-black border border-white/10 flex items-center justify-center relative shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:border-cyan-500/50">
-                           <Icon size={28} style={{ color: service.color }} className="animate-realtime-glow" />
-                        </div>
-                      </div>
-
+                    <div className="relative z-10 p-8 h-full flex flex-col justify-end">
                       <div className="mt-auto">
                         <div className="flex items-center gap-2 mb-3">
                            <h3 className="text-2xl font-black text-white group-hover:text-cyan-300 transition-colors tracking-tight">{service.title}</h3>
@@ -127,7 +129,7 @@ export default function ServicesPage() {
                         
                         <div className="flex items-center justify-between">
                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: service.color }}>
-                              Explore Path <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                               Explore Path <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                            </div>
                            
                            {/* Micro-spark visual */}

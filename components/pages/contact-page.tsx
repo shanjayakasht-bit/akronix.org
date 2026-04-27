@@ -7,6 +7,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+
  
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -20,15 +23,23 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
  
 export default function ContactPage() {
+  const searchParams = useSearchParams();
+  const requestedService = searchParams.get("service");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      serviceType: "saas-development",
+      serviceType: requestedService || "saas-development",
     }
   });
+
+  useEffect(() => {
+    if (requestedService) {
+      setValue("serviceType", requestedService);
+    }
+  }, [requestedService, setValue]);
  
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -182,11 +193,15 @@ export default function ContactPage() {
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-fuchsia-900/50 transition-all appearance-none"
                 >
                   <option value="saas-development" className="bg-neutral-900">SaaS Development</option>
+                  <option value="ai-solutions" className="bg-neutral-900">AI Solutions</option>
                   <option value="mvp-development" className="bg-neutral-900">MVP Development</option>
+                  <option value="digital-marketing" className="bg-neutral-900">Digital Marketing</option>
+                  <option value="business-networking" className="bg-neutral-900">Business Networking</option>
+                  <option value="automation-systems" className="bg-neutral-900">Automation Systems</option>
                   <option value="landing-pages" className="bg-neutral-900">Landing Pages</option>
-                  <option value="custom-web-app" className="bg-neutral-900">Custom Web App</option>
-                  <option value="ai-automation" className="bg-neutral-900">AI & Automation</option>
+                  <option value="product-early-access" className="bg-neutral-900">Product Early Access</option>
                 </select>
+
               </div>
  
               <div className="space-y-2">

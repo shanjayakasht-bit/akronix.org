@@ -2,11 +2,11 @@
 
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion";
 import { CheckCircle, ArrowRight, UserPlus, Settings2, Cpu, Rocket } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 
 /* ─── Data ──────────────────────────────────────────────────────── */
 const features = [
@@ -14,13 +14,6 @@ const features = [
   { title: "Subscription Management",   desc: "Integrated Stripe/Paddle for tiered billing and seat-based pricing engines." },
   { title: "Advanced Analytics",         desc: "Real-time insights for your users and your business metrics via custom dashboards." },
   { title: "API-First Design",           desc: "Built with modern APIs for easy integration and third-party ecosystem growth." },
-];
-
-const workflowSteps = [
-  { num: "01", label: "Sign Up",          icon: UserPlus,  desc: "Create your account and onboard in minutes with zero friction.",                              color: "#00F0FF" },
-  { num: "02", label: "Configure",        icon: Settings2, desc: "Tailor your workspace, integrations, and permissions to your exact needs.",                   color: "#9D5BFF" },
-  { num: "03", label: "Process",          icon: Cpu,       desc: "Our engine handles scale, billing, and analytics in real time.",                              color: "#00F0FF" },
-  { num: "04", label: "Deliver & Improve",icon: Rocket,    desc: "Ship to users, track metrics, and iterate with confidence at any scale.",                    color: "#9D5BFF" },
 ];
 
 /* ─── Parallax image panel (original effect) ────────────────────── */
@@ -65,23 +58,41 @@ function ParallaxImagePanel() {
 
 /* ─── Workflow Wave Section ─────────────────────────────────────── */
 function WorkflowSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const lineProgress = useTransform(scrollYProgress, [0.1, 0.6], [0, 1]);
+  const [activeNode, setActiveNode] = useState<number | null>(null);
+  const progress = useMotionValue(0);
 
   // Wave path in viewBox 0 0 1000 100
-  // Bend points: trough (220,75), peak (450,25), trough (670,75), peak (880,25)
   const wavePath = "M0 50 C100 50 130 75 220 75 C310 75 360 25 450 25 C540 25 590 75 670 75 C760 75 800 25 880 25 C950 25 1000 25 1000 25";
 
-  const nodes = [
+  const nodes = useMemo(() => [
     { cx: 220, cy: 75, num: 1, label: "Sign Up",          desc: "Create your account and onboard in minutes with zero friction.",              color: "#00F0FF", above: false },
     { cx: 450, cy: 25, num: 2, label: "Configure",         desc: "Tailor your workspace, integrations, and permissions to fit your needs.",     color: "#9D5BFF", above: true  },
     { cx: 670, cy: 75, num: 3, label: "Process",           desc: "Our engine handles scale, billing, and analytics in real time.",              color: "#00F0FF", above: false },
     { cx: 880, cy: 25, num: 4, label: "Deliver & Improve", desc: "Ship to users, track metrics, and iterate with confidence at any scale.",     color: "#9D5BFF", above: true  },
-  ];
+  ], []);
+
+  // Continuous animation loop
+  useEffect(() => {
+    const controls = animate(progress, 1, {
+      duration: 10,
+      repeat: Infinity,
+      ease: "linear",
+      onUpdate: (latest) => {
+        const currentX = latest * 1000;
+        // Find if we are 'hitting' a node (within a range)
+        const threshold = 40;
+        const hit = nodes.find(n => currentX > n.cx - threshold && currentX < n.cx + threshold);
+        setActiveNode(hit ? hit.num : null);
+      }
+    });
+    return () => controls.stop();
+  }, [progress, nodes]);
+
+  // Dash animation for the 'kinetic' moving line
+  const dashOffset = useTransform(progress, [0, 1], [0, -1000]);
 
   return (
-    <section ref={ref} className="relative z-10 py-20">
+    <section className="relative z-10 py-20">
       <div className="container-xl px-6">
         {/* Header */}
         <motion.div
@@ -120,15 +131,15 @@ function WorkflowSection() {
               strokeDasharray="7 6"
               fill="none"
             />
-            {/* Animated gradient line */}
+            {/* Continuous Kinetic Moving Line */}
             <motion.path
               d={wavePath}
               stroke="url(#waveGrad)"
               strokeWidth="2"
               fill="none"
               strokeLinecap="round"
-              pathLength={1}
-              style={{ pathLength: lineProgress }}
+              strokeDasharray="150 850" // A moving segment of 150 units
+              style={{ strokeDashoffset: dashOffset }}
             />
           </svg>
 
@@ -136,6 +147,8 @@ function WorkflowSection() {
           {nodes.map(({ cx, cy, num, label, desc, color, above }) => {
             const solidBg   = color === "#00F0FF" ? "#00282e" : "#1a0a2e";
             const glowColor = color === "#00F0FF" ? "rgba(0,240,255,0.25)" : "rgba(157,91,255,0.25)";
+            const isActive = activeNode === num;
+
             return (
               <div
                 key={num}
@@ -152,32 +165,34 @@ function WorkflowSection() {
                   initial={{ opacity: 0, scale: 0.5 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: (num - 1) * 0.12 + 0.2 }}
-                  whileHover={{ scale: 1.12 }}
-                  className="flex items-center justify-center cursor-pointer font-black text-lg select-none"
+                  animate={{
+                    scale: isActive ? 1.2 : 1,
+                    boxShadow: isActive ? `0 0 30px ${color}` : `0 0 20px ${glowColor}`,
+                    borderColor: isActive ? color : `${color}80`
+                  }}
+                  whileHover={{ scale: 1.15 }}
+                  className="flex items-center justify-center cursor-pointer font-black text-lg select-none transition-colors duration-300"
                   style={{
                     width:        "52px",
                     height:       "52px",
                     borderRadius: "50%",
                     background:   solidBg,
-                    border:       `2px solid ${color}`,
+                    borderWidth:  "2px",
                     color:        color,
-                    boxShadow:    `0 0 20px ${glowColor}`,
                   }}
                 >
                   {num}
                 </motion.div>
 
-                {/* Hover tooltip */}
+                {/* Tooltip (Auto-triggered or Hover-triggered) */}
                 <div
                   className={`absolute left-1/2 -translate-x-1/2 w-44
                     ${above ? "bottom-full mb-3" : "top-full mt-3"}
                     p-4 rounded-2xl border border-white/[0.08] bg-[#0c0c18]/95
                     backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.9)]
-                    opacity-0 group-hover:opacity-100
-                    scale-95 group-hover:scale-100
-                    pointer-events-none z-50
-                    transition-all duration-200 ease-out`}
+                    transition-all duration-300 ease-out z-50 pointer-events-none
+                    ${isActive ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100"}
+                  `}
                 >
                   <div
                     className="w-full h-px mb-3 rounded-full"
@@ -394,7 +409,7 @@ export default function SaaSDevelopmentPage() {
 
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 }}>
                 <Link
-                  href="/contact?service=saas"
+                  href="/contact?service=saas-development"
                   className="px-12 py-5 rounded-full bg-white text-black font-black uppercase
                              tracking-[0.2em] text-sm transition-all hover:bg-cyan-400
                              hover:text-black hover:scale-105 active:scale-95

@@ -13,14 +13,7 @@ const navLinks = [
   { label:"Home",href:"/"},
   { label: "Services", href: "/services" },
   { label: "About", href: "/about" },
-  {
-    label: "Products",
-    dropdown: [
-      { label: "SaaS Platform", href: "/services/saas-development", desc: "Full-scale SaaS solutions" },
-      { label: "MVP Development", href: "/services/mvp-development", desc: "Ship fast, validate faster" },
-      { label: "Landing Pages", href: "/services/landing-pages", desc: "Convert visitors to clients" },
-    ],
-  },
+  { label: "Products", href: "/products" },
   { label: "Policies", href: "/policies" },
   { label: "Pricing", href: "/pricing" 
    ,

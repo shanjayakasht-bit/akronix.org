@@ -10,10 +10,10 @@ import { useRef, useEffect, useState, useMemo } from "react";
 
 /* ─── Data ──────────────────────────────────────────────────────── */
 const features = [
-  { title: "Psychology-Led Design",   desc: "Using advanced visual cues and cognitive hierarchy to guide users to action with zero friction." },
-  { title: "Blazing Fast Performance", desc: "Sub-second load times engineered to capture every single visitor without drop-off." },
-  { title: "A/B Testing Ready",       desc: "Built with a technical framework to easily test headlines, CTAs, and complex layouts." },
-  { title: "Fully Responsive",        desc: "A flawless, high-contrast experience across desktop, ultra-wide, and mobile devices." },
+  { title: "Self-Service Provisioning", desc: "Automatically creates accounts, database shards, and workspaces for new users instantly with zero manual effort." },
+  { title: "Billing Lifecycle Automation", desc: "Manages the entire payment cycle—from trial periods and monthly renewals to automated seat-based billing." },
+  { title: "Scalability Engine",         desc: "Capable of scaling from 1 to 1M+ users without manual server configuration or technical bottlenecks." },
+  { title: "Hands-Off Management",       desc: "The backbone of your product, eliminating manual administration and operational chaos." },
 ];
 
 /* ─── Parallax image panel ───────────────────────────────────────── */
@@ -35,22 +35,22 @@ function ParallaxImagePanel() {
       >
         <motion.div style={{ y }} className="absolute inset-0 scale-110">
           <Image
-            src="/blog-design.png"
-            alt="Landing Pages"
+            src="/blog-automation.png"
+            alt="Automation Systems"
             fill
             className="object-cover opacity-40 grayscale group-hover:grayscale-0
                        group-hover:scale-110 transition-all duration-[2000ms] mix-blend-screen"
           />
         </motion.div>
         <motion.div
-           animate={{ top: ["-100%", "200%"] }}
-           transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-           className="absolute inset-x-0 h-1/2 bg-gradient-to-b from-fuchsia-400/0 via-fuchsia-400/10
-                      to-transparent opacity-0 group-hover:opacity-100"
+          animate={{ top: ["-100%", "200%"] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-x-0 h-1/2 bg-gradient-to-b from-purple-400/0 via-purple-400/10
+                     to-transparent opacity-0 group-hover:opacity-100"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent/20 to-transparent" />
-        <div className="absolute top-8 left-8 w-4 h-4 border-t-2 border-l-2 border-white/20 group-hover:border-fuchsia-500/50 transition-colors" />
-        <div className="absolute bottom-8 right-8 w-4 h-4 border-b-2 border-r-2 border-white/20 group-hover:border-fuchsia-500/50 transition-colors" />
+        <div className="absolute top-8 left-8 w-4 h-4 border-t-2 border-l-2 border-white/20 group-hover:border-purple-500/50 transition-colors" />
+        <div className="absolute bottom-8 right-8 w-4 h-4 border-b-2 border-r-2 border-white/20 group-hover:border-purple-500/50 transition-colors" />
       </motion.div>
     </div>
   );
@@ -61,17 +61,15 @@ function WorkflowSection() {
   const [activeNode, setActiveNode] = useState<number | null>(null);
   const progress = useMotionValue(0);
 
-  // Wave path in viewBox 0 0 1000 100
   const wavePath = "M0 50 C100 50 130 75 220 75 C310 75 360 25 450 25 C540 25 590 75 670 75 C760 75 800 25 880 25 C950 25 1000 25 1000 25";
 
   const nodes = useMemo(() => [
-    { cx: 220, cy: 75, num: 1, label: "Hook",            desc: "Grab attention with high-impact visuals and powerful headlines.",             color: "#00F0FF", above: false },
-    { cx: 450, cy: 25, num: 2, label: "Explain",         desc: "Clarify value and solve user pain points with precise copy.",                 color: "#9D5BFF", above: true  },
-    { cx: 670, cy: 75, num: 3, label: "Trust",           desc: "Establish authority with social proof and technical reliability.",             color: "#00F0FF", above: false },
-    { cx: 880, cy: 25, num: 4, label: "Convert",         desc: "Drive action with friction-less forms and persuasive CTAs.",                  color: "#9D5BFF", above: true  },
+    { cx: 220, cy: 75, num: 1, label: "Sign-Up",          desc: "Trigger-Action logic: A new user sign-up initiates an automated chain reaction.", color: "#00F0FF", above: false },
+    { cx: 450, cy: 25, num: 2, label: "Provision",        desc: "System instantly provisions a secure shard, workspace, and database for the user.", color: "#9D5BFF", above: true  },
+    { cx: 670, cy: 75, num: 3, label: "Configure",        desc: "Automatically sets up the billing profile through Stripe/Paddle and dashboard.", color: "#00F0FF", above: false },
+    { cx: 880, cy: 25, num: 4, label: "Deliver",          desc: "Product is delivered immediately, with multi-tenant resources managed automatically.", color: "#9D5BFF", above: true  },
   ], []);
 
-  // Continuous animation loop
   useEffect(() => {
     const controls = animate(progress, 1, {
       duration: 10,
@@ -87,7 +85,6 @@ function WorkflowSection() {
     return () => controls.stop();
   }, [progress, nodes]);
 
-  // Dash animation for the 'kinetic' moving line
   const dashOffset = useTransform(progress, [0, 1], [0, -1000]);
 
   return (
@@ -100,8 +97,8 @@ function WorkflowSection() {
           transition={{ duration: 0.6 }}
           className="flex items-center gap-3 mb-14"
         >
-          <div className="h-px w-7 bg-fuchsia-500" />
-          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">
+          <div className="h-px w-7 bg-purple-500" />
+          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-purple-400">
             How It Works
           </span>
         </motion.div>
@@ -115,7 +112,6 @@ function WorkflowSection() {
               </linearGradient>
             </defs>
             <path d={wavePath} stroke="rgba(255,255,255,0.07)" strokeWidth="1.5" strokeDasharray="7 6" fill="none" />
-            {/* Continuous Kinetic Moving Line */}
             <motion.path
               d={wavePath}
               stroke="url(#waveGrad)"
@@ -172,15 +168,15 @@ function BgOrbs() {
   const orb2Y = useTransform(scrollYProgress, [0, 1], [0, 100]);
   return (
     <div ref={ref} className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <motion.div style={{ y: orb1Y }} className="absolute top-[8%] left-[20%] w-[550px] h-[550px] rounded-full bg-fuchsia-500/[0.04] blur-[150px]" />
-      <motion.div style={{ y: orb2Y }} className="absolute top-[55%] right-[10%] w-[450px] h-[450px] rounded-full bg-cyan-500/[0.04] blur-[130px]" />
+      <motion.div style={{ y: orb1Y }} className="absolute top-[8%] left-[3%] w-[550px] h-[550px] rounded-full bg-purple-500/[0.05] blur-[150px]" />
+      <motion.div style={{ y: orb2Y }} className="absolute top-[55%] right-[0%] w-[450px] h-[450px] rounded-full bg-cyan-500/[0.04] blur-[130px]" />
       <motion.div animate={{ opacity: [0.025, 0.055, 0.025] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0" style={{ backgroundImage: "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
     </div>
   );
 }
 
 /* ─── Page ──────────────────────────────────────────────────────── */
-export default function LandingPagesPage() {
+export default function AutomationSystemPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: pageRef });
   const heroY = useTransform(scrollYProgress, [0, 0.25], [0, -50]);
@@ -192,23 +188,33 @@ export default function LandingPagesPage() {
       <main ref={pageRef} className="bg-[#020205] text-white relative overflow-hidden">
         <BgOrbs />
 
-        {/* Hero */}
+        {/* ── HERO ─────────────────────────────────────────────── */}
         <section className="relative pt-32 pb-16 z-10">
           <div className="container-xl px-6">
             <motion.div style={{ y: heroY, opacity: heroOpacity }} className="max-w-5xl">
               <div className="flex items-center gap-3 mb-8">
-                <motion.div initial={{ width: 0 }} animate={{ width: "48px" }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} className="h-px bg-fuchsia-500" />
-                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">Landing Pages</motion.span>
+                <motion.div initial={{ width: 0 }} animate={{ width: "48px" }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} className="h-px bg-purple-500" />
+                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="text-[10px] font-black uppercase tracking-[0.5em] text-purple-400">Automation System</motion.span>
               </div>
 
               <div className="overflow-visible mb-8">
-                <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tighter uppercase italic text-white/90 whitespace-nowrap">
-                  High-Converting <span className="gradient-text-primary">Engines</span>
+                <motion.h1
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
+                >
+                  "Hands-Off" <span className="gradient-text-primary">Backbone</span> Systems
                 </motion.h1>
               </div>
 
-              <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.6, ease: [0.22, 1, 0.36, 1] }} className="text-base md:text-lg text-white/35 max-w-xl leading-relaxed font-medium uppercase tracking-widest">
-                Designing psychological-led digital experiences that drive ROI.
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.75, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="text-base md:text-lg text-white/35 max-w-xl leading-relaxed font-medium uppercase tracking-widest"
+              >
+                Eliminating manual administration with autonomous scalability engines.
               </motion.p>
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 1 }} className="mt-14 flex items-center gap-4">
@@ -221,26 +227,33 @@ export default function LandingPagesPage() {
           </div>
         </section>
 
-        {/* Features + Image */}
+        {/* ── FEATURES + IMAGE ─────────────────────────────────── */}
         <section className="relative z-10 pb-20">
           <div className="container-xl px-6">
             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-12">
-              <div className="h-px w-7 bg-fuchsia-500" />
-              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">Core Capabilities</span>
+              <div className="h-px w-7 bg-purple-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-purple-400">Core Capabilities</span>
             </motion.div>
 
             <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div className="space-y-4 order-2 lg:order-1">
                 {features.map((item, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }} className="group relative flex gap-6 p-6 rounded-3xl transition-all duration-500 hover:bg-white/[0.02] border border-transparent hover:border-white/[0.05]">
-                    <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:border-fuchsia-500/50 transition-all duration-500 shadow-2xl">
-                      <CheckCircle size={20} className="text-fuchsia-400" />
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    className="group relative flex gap-6 p-6 rounded-3xl transition-all duration-500 hover:bg-white/[0.02] border border-transparent hover:border-white/[0.05]"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:border-purple-500/50 transition-all duration-500 shadow-2xl">
+                      <CheckCircle size={20} className="text-purple-400" />
                     </div>
                     <div>
                       <h3 className="font-black text-xl mb-2 text-white/90 group-hover:text-white transition-colors">{item.title}</h3>
                       <p className="text-sm md:text-base text-white/30 group-hover:text-white/50 leading-relaxed transition-colors">{item.desc}</p>
                     </div>
-                    <div className="absolute right-6 top-6 text-[8px] font-black text-white/5 group-hover:text-white/10 opacity-0 group-hover:opacity-100 uppercase tracking-widest transition-all">Engine_0{i + 1}</div>
+                    <div className="absolute right-6 top-6 text-[8px] font-black text-white/5 group-hover:text-white/10 opacity-0 group-hover:opacity-100 uppercase tracking-widest transition-all">Auto_Node_0{i + 1}</div>
                   </motion.div>
                 ))}
               </div>
@@ -249,27 +262,36 @@ export default function LandingPagesPage() {
           </div>
         </section>
 
-        {/* Workflow */}
+        {/* ── WORKFLOW ─────────────────────────────────────────── */}
         <WorkflowSection />
 
-        {/* CTA */}
+        {/* ── KINETIC EDGE GLOW CTA ────────────────────────────── */}
         <section className="relative z-10 py-32">
           <div className="max-w-4xl mx-auto px-6">
-            <motion.div initial={{ opacity: 0, y: 36 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} className="p-12 md:p-20 rounded-[4rem] border border-white/[0.05] bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur-3xl relative overflow-hidden text-center">
-              <motion.div animate={{ x: ["-100%", "200%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }} className="absolute top-0 left-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" />
-              <motion.div animate={{ x: ["200%", "-100%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear", delay: 1.75 }} className="absolute bottom-0 right-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+            <motion.div
+              initial={{ opacity: 0, y: 36 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="p-12 md:p-20 rounded-[4rem] border border-white/[0.05] bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur-3xl relative overflow-hidden text-center"
+            >
+              <motion.div animate={{ x: ["-100%", "200%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }} className="absolute top-0 left-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent" />
+              <motion.div animate={{ x: ["200%", "-100%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear", delay: 1.75 }} className="absolute bottom-0 right-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" />
 
-              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }} className="text-3xl md:text-6xl lg:text-7xl font-black mb-8 leading-[0.9] tracking-tighter italic uppercase text-white/90">
-                Boost your <span className="gradient-text-primary">Conversions</span>
-              </motion.h2>
+              <h2 className="text-3xl md:text-6xl lg:text-7xl font-black mb-8 leading-[0.9] tracking-tighter italic uppercase text-white/90">
+                Automate your <span className="gradient-text-primary">Success</span>
+              </h2>
 
-              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="text-base md:text-lg mb-12 max-w-xl mx-auto font-medium leading-relaxed text-white/30 uppercase tracking-widest">
-                We guide your product strategy at every layer to ensure maximum engagement.
-              </motion.p>
+              <p className="text-base md:text-lg mb-12 max-w-xl mx-auto font-medium leading-relaxed text-white/30 uppercase tracking-widest">
+                Our architecture handles user scaling from 1 to 1M+ without a single manual touch.
+              </p>
 
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 }}>
-                <Link href="/contact?service=landing-pages" className="px-12 py-5 rounded-full bg-white text-black font-black uppercase tracking-[0.2em] text-sm transition-all hover:bg-fuchsia-600 hover:text-white hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)] inline-flex items-center gap-3">
-                  Calculate ROI <ArrowRight size={18} />
+                <Link
+                  href="/contact?service=automation-systems"
+                  className="px-12 py-5 rounded-full bg-white text-black font-black uppercase tracking-[0.2em] text-sm transition-all hover:bg-purple-600 hover:text-white hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)] inline-flex items-center gap-3"
+                >
+                  Configure Automation <ArrowRight size={18} />
                 </Link>
               </motion.div>
             </motion.div>

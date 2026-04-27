@@ -2,11 +2,11 @@
 
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion";
 import { CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 
 /* ─── Data ──────────────────────────────────────────────────────── */
 const features = [
@@ -58,21 +58,40 @@ function ParallaxImagePanel() {
 
 /* ─── Workflow Wave Section ─────────────────────────────────────── */
 function WorkflowSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const lineProgress = useTransform(scrollYProgress, [0.1, 0.6], [0, 1]);
+  const [activeNode, setActiveNode] = useState<number | null>(null);
+  const progress = useMotionValue(0);
 
+  // Wave path in viewBox 0 0 1000 100
   const wavePath = "M0 50 C100 50 130 75 220 75 C310 75 360 25 450 25 C540 25 590 75 670 75 C760 75 800 25 880 25 C950 25 1000 25 1000 25";
 
-  const nodes = [
+  const nodes = useMemo(() => [
     { cx: 220, cy: 75, num: 1, label: "Define",           desc: "Identify market fit and core value proposition.",                             color: "#00F0FF", above: false },
     { cx: 450, cy: 25, num: 2, label: "Design",           desc: "Architect high-fidelity UI and robust system blueprints.",                    color: "#9D5BFF", above: true  },
     { cx: 670, cy: 75, num: 3, label: "Build",            desc: "Rapid engineering focused on essential product logic.",                        color: "#00F0FF", above: false },
     { cx: 880, cy: 25, num: 4, label: "Launch",           desc: "Deploy to production and begin user validation.",                             color: "#9D5BFF", above: true  },
-  ];
+  ], []);
+
+  // Continuous animation loop
+  useEffect(() => {
+    const controls = animate(progress, 1, {
+      duration: 10,
+      repeat: Infinity,
+      ease: "linear",
+      onUpdate: (latest) => {
+        const currentX = latest * 1000;
+        const threshold = 40;
+        const hit = nodes.find(n => currentX > n.cx - threshold && currentX < n.cx + threshold);
+        setActiveNode(hit ? hit.num : null);
+      }
+    });
+    return () => controls.stop();
+  }, [progress, nodes]);
+
+  // Dash animation for the 'kinetic' moving line
+  const dashOffset = useTransform(progress, [0, 1], [0, -1000]);
 
   return (
-    <section ref={ref} className="relative z-10 py-20">
+    <section className="relative z-10 py-20">
       <div className="container-xl px-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -96,26 +115,41 @@ function WorkflowSection() {
               </linearGradient>
             </defs>
             <path d={wavePath} stroke="rgba(255,255,255,0.07)" strokeWidth="1.5" strokeDasharray="7 6" fill="none" />
-            <motion.path d={wavePath} stroke="url(#waveGrad)" strokeWidth="2" fill="none" strokeLinecap="round" pathLength={1} style={{ pathLength: lineProgress }} />
+            {/* Continuous Kinetic Moving Line */}
+            <motion.path
+              d={wavePath}
+              stroke="url(#waveGrad)"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeDasharray="150 850"
+              style={{ strokeDashoffset: dashOffset }}
+            />
           </svg>
 
           {nodes.map(({ cx, cy, num, label, desc, color, above }) => {
             const solidBg   = color === "#00F0FF" ? "#00282e" : "#1a0a2e";
             const glowColor = color === "#00F0FF" ? "rgba(0,240,255,0.25)" : "rgba(157,91,255,0.25)";
+            const isActive = activeNode === num;
+
             return (
               <div key={num} className="absolute group" style={{ left: `${cx / 10}%`, top: `${cy}%`, transform: "translate(-50%, -50%)", zIndex: 20 }}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.5 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: (num - 1) * 0.12 + 0.2 }}
-                  whileHover={{ scale: 1.12 }}
-                  className="flex items-center justify-center cursor-pointer font-black text-lg select-none"
-                  style={{ width: "52px", height: "52px", borderRadius: "50%", background: solidBg, border: `2px solid ${color}`, color: color, boxShadow: `0 0 20px ${glowColor}` }}
+                  animate={{
+                    scale: isActive ? 1.2 : 1,
+                    boxShadow: isActive ? `0 0 30px ${color}` : `0 0 20px ${glowColor}`,
+                    borderColor: isActive ? color : `${color}80`
+                  }}
+                  whileHover={{ scale: 1.15 }}
+                  className="flex items-center justify-center cursor-pointer font-black text-lg select-none transition-colors duration-300"
+                  style={{ width: "52px", height: "52px", borderRadius: "50%", background: solidBg, borderWidth: "2px", color: color }}
                 >
                   {num}
                 </motion.div>
-                <div className={`absolute left-1/2 -translate-x-1/2 w-44 ${above ? "bottom-full mb-3" : "top-full mt-3"} p-4 rounded-2xl border border-white/[0.08] bg-[#0c0c18]/95 backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.9)] opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100 pointer-events-none z-50 transition-all duration-200 ease-out`}>
+                <div className={`absolute left-1/2 -translate-x-1/2 w-44 ${above ? "bottom-full mb-3" : "top-full mt-3"} p-4 rounded-2xl border border-white/[0.08] bg-[#0c0c18]/95 backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.9)] transition-all duration-300 ease-out z-50 pointer-events-none ${isActive ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100"}`}>
                   <div className="w-full h-px mb-3 rounded-full" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
                   <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1" style={{ color }}>Step {num}</p>
                   <h4 className="text-sm font-black text-white/90 mb-1.5 leading-snug">{label}</h4>
@@ -173,7 +207,7 @@ export default function MVPDevelopmentPage() {
                 </motion.h1>
               </div>
 
-              <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.6, ease: [0.22, 1, 0.36, 1] }} className="text-base md:text-lg text-white/35 max-w-xl leading-relaxed font-medium uppercase tracking-widest">
+              <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.6, ease: [0.22, 1, 0.36, 1] }} className="text-base md:text-lg text-white/35 max-w-xl leading-relaxed font-medium uppercase tracking-widest" >
                 Validating your vision with scalable technical blueprints.
               </motion.p>
 
@@ -234,7 +268,7 @@ export default function MVPDevelopmentPage() {
               </motion.p>
 
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 }}>
-                <Link href="/contact?service=mvp" className="px-12 py-5 rounded-full bg-white text-black font-black uppercase tracking-[0.2em] text-sm transition-all hover:bg-purple-600 hover:text-white hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)] inline-flex items-center gap-3">
+                <Link href="/contact?service=mvp-development" className="px-12 py-5 rounded-full bg-white text-black font-black uppercase tracking-[0.2em] text-sm transition-all hover:bg-purple-600 hover:text-white hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)] inline-flex items-center gap-3">
                   Start Building <ArrowRight size={18} />
                 </Link>
               </motion.div>
