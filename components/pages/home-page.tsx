@@ -418,7 +418,7 @@ export default function HomePage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl sm:text-5xl md:text-7xl font-black mb-5 leading-[0.88] tracking-tighter italic uppercase"
+              className="text-4xl sm:text-5xl md:text-7xl font-black mb-5 leading-tight tracking-tighter italic uppercase"
             >
               Turning <span className="gradient-text-primary">chaos</span> into code.
             </motion.h2>
@@ -484,7 +484,7 @@ export default function HomePage() {
                           {step}
                         </div>
 
-                        <h3 className="relative text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic leading-[0.88] mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-cyan-400 transition-all duration-500">
+                        <h3 className="relative text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic leading-tight mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-cyan-400 transition-all duration-500">
                           {title}
                         </h3>
                         <p className="relative text-sm md:text-base text-white/35 leading-relaxed font-medium group-hover:text-white/60 transition-colors duration-500 uppercase tracking-wide">

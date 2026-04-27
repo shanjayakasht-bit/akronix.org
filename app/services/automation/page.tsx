@@ -202,7 +202,7 @@ export default function AutomationSystemPage() {
                   initial={{ opacity: 0, y: 28 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
                 >
                   "Hands-Off" <span className="gradient-text-primary">Backbone</span> Systems
                 </motion.h1>
@@ -278,7 +278,7 @@ export default function AutomationSystemPage() {
               <motion.div animate={{ x: ["-100%", "200%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }} className="absolute top-0 left-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent" />
               <motion.div animate={{ x: ["200%", "-100%"] }} transition={{ duration: 3.5, repeat: Infinity, ease: "linear", delay: 1.75 }} className="absolute bottom-0 right-0 w-72 h-[2px] bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent" />
 
-              <h2 className="text-3xl md:text-6xl lg:text-7xl font-black mb-8 leading-[0.9] tracking-tighter italic uppercase text-white/90">
+              <h2 className="text-3xl md:text-6xl lg:text-7xl font-black mb-8 leading-tight tracking-tighter italic uppercase text-white/90">
                 Automate your <span className="gradient-text-primary">Success</span>
               </h2>
 

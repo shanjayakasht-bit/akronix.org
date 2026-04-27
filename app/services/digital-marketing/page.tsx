@@ -202,7 +202,7 @@ export default function DigitalMarketingPage() {
                   initial={{ opacity: 0, y: 28 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
                 >
                   Growth <span className="gradient-text-primary">Marketing</span> Engines
                 </motion.h1>

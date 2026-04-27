@@ -97,7 +97,7 @@ export default function PricingPage() {
                  initial={{ opacity: 0, y: 30 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as any }}
-                 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-10"
+                 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight mb-10"
               >
                 Predictable pricing for <span className="gradient-text-primary">unstoppable</span> growth.
               </motion.h1>

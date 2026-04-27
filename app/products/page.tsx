@@ -109,7 +109,7 @@ export default function ProductsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-5xl md:text-7xl font-black mb-8 leading-[0.95] tracking-tight italic uppercase"
+              className="text-5xl md:text-7xl font-black mb-8 leading-tight tracking-tight italic uppercase"
             >
               The Next Era of <br />
               <span className="gradient-text-primary">Enterprise Software</span>

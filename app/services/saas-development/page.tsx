@@ -272,7 +272,7 @@ export default function SaaSDevelopmentPage() {
                   initial={{ opacity: 0, y: 28 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
+                  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
                 >
                   Enterprise{" "}
                   <span className="gradient-text-primary">SaaS</span>{" "}
@@ -392,7 +392,7 @@ export default function SaaSDevelopmentPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="text-3xl md:text-6xl lg:text-7xl font-black mb-8 leading-[0.9] tracking-tighter italic uppercase text-white/90"
+                className="text-3xl md:text-6xl lg:text-7xl font-black mb-8 leading-tight tracking-tighter italic uppercase text-white/90"
               >
                 Launch your <span className="gradient-text-primary">Ecosystem</span>
               </motion.h2>
