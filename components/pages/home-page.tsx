@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence, useMotionValueEvent } from "framer-motion";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 import {
@@ -28,10 +28,10 @@ const fadeIn = (delay = 0) => ({
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const steps = [
-  { step: "01", title: "Discovery", desc: "Map your idea to a precise technical blueprint.", icon: Search, phase: "DISCOVERY" },
-  { step: "02", title: "Design & Build", desc: "Agile sprints with weekly demos and live previews.", icon: Palette, phase: "ASSEMBLY" },
-  { step: "03", title: "Launch", desc: "Thorough QA and zero-downtime production rollout.", icon: PlayCircle, phase: "LAUNCH" },
-  { step: "04", title: "Scale", desc: "Elastic infrastructure engineered for 1M+ users.", icon: Settings, phase: "SCALE" },
+  { step: "01", title: "Discovery", desc: "Map your idea to a precise technical blueprint.", icon: Search, phase: "DISCOVERY", image: "/assets/execution/discovery.png" },
+  { step: "02", title: "Design & Build", desc: "Agile sprints with weekly demos and live previews.", icon: Palette, phase: "ASSEMBLY", image: "/assets/execution/design_build.png" },
+  { step: "03", title: "Launch", desc: "Thorough QA and zero-downtime production rollout.", icon: PlayCircle, phase: "LAUNCH", image: "/assets/execution/launch.png" },
+  { step: "04", title: "Scale", desc: "Elastic infrastructure engineered for 1M+ users.", icon: Settings, phase: "SCALE", image: "/assets/execution/scale.png" },
 ];
 
 const capabilities = [
@@ -71,6 +71,73 @@ const heroStars = [
   { top: "80%", left: "90%", size: 1.5, delay: 1.4 },
 ];
 
+/* ── Execution Card ─────────────────────────────────────────── */
+function ExecutionCard({ step, title, desc, icon: Icon, phase, image, index, progress }: any) {
+  // Each card is active for a specific range
+  // Total range is [0, 1]. For 4 cards, each gets ~0.25.
+  const start = index * 0.25;
+  const end = (index + 1) * 0.25;
+  
+  // Local progress within this card's scroll range
+  const cardProgress = useTransform(progress, [start, end], [0, 1]);
+  
+  // Exit animations (moving to back)
+  const isLast = index === steps.length - 1;
+  const y = useTransform(cardProgress, [0, 0.6, 1], [0, -40, isLast ? 0 : -1000]);
+  const scale = useTransform(cardProgress, [0, 0.6, 1], [1, 0.96, isLast ? 1 : 0.8]);
+  const opacity = useTransform(cardProgress, [0, 0.6, 1], [1, 1, isLast ? 1 : 0]);
+  const blur = useTransform(cardProgress, [0, 0.6, 1], [0, 2, isLast ? 0 : 20]);
+
+  // Entrance animations (coming from front/bottom)
+  const entranceY = useTransform(progress, [start - 0.1, start], [600, 0]);
+  const entranceOpacity = useTransform(progress, [start - 0.05, start], [0, 1]);
+
+  return (
+    <motion.div
+      style={{ 
+        y: index === 0 ? y : (progress < start ? entranceY : y), 
+        scale, 
+        opacity: index === 0 ? opacity : (progress < start ? entranceOpacity : opacity),
+        filter: `blur(${blur}px)`,
+        zIndex: steps.length - index 
+      }}
+      className="absolute inset-0 w-full h-full rounded-[40px] overflow-hidden border border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.6)] bg-[#0A0A14]"
+    >
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-[#020205]" />
+      </div>
+
+      {/* Content */}
+      <div className="relative h-full flex flex-col justify-end p-8 md:p-16">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="h-px w-12 bg-cyan-400" />
+          <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.6em]">{phase}</span>
+        </div>
+        
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div className="max-w-2xl">
+            <h3 className="text-5xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-6 leading-[0.85]">
+              <span className="text-white/10 mr-6 not-italic">{step}</span><br />
+              {title}
+            </h3>
+            <p className="text-base md:text-xl text-white/40 font-medium max-w-lg leading-relaxed uppercase tracking-widest">
+              {desc}
+            </p>
+          </div>
+          
+          <div className="hidden md:flex w-28 h-28 rounded-[32px] bg-white/[0.03] border border-white/10 items-center justify-center backdrop-blur-xl group">
+            <Icon size={44} className="text-white/20 group-hover:text-cyan-400 transition-colors duration-500" />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+
 /* ── Animated Counter ─────────────────────────────────────────── */
 function AnimatedStat({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
   const ref = useRef(null);
@@ -94,13 +161,51 @@ function AnimatedStat({ value, label, icon: Icon }: { value: string; label: stri
 
 /* ── Component ────────────────────────────────────────────────── */
 export default function HomePage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef });
   const [selectedCapability, setSelectedCapability] = useState<number | null>(null);
-  const axisScaleY = useSpring(
-    useTransform(scrollYProgress, [0.3, 0.85], [0, 1]),
-    { damping: 25, stiffness: 80 }
-  );
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const executionRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress: cardsProgress } = useScroll({
+    target: executionRef,
+    offset: ["start start", "end end"]
+  });
+
+  // Apply spring physics to smooth out the card transitions (absorbs rigid scroll ticks)
+  const smoothCardsProgress = useSpring(cardsProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
+
+  useMotionValueEvent(cardsProgress, "change", (latest) => {
+    let newIndex = Math.floor(latest / 0.25);
+    if (newIndex > 3) newIndex = 3;
+    if (newIndex < 0) newIndex = 0;
+    setActiveCardIndex(newIndex);
+  });
+
+  const scrollToCard = (index: number) => {
+    if (executionRef.current) {
+      const rect = executionRef.current.getBoundingClientRect();
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const sectionTop = rect.top + scrollTop;
+      const scrollableDistance = window.innerHeight * 4; // 500vh - 100vh
+      const targetY = sectionTop + (index * 0.25 * scrollableDistance) + 5; // +5px buffer
+      
+      window.scrollTo({
+        top: targetY,
+        behavior: "smooth"
+      });
+    }
+  };
+
+  // Separate tracker for the title so it joins *as* the user scrolls to it, before it even pins
+  const { scrollYProgress: titleProgress } = useScroll({
+    target: executionRef,
+    offset: ["start 90%", "start 40%"]
+  });
+
+  // Title join animation values
+  const titleXLeft = useTransform(titleProgress, [0, 1], ["-100%", "0%"]);
+  const titleXRight = useTransform(titleProgress, [0, 1], ["100%", "0%"]);
+  const titleOpacity = useTransform(titleProgress, [0, 0.8], [0, 1]);
+
 
   // Minimal interactive spotlight
   const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
@@ -115,7 +220,7 @@ export default function HomePage() {
   };
 
   return (
-    <div ref={containerRef} className="overflow-hidden bg-[#020205]">
+    <div className="overflow-clip bg-[#020205]">
 
       {/* ── HERO ────────────────────────────────────────────────── */}
       <section 
@@ -360,7 +465,7 @@ export default function HomePage() {
                         <p className="text-base sm:text-lg leading-relaxed text-white/50 font-medium max-w-lg">
                           {desc}
                           <br/><br/>
-                          This is an expanded view. By leveraging our deeply integrated ecosystem approach, we map these specific capabilities directly into your project's technical architecture, ensuring flawless scale and absolute market superiority.
+                          This is an expanded view. By leveraging our deeply integrated ecosystem approach, we map these specific capabilities directly into your project&apos;s technical architecture, ensuring flawless scale and absolute market superiority.
                         </p>
                       </div>
 
@@ -380,158 +485,79 @@ export default function HomePage() {
       </section>
 
       {/* ── EXECUTION STRATEGY ──────────────────────────────────── */}
-      <section className="py-24 relative overflow-hidden border-t border-white/[0.03]">
-        {/* Background particles */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-64 bg-gradient-to-b from-cyan-500/[0.04] to-transparent" />
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{ y: [0, -30, 0], x: [0, 15, 0], opacity: [0.05, 0.15, 0.05] }}
-              transition={{ duration: 12 + i * 2, repeat: Infinity, ease: "easeInOut", delay: i * 1.8 }}
-              className="absolute w-[250px] h-[250px] rounded-full blur-[90px]"
-              style={{
-                background: i % 2 === 0 ? "rgba(0,240,255,0.12)" : "rgba(157,91,255,0.12)",
-                left: `${i * 22}%`, top: `${15 + i * 18}%`,
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="container-xl relative z-10">
-          {/* Section header */}
-          <div className="text-center mb-20">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="flex items-center justify-center gap-3 mb-8"
-            >
-              <div className="h-px w-10 bg-gradient-to-r from-transparent to-cyan-400" />
-              <span className="text-[11px] font-black uppercase tracking-[0.6em] text-cyan-400 drop-shadow-[0_0_8px_rgba(0,240,255,0.4)]">Execution Strategy</span>
-              <div className="h-px w-10 bg-gradient-to-l from-transparent to-cyan-400" />
-            </motion.div>
-
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl sm:text-5xl md:text-7xl font-black mb-5 leading-tight tracking-tighter italic uppercase"
-            >
-              Turning <span className="gradient-text-primary">chaos</span> into code.
-            </motion.h2>
-
-            <motion.p
-              {...fadeIn(0.3)}
-              className="text-sm text-white/35 max-w-lg mx-auto font-medium uppercase tracking-widest"
-            >
-              A high-precision framework built for <span className="text-white/70">market-dominant ecosystems</span>.
-            </motion.p>
-          </div>
-
-          {/* Steps timeline */}
-          <div className="relative">
-            {/* Central axis */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 overflow-hidden hidden md:block">
-              {/* Static track */}
-              <div className="absolute inset-0 bg-white/[0.04]" />
-              {/* Animated fill */}
-              <motion.div
-                className="absolute top-0 left-0 w-full bg-gradient-to-b from-cyan-400 via-purple-500 to-transparent"
-                style={{ scaleY: axisScaleY, transformOrigin: "top", height: "100%" }}
-              />
-              {/* Traveling pulse */}
-              <motion.div
-                animate={{ top: ["-15%", "115%"] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-                className="absolute left-0 w-full h-24 bg-gradient-to-b from-transparent via-cyan-400/70 to-transparent z-10"
-              />
+      <section className="relative">
+        <div ref={executionRef} className="h-[500vh] relative bg-[#020205]">
+          <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-24">
+            
+            {/* Side Navigation */}
+            <div className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50">
+              {steps.map((_, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => scrollToCard(i)} 
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-black transition-all duration-300 ${activeCardIndex === i ? 'bg-cyan-400 text-black shadow-[0_0_20px_rgba(0,240,255,0.4)] scale-110' : 'bg-white/5 border border-white/10 text-white/40 hover:text-white hover:border-white/30 hover:bg-white/10'}`}
+                >
+                  0{i + 1}
+                </button>
+              ))}
             </div>
 
-            <div className="space-y-20 md:space-y-32 relative">
-              {steps.map(({ step, title, desc, icon: StepIcon, phase }, i) => {
-                const isEven = i % 2 === 0;
-                return (
-                  <motion.div
-                    key={step}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                    className={`flex flex-col md:flex-row items-center relative ${!isEven ? "md:flex-row-reverse" : ""}`}
+            {/* Background ambient */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen bg-gradient-to-b from-cyan-500/[0.04] to-transparent" />
+              {[...Array(3)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ opacity: [0.05, 0.1, 0.05], scale: [1, 1.2, 1] }}
+                  transition={{ duration: 10 + i * 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute w-[800px] h-[800px] rounded-full blur-[160px]"
+                  style={{
+                    background: i % 2 === 0 ? "rgba(0,240,255,0.08)" : "rgba(157,91,255,0.08)",
+                    left: `${i * 20 - 10}%`, top: `${10 + i * 20}%`,
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className="container-xl relative z-10 w-full px-4">
+              {/* Section header with Join Animation */}
+              <div className="text-center mb-12">
+                <motion.div
+                  style={{ opacity: titleOpacity }}
+                  className="flex items-center justify-center gap-3 mb-6"
+                >
+                  <div className="h-px w-10 bg-cyan-400/50" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.6em] text-cyan-400">Execution Strategy</span>
+                  <div className="h-px w-10 bg-cyan-400/50" />
+                </motion.div>
+
+                <div className="flex flex-col items-center overflow-hidden">
+                  <motion.h2
+                    style={{ x: titleXLeft }}
+                    className="text-5xl sm:text-7xl md:text-9xl font-black leading-tight tracking-tighter italic uppercase text-white"
                   >
-                    {/* Content side */}
-                    <div className={`w-full md:w-[44%] ${isEven ? "md:pr-20" : "md:pl-20"}`}>
-                      <motion.div
-                        initial={{ opacity: 0, x: isEven ? -16 : 16 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
-                        className={`group relative p-7 rounded-3xl border border-white/[0.04] hover:border-white/[0.08] hover:bg-white/[0.02] transition-all duration-500 ${isEven ? "text-left" : "text-right"}`}
-                      >
-                        {/* Phase label */}
-                        <div className={`flex items-center gap-3 mb-4 ${!isEven ? "flex-row-reverse" : ""}`}>
-                          <div className="h-px w-8 bg-gradient-to-r from-cyan-400/50 to-transparent" />
-                          <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.7em] group-hover:text-cyan-400 transition-colors duration-500">
-                            {phase}
-                          </span>
-                        </div>
+                    Turning <span className="gradient-text-primary">chaos</span>
+                  </motion.h2>
+                  <motion.h2
+                    style={{ x: titleXRight }}
+                    className="text-5xl sm:text-7xl md:text-9xl font-black leading-tight tracking-tighter italic uppercase text-white -mt-4 md:-mt-8"
+                  >
+                    into code.
+                  </motion.h2>
+                </div>
+              </div>
 
-                        {/* Large bg step number */}
-                        <div className="absolute inset-0 flex items-center justify-center text-[10rem] font-black text-white/[0.013] pointer-events-none select-none italic group-hover:text-cyan-400/[0.025] transition-colors duration-700">
-                          {step}
-                        </div>
-
-                        <h3 className="relative text-3xl md:text-5xl font-black text-white uppercase tracking-tighter italic leading-tight mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-cyan-400 transition-all duration-500">
-                          {title}
-                        </h3>
-                        <p className="relative text-sm md:text-base text-white/35 leading-relaxed font-medium group-hover:text-white/60 transition-colors duration-500 uppercase tracking-wide">
-                          {desc}
-                        </p>
-                      </motion.div>
-                    </div>
-
-                    {/* Center node */}
-                    <div className="absolute left-1/2 -translate-x-1/2 z-20 hidden md:flex items-center justify-center">
-                      <div className="relative group cursor-default">
-                        {/* Orbital ring */}
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                          className="absolute -inset-10 border border-white/[0.07] rounded-full border-dashed"
-                        />
-                        <motion.div
-                          animate={{ rotate: -360 }}
-                          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                          className="absolute -inset-6 border border-cyan-500/[0.08] rounded-full"
-                        />
-                        {/* Core */}
-                        <motion.div
-                          whileHover={{ scale: 1.12 }}
-                          transition={{ duration: 0.4 }}
-                          className="w-20 h-20 rounded-3xl bg-[#030308] border border-white/[0.08] flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.9)] group-hover:border-cyan-400/40 group-hover:bg-cyan-950/20 transition-all duration-500 overflow-hidden relative"
-                        >
-                          <div className="absolute top-1.5 left-1.5 w-1.5 h-1.5 border-t border-l border-white/15" />
-                          <div className="absolute bottom-1.5 right-1.5 w-1.5 h-1.5 border-b border-r border-white/15" />
-                          <StepIcon size={28} className="text-white/25 group-hover:text-cyan-400 transition-all duration-500 relative z-10 group-hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]" />
-                        </motion.div>
-                        {/* Connector line */}
-                        <motion.div
-                          animate={{ opacity: [0.4, 0.9, 0.4] }}
-                          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                          className={`absolute top-1/2 ${isEven ? "right-full mr-2" : "left-full ml-2"} h-px w-[calc(100%-0px)] bg-gradient-to-r from-cyan-400/50 to-transparent hidden xl:block`}
-                          style={{ width: "4rem" }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Spacer for opposite side */}
-                    <div className="hidden md:block w-[44%]" />
-                  </motion.div>
-                );
-              })}
+              {/* Stacked Cards Deck */}
+              <div className="relative h-[60vh] md:h-[70vh] w-full max-w-6xl mx-auto">
+                {steps.map((step, i) => (
+                  <ExecutionCard 
+                    key={step.step} 
+                    {...step} 
+                    index={i} 
+                    progress={smoothCardsProgress}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
