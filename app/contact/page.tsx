@@ -3,12 +3,16 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ContactForm from "@/components/ContactForm"; 
 
+import { Suspense } from "react";
+
 export default function Page() {
   return (
     <>
       <Navigation />
       <main>
-        <ContactPage />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ContactPage />
+        </Suspense>
       </main>
       <Footer />
     </>

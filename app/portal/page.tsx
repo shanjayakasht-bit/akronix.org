@@ -92,9 +92,9 @@ export default async function ClientPortal() {
     db.testimonial.findFirst({ where: { userId } }),
   ]);
 
-  const activeProjects = projects.filter((p) => p.status === "IN_PROGRESS" || p.status === "IN_REVIEW");
-  const pendingInvoices = invoices.filter((i) => i.status === "SENT" || i.status === "OVERDUE");
-  const unreadMessages = messages.filter((m) => m.status === "UNREAD");
+  const activeProjects = projects.filter((p: any) => p.status === "IN_PROGRESS" || p.status === "IN_REVIEW");
+  const pendingInvoices = invoices.filter((i: any) => i.status === "SENT" || i.status === "OVERDUE");
+  const unreadMessages = messages.filter((m: any) => m.status === "UNREAD");
   const latestProject = projects[0];
 
   return (
@@ -208,8 +208,8 @@ export default async function ClientPortal() {
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
-                {projects.map((project) => {
-                  const completedMilestones = project.milestones.filter((m) => m.completed).length;
+                {projects.map((project: any) => {
+                  const completedMilestones = project.milestones.filter((m: any) => m.completed).length;
                   const totalMilestones = project.milestones.length;
                   const progressPct = project.progress;
 
@@ -253,7 +253,7 @@ export default async function ClientPortal() {
                       {/* Milestones preview */}
                       {project.milestones.length > 0 && (
                         <div className="space-y-1.5 mb-5">
-                          {project.milestones.slice(0, 3).map((m) => (
+                          {project.milestones.slice(0, 3).map((m: any) => (
                             <div key={m.id} className="flex items-center gap-2">
                               {m.completed ? (
                                 <CheckCircle2 size={13} className="text-emerald-400 flex-shrink-0" />
@@ -308,7 +308,7 @@ export default async function ClientPortal() {
                   </div>
                 ) : (
                   <div className="divide-y divide-white/5">
-                    {invoices.map((inv) => (
+                    {invoices.map((inv: any) => (
                       <div key={inv.id} className="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors">
                         <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
                           <CreditCard size={15} className="text-white/40" />
@@ -346,7 +346,7 @@ export default async function ClientPortal() {
                   </div>
                 ) : (
                   <div className="divide-y divide-white/5">
-                    {messages.map((msg) => (
+                    {messages.map((msg: any) => (
                       <div
                         key={msg.id}
                         className={cn(

@@ -8,6 +8,8 @@ export const metadata = {
   description: "See what our clients say about the premium web and software solutions built by Akronix.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const testimonialsData = await db.testimonial.findMany({
     where: { isPublished: true },
