@@ -62,7 +62,7 @@ export default function ContactForm() {
           <div className="text-4xl mb-3">✅</div>
           <h3 className="text-xl font-semibold text-green-800 mb-2">Message Sent!</h3>
           <p className="text-green-700 text-sm">
-            Thanks for reaching out. We'll get back to you within 1–2 business days.
+            Thanks for reaching out. We&apos;ll get back to you within 1–2 business days.
           </p>
           <button
             onClick={() => setStatus("idle")}

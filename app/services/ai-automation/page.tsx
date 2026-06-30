@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion";
-import { CheckCircle, ArrowRight, Brain, Zap, Shield, BarChart3 } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState, useMemo } from "react";

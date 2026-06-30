@@ -140,6 +140,20 @@ export default function LoginPage() {
                 <span>GitHub</span>
               </button>
             </div>
+            
+            <div className="mt-8 border-t border-white/5 pt-6 text-left">
+              <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 mb-2">
+                Administrative Control Bypass
+              </span>
+              <div className="bg-white/[0.02] border border-white/10 p-3 rounded-2xl">
+                <p className="text-[10px] text-white/50 mb-1 leading-normal font-mono">
+                  <span className="font-bold text-white/70 font-sans">Email:</span> admin@akronix.io
+                </p>
+                <p className="text-[10px] text-white/50 leading-normal font-mono">
+                  <span className="font-bold text-white/70 font-sans">Password:</span> admin123456
+                </p>
+              </div>
+            </div>
           </div>
         </motion.div>
         

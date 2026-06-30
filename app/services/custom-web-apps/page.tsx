@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion } from "framer-motion";
-import { Terminal, CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 

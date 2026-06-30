@@ -204,7 +204,7 @@ export default function AutomationSystemPage() {
                   transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter uppercase italic text-white/90 whitespace-nowrap"
                 >
-                  "Hands-Off" <span className="gradient-text-primary">Backbone</span> Systems
+                  &quot;Hands-Off&quot; <span className="gradient-text-primary">Backbone</span> Systems
                 </motion.h1>
               </div>
 

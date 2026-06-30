@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,8 +9,7 @@ import {
   Users, 
   Rocket, 
   Lightbulb,
-  ChevronRight,
-  Clock
+  ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -78,14 +76,14 @@ const policySections = [
               Partners must maintain strict professional conduct. Misrepresentation of Akronix’s services, capabilities, or pricing will result in immediate removal from the network.
             </p>
             <p className="text-sm text-white/60 leading-relaxed">
-              We highly value warm, well-contextualized introductions over cold leads. Ensure the referred party is aware of Akronix's expertise before connecting us.
+              We highly value warm, well-contextualized introductions over cold leads. Ensure the referred party is aware of Akronix&apos;s expertise before connecting us.
             </p>
           </div>
         </div>
         <div className="bg-indigo-500/10 border border-indigo-500/20 p-6 rounded-2xl mt-6">
           <h4 className="text-white font-bold mb-2">Network Audits</h4>
           <p className="text-white/70 leading-relaxed text-sm">
-            Akronix reserves the right to audit referral quality regularly. Inactive partners or those consistently providing poor-fit leads may have their referral agreements re-evaluated. If you're interested in formalizing a partnership, contact our alliance team at <a href="mailto:admin@akronix.org" className="text-indigo-400">admin@akronix.org</a>.
+            Akronix reserves the right to audit referral quality regularly. Inactive partners or those consistently providing poor-fit leads may have their referral agreements re-evaluated. If you&apos;re interested in formalizing a partnership, contact our alliance team at <a href="mailto:admin@akronix.org" className="text-indigo-400">admin@akronix.org</a>.
           </p>
         </div>
       </div>
@@ -163,7 +161,7 @@ export default function PoliciesPage() {
     fadeUp: {
       initial: { opacity: 0, y: 30 },
       animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as any }
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }
     },
     stagger: {
       animate: {

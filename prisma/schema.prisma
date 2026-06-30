@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
@@ -465,4 +464,18 @@ model AdminUser {
   updatedAt      DateTime   @updatedAt
   
   @@map("admin_users")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  features    String[]
+  badge       String?  @default("Coming Soon")
+  icon        String?  @default("Briefcase")
+  color       String?  @default("#9D5BFF")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("products")
 }

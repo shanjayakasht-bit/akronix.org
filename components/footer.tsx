@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Zap, Twitter, Instagram, Linkedin, ArrowRight } from "lucide-react";
+import { Twitter, Instagram, Linkedin } from "lucide-react";
 
 const footerLinks = {
   Services: [

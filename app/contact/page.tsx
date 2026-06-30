@@ -1,7 +1,9 @@
 import ContactPage from "@/components/pages/contact-page";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
-import ContactForm from "@/components/ContactForm"; 
+
+export const dynamic = "force-dynamic";
+
 
 export default function Page() {
   return (

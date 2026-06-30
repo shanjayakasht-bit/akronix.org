@@ -4,7 +4,7 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Instagram, Linkedin, Twitter, Mail, MapPin, Star,
+  Instagram, Linkedin, Mail, MapPin, Star,
   ChevronDown, Code2, Palette, Zap, Shield, BarChart3, Rocket, X, CheckCircle
 } from "lucide-react";
 import Image from "next/image";
@@ -25,6 +25,7 @@ const iconMap: Record<string, React.ElementType> = {
 /* ── HELPERS ────────────────────────────────────────────────── */
 const playBlip = () => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
     if (!AudioContextClass) return;
     const ctx = new AudioContextClass();
@@ -38,7 +39,7 @@ const playBlip = () => {
     gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + 0.1);
-  } catch (e) {
+  } catch {
     // browser might block audio if no interaction
   }
 };
@@ -444,7 +445,7 @@ export default function TeamPage() {
                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-[#5B4DFF] to-transparent" />
                    <h2 className="text-5xl md:text-6xl font-black mb-8">HAVE THE <span className="gradient-text-primary">EDGE?</span></h2>
                    <p className="text-lg text-white/50 mb-12 max-w-lg mx-auto leading-relaxed">
-                      We are always scanning for outliers. If you build at the limit of what's possible, let's talk.
+                      We are always scanning for outliers. If you build at the limit of what&apos;s possible, let&apos;s talk.
                    </p>
                    <Link href="/contact" className="px-12 py-5 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-sm transition-all hover:bg-white/90 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)]">
                       Apply to the Taskforce

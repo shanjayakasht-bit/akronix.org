@@ -34,8 +34,9 @@ export default function TestimonialForm({ existingTestimonial }: TestimonialForm
       setSuccess(true);
       router.refresh();
       setTimeout(() => setSuccess(false), 5000);
-    } catch (e: any) {
-      setError(e?.message ?? "Something went wrong. Please try again.");
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setError((e as any)?.message ?? "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

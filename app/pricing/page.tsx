@@ -96,7 +96,7 @@ export default function PricingPage() {
               <motion.h1 
                  initial={{ opacity: 0, y: 30 }}
                  animate={{ opacity: 1, y: 0 }}
-                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as any }}
+                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
                  className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight mb-10"
               >
                 Predictable pricing for <span className="gradient-text-primary">unstoppable</span> growth.
@@ -117,7 +117,7 @@ export default function PricingPage() {
               animate="animate"
               className="grid md:grid-cols-3 gap-8"
             >
-              {plans.map((plan, i) => (
+              {plans.map((plan) => (
                 <motion.div
                   key={plan.name}
                   variants={{

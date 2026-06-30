@@ -3,16 +3,23 @@ import Footer from "@/components/footer";
 import TestimonialsPage from "@/components/pages/testimonials-page";
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Testimonials | Akronix",
   description: "See what our clients say about the premium web and software solutions built by Akronix.",
 };
 
 export default async function Page() {
-  const testimonialsData = await db.testimonial.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: "desc" }
-  });
+  let testimonialsData: { id: string | number; content: string; authorName: string; authorTitle: string; rating: number; company: string; }[] = [];
+  try {
+    testimonialsData = await db.testimonial.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: "desc" }
+    });
+  } catch (err) {
+    console.warn("PostgreSQL server offline, gracefully falling back to testimonials page mock content.", err);
+  }
 
   return (
     <>

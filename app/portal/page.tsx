@@ -9,14 +9,10 @@ import {
   MessageSquare,
   CreditCard,
   Terminal,
-  ExternalLink,
-  ChevronRight,
   CheckCircle2,
   Clock,
-  AlertCircle,
   FileText,
   Star,
-  User,
   Package,
   Zap,
 } from "lucide-react";
@@ -66,6 +62,11 @@ export default async function ClientPortal() {
     redirect("/login");
   }
 
+  const role = (session?.user as { role?: string })?.role;
+  if (role === "ADMIN" || role === "SUPER_ADMIN") {
+    redirect("/admin");
+  }
+
   const userId = session.user.id;
 
   // --- Fetch all real data in parallel ---
@@ -95,7 +96,6 @@ export default async function ClientPortal() {
   const activeProjects = projects.filter((p) => p.status === "IN_PROGRESS" || p.status === "IN_REVIEW");
   const pendingInvoices = invoices.filter((i) => i.status === "SENT" || i.status === "OVERDUE");
   const unreadMessages = messages.filter((m) => m.status === "UNREAD");
-  const latestProject = projects[0];
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white flex">

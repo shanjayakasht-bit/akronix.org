@@ -3,8 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion } from "framer-motion";
-import { Rocket, Heart, Users, Target, Shield, Zap, Activity } from "lucide-react";
-import { LiveIndicator } from "@/components/ui/live-indicator";
+import { Rocket, Heart } from "lucide-react";
 import Image from "next/image";
 
 export default function AboutPage() {

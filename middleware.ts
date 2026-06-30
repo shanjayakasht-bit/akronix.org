@@ -25,6 +25,10 @@ export default auth(function middleware(req: NextRequest & { auth: any }) {
     if (!session) {
       return NextResponse.redirect(new URL("/login?callbackUrl=/portal", req.url));
     }
+    const role = session?.user?.role as string;
+    if (role === "ADMIN" || role === "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
   }
 
   // Redirect logged in users away from auth pages

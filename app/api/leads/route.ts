@@ -42,21 +42,19 @@ export async function POST(req: NextRequest) {
     const data = parsed.data;
  
     // 3. Save lead to database
-    // const lead = await db.lead.create({
-    //   data: {
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     email: data.email,
-    //     phone: data.phone ?? null,
-    //     company: data.company ?? null,
-    //     message: data.message,
-    //     budget: data.budget ?? null,
-    //     source: data.source ?? "contact-page",
-    //     status: "NEW",
-    //   },
-    // });
- 
-    const lead = { id: "test-123" };
+    const lead = await db.lead.create({
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone ?? null,
+        company: data.company ?? null,
+        message: data.message,
+        budget: data.budget ?? null,
+        source: data.source ?? "contact-page",
+        status: "NEW",
+      },
+    });
 
     // 4. Send emails (non-blocking — don't fail the request if email fails)
     const emailPayload = {

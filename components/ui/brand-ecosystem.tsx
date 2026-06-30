@@ -32,6 +32,7 @@ export const BrandEcosystem = () => {
   const playSound = () => {
     if (typeof window === 'undefined' || !mounted) return;
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
@@ -48,7 +49,7 @@ export const BrandEcosystem = () => {
 
       oscillator.start();
       oscillator.stop(audioCtx.currentTime + 0.03);
-    } catch (e) {}
+    } catch {}
   };
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export const BrandEcosystem = () => {
 
   useEffect(() => {
     if (mounted) playSound();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeBrand, mounted]);
 
   const stars = useMemo(() => {
