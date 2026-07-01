@@ -10,18 +10,21 @@ import { cn } from "@/lib/utils";
 import { useSession, signOut } from "next-auth/react";
 
 const navLinks = [
-  { label:"Home",href:"/"},
-  { label: "Services", href: "/services" },
-  { label: "About", href: "/about" },
   { label: "Products", href: "/products" },
-  { label: "Policies", href: "/policies" },
-  { label: "Pricing", href: "/pricing" 
-   ,
+  { label: "Solutions", href: "/services" },
+  { label: "Networking", href: "/networking" },
+  { label: "Academy", href: "/academy" },
+  {
+    label: "Pricing",
+    href: "/pricing",
     dropdown: [
-    { label: "Pricing", href: "/pricing"},
-    { label: "Testimonials", href: "/pricing/testimonials", desc: "See what our clients say" },
-  ],},
-   { label: "Team", href: "/blog" },
+      { label: "Pricing Plans", href: "/pricing", desc: "View all our pricing options" },
+      { label: "Testimonials", href: "/pricing/testimonials", desc: "See what our clients say" },
+    ],
+  },
+  { label: "Partners", href: "/contact?type=partner" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navigation() {
@@ -48,7 +51,9 @@ export default function Navigation() {
     <header
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-300",
-        scrolled ? "nav-blur" : "bg-transparent"
+        scrolled
+          ? "bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-[0_2px_20px_rgba(0,0,0,0.06)]"
+          : "bg-transparent"
       )}
     >
       <nav className="container-xl flex items-center justify-between h-16">
@@ -74,7 +79,7 @@ export default function Navigation() {
                   onMouseEnter={() => setOpenDropdown(link.label)}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <button className={cn("btn-ghost gap-1", openDropdown === link.label && "text-white")}>
+                  <button className={cn("px-3 py-2 text-sm font-medium rounded-lg transition-all duration-150 text-gray-600 hover:text-gray-900 hover:bg-gray-100 inline-flex items-center gap-1", openDropdown === link.label && "text-blue-700 bg-blue-50")}>
                     {link.label}
                     <ChevronDown
                       size={14}
@@ -88,21 +93,16 @@ export default function Navigation() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.96 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute top-full left-0 mt-2 w-56 rounded-xl border p-1.5"
-                        style={{
-                          background: "rgba(15, 10, 60, 0.6)",
-                          borderColor: "rgba(255,255,255,0.1)",
-                          boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
-                        }}
+                        className="absolute top-full left-0 mt-2 w-56 rounded-xl border p-1.5 bg-white shadow-[0_8px_40px_rgba(0,0,0,0.12)] border-gray-100"
                       >
                         {link.dropdown.map((item) => (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className="flex flex-col px-3 py-2.5 rounded-lg transition-all duration-150 hover:bg-white/5"
+                            className="flex flex-col px-3 py-2.5 rounded-lg transition-all duration-150 hover:bg-gray-50"
                           >
-                            <span className="text-sm font-medium text-white/90">{item.label}</span>
-                            <span className="text-xs text-white/40 mt-0.5">{item.desc}</span>
+                            <span className="text-sm font-medium text-gray-800">{item.label}</span>
+                            <span className="text-xs text-gray-400 mt-0.5">{item.desc}</span>
                           </Link>
                         ))}
                       </motion.div>
@@ -116,8 +116,8 @@ export default function Navigation() {
                 key={link.href}
                 href={link.href!}
                 className={cn(
-                  "btn-ghost",
-                  pathname === link.href && "text-white bg-white/5"
+                  "px-3 py-2 text-sm font-medium rounded-lg transition-all duration-150 text-gray-600 hover:text-gray-900 hover:bg-gray-100",
+                  pathname === link.href && "text-blue-700 bg-blue-50 font-semibold"
                 )}
               >
                 {link.label}
@@ -176,8 +176,18 @@ export default function Navigation() {
             </div>
           ) : (
             <>
-              <Link href="/contact" className="btn-primary text-sm py-2 px-5">
-                Start a Project
+              <Link
+                href="/contact"
+                className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Book a Consultation
+              </Link>
+              <Link
+                href="/contact?type=project"
+                className="inline-flex items-center gap-2 text-sm font-bold text-white px-5 py-2.5 rounded-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)", boxShadow: "0 4px 16px rgba(245,158,11,0.3)" }}
+              >
+                Get Started
               </Link>
             </>
           )}
@@ -202,7 +212,7 @@ export default function Navigation() {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
             className="md:hidden overflow-hidden border-t"
-            style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(15, 10, 60, 0.6)" }}
+            style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.98)" }}
           >
             <div className="container-xl py-4 flex flex-col gap-1">
               {navLinks.map((link) => {
@@ -228,21 +238,26 @@ export default function Navigation() {
                   <Link
                     key={link.href}
                     href={link.href!}
-                    className="px-3 py-2.5 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-all"
+                    className="px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all"
                   >
                     {link.label}
                   </Link>
                 );
               })}
-              <div className="flex flex-col gap-2 pt-3 mt-2 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+              <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-gray-100">
                 {status === "authenticated" ? (
                   <>
-                    <Link href="/portal" className="btn-secondary w-full text-center py-2.5">Dashboard</Link>
-                    <button onClick={() => signOut()} className="btn-ghost w-full text-center py-2.5 text-red-400">Sign Out</button>
+                    <Link href="/portal" className="text-center py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Dashboard</Link>
+                    <button onClick={() => signOut()} className="w-full text-center py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 rounded-lg transition-colors">Sign Out</button>
                   </>
                 ) : (
                   <>
-                    <Link href="/contact" className="btn-primary w-full text-center">Start a Project</Link>
+                    <Link
+                      href="/contact?type=project"
+                      className="text-center py-3 rounded-full text-sm font-bold text-white"
+                      style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)" }}
+                    >Get Started</Link>
+                    <Link href="/contact" className="text-center py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">Book a Consultation</Link>
                   </>
                 )}
               </div>

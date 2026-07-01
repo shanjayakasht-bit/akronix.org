@@ -11,10 +11,15 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  const testimonialsData = await db.testimonial.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: "desc" }
-  });
+  let testimonialsData: { id: string; content: string; authorName: string; authorTitle: string; rating: number; company: string }[] = [];
+  try {
+    testimonialsData = await db.testimonial.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch {
+    // DB unavailable — fall back to static testimonials in the component
+  }
 
   return (
     <>

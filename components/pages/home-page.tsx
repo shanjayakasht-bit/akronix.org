@@ -1,145 +1,196 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
 import {
-  ArrowRight, Search, Palette, PlayCircle, Settings,
-  GraduationCap, Sparkles, BarChart3, TrendingUp,
-  ChevronRight, Zap, Globe, Star
+  ArrowRight, ChevronRight, Play, Star, Globe, TrendingUp, Zap,
+  Code2, BarChart3, Users, GraduationCap, CheckCircle2, Quote,
+  ChevronLeft, ExternalLink, ShieldCheck, Lightbulb, Handshake, Rocket,
+  Building2, Package, Cpu, MailOpen, PhoneCall, MapPin
 } from "lucide-react";
-import { InteractiveHeroText } from "@/components/ui/interactive-hero-text";
-import { BrandEcosystem } from "@/components/ui/brand-ecosystem";
 
 /* ── Animation Variants ──────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 32 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
+  transition: { duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] as const },
 });
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0 },
   whileInView: { opacity: 1 },
   viewport: { once: true },
-  transition: { duration: 0.7, delay },
+  transition: { duration: 0.6, delay },
+});
+
+const scaleIn = (delay = 0) => ({
+  initial: { opacity: 0, scale: 0.92 },
+  whileInView: { opacity: 1, scale: 1 },
+  viewport: { once: true },
+  transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
 });
 
 /* ── Data ─────────────────────────────────────────────────────── */
-const steps = [
-  { step: "01", title: "Discovery", desc: "Map your idea to a precise technical blueprint.", icon: Search, phase: "DISCOVERY", image: "/assets/execution/discovery.png" },
-  { step: "02", title: "Design & Build", desc: "Agile sprints with weekly demos and live previews.", icon: Palette, phase: "ASSEMBLY", image: "/assets/execution/design_build.png" },
-  { step: "03", title: "Launch", desc: "Thorough QA and zero-downtime production rollout.", icon: PlayCircle, phase: "LAUNCH", image: "/assets/execution/launch.png" },
-  { step: "04", title: "Scale", desc: "Elastic infrastructure engineered for 1M+ users.", icon: Settings, phase: "SCALE", image: "/assets/execution/scale.png" },
-];
-
-const capabilities = [
-  { icon: GraduationCap, title: "Founder Mentorship", desc: "Product-market fit, venture strategy, and investor-ready foundations.", color: "#00F0FF", tag: "CAP_01" },
-  { icon: Sparkles, title: "Visual Narrative", desc: "World-class brand identity and premium storytelling that drives valuation.", color: "#9D5BFF", tag: "CAP_02" },
-  { icon: BarChart3, title: "Venture Intelligence", desc: "Data-driven insights to guide your roadmap and operational logic.", color: "#A5B4FC", tag: "CAP_03" },
-  { icon: TrendingUp, title: "Ecosystem Scaling", desc: "Elastic mission-critical infrastructure built beyond the launch.", color: "#00F0FF", tag: "CAP_04" },
-];
-
 const stats = [
-  { value: "50+", label: "Global Partners", icon: Globe },
-  { value: "3×", label: "Avg. Growth Rate", icon: TrendingUp },
-  { value: "98%", label: "Client Retention", icon: Star },
-  { value: "12d", label: "Avg. First Deploy", icon: Zap },
+  { value: "500+", label: "Businesses Empowered" },
+  { value: "15+", label: "Valuable Partnerships" },
+  { value: "98%", label: "Client Retention" },
+  { value: "60%", label: "Avg. Efficiency Gain" },
 ];
 
-const heroStars = [
-  { top: "15%", left: "20%", size: 1.5, delay: 0 },
-  { top: "25%", left: "75%", size: 2, delay: 1 },
-  { top: "45%", left: "10%", size: 1, delay: 2 },
-  { top: "65%", left: "85%", size: 2.5, delay: 0.5 },
-  { top: "80%", left: "30%", size: 1.5, delay: 1.5 },
-  { top: "10%", left: "60%", size: 1, delay: 2.5 },
-  { top: "35%", left: "40%", size: 2, delay: 0.8 },
-  { top: "55%", left: "65%", size: 1.5, delay: 1.2 },
-  { top: "75%", left: "15%", size: 1, delay: 2.2 },
-  { top: "85%", left: "70%", size: 2.5, delay: 0.3 },
-  { top: "20%", left: "90%", size: 1.5, delay: 1.8 },
-  { top: "50%", left: "95%", size: 1, delay: 0.7 },
-  { top: "70%", left: "50%", size: 2, delay: 2.1 },
-  { top: "30%", left: "5%", size: 1.5, delay: 1.1 },
-  { top: "90%", left: "8%", size: 1, delay: 0.4 },
-  { top: "5%", left: "45%", size: 2, delay: 1.6 },
-  { top: "40%", left: "25%", size: 1.5, delay: 2.4 },
-  { top: "60%", left: "55%", size: 1, delay: 0.9 },
-  { top: "95%", left: "40%", size: 2.5, delay: 1.7 },
-  { top: "80%", left: "90%", size: 1.5, delay: 1.4 },
+const ecosystem = [
+  {
+    icon: Code2,
+    title: "Software Solutions",
+    tagline: "Build Powerful Products",
+    color: "#2563EB",
+    bgColor: "#EFF6FF",
+    accentColor: "#DBEAFE",
+    desc: "Custom SaaS, white-label products, CRM, ERP, AI applications and more to power your business.",
+    features: ["SaaS Development", "White-Label Products", "CRM & ERP Systems", "AI & Automation"],
+    cta: "Explore Software",
+    href: "/services",
+  },
+  {
+    icon: BarChart3,
+    title: "Digital Growth",
+    tagline: "Grow Your Brand",
+    color: "#16A34A",
+    bgColor: "#F0FDF4",
+    accentColor: "#DCFCE7",
+    desc: "Data-driven marketing strategies that generate leads, build brands and accelerate business growth.",
+    features: ["SEO & SEM", "Social Media Marketing", "Performance Marketing", "Branding & Content"],
+    cta: "Explore Marketing",
+    href: "/services",
+  },
+  {
+    icon: Users,
+    title: "Business Networking",
+    tagline: "Connect & Collaborate",
+    color: "#9333EA",
+    bgColor: "#FDF4FF",
+    accentColor: "#F3E8FF",
+    desc: "BNI-inspired networking ecosystem that connects, mentors, collaborates and creates opportunities.",
+    features: ["Tailored Networking", "Mentorship Networking Events", "Business Communities", "Strategic Partnerships"],
+    cta: "Join the Network",
+    href: "/contact",
+  },
+  {
+    icon: GraduationCap,
+    title: "Academy & Mentorship",
+    tagline: "Learn & Grow",
+    color: "#EA580C",
+    bgColor: "#FFF7ED",
+    accentColor: "#FFEDD5",
+    desc: "Empowering students, startups and professionals to up-skill, get mentorship and unlock opportunities.",
+    features: ["Startup Mentorship", "Fund Your Projects", "Workshops & Internships", "Business Guidance"],
+    cta: "Explore Academy",
+    href: "/contact",
+  },
 ];
 
-/* ── Execution Card ─────────────────────────────────────────── */
-function ExecutionCard({ step, title, desc, icon: Icon, phase, image, index, progress }: any) {
-  // Each card is active for a specific range
-  // Total range is [0, 1]. For 4 cards, each gets ~0.25.
-  const start = index * 0.25;
-  const end = (index + 1) * 0.25;
-  
-  // Local progress within this card's scroll range
-  const cardProgress = useTransform(progress, [start, end], [0, 1]);
-  
-  // Exit animations (moving to back)
-  const isLast = index === steps.length - 1;
-  const y = useTransform(cardProgress, [0, 0.6, 1], [0, -40, isLast ? 0 : -1000]);
-  const scale = useTransform(cardProgress, [0, 0.6, 1], [1, 0.96, isLast ? 1 : 0.8]);
-  const opacity = useTransform(cardProgress, [0, 0.6, 1], [1, 1, isLast ? 1 : 0]);
-  const blur = useTransform(cardProgress, [0, 0.6, 1], [0, 2, isLast ? 0 : 20]);
+const products = [
+  { name: "Akronix CRM", desc: "Manage leads and customers", icon: Users, tag: "CRM" },
+  { name: "Akronix HRMS", desc: "Simplify HR and employee management", icon: Building2, tag: "HRMS" },
+  { name: "Akronix ERP", desc: "Complete ERP solution for your business", icon: Package, tag: "ERP" },
+  { name: "Akronix Inventory", desc: "Track inventory & stock needs", icon: Cpu, tag: "INV" },
+  { name: "Akronix POS", desc: "Point-of-sale for retail businesses", icon: ShieldCheck, tag: "POS" },
+  { name: "Akronix AI", desc: "A remote assistant with AI Intelligence", icon: Zap, tag: "AI" },
+];
 
-  // Entrance animations (coming from front/bottom)
-  const entranceY = useTransform(progress, [start - 0.1, start], [600, 0]);
-  const entranceOpacity = useTransform(progress, [start - 0.05, start], [0, 1]);
+const whyChoose = [
+  { icon: ShieldCheck, title: "Complete Ecosystem", desc: "One platform to manage all your business needs." },
+  { icon: Lightbulb, title: "Expert Mentorship", desc: "Guidance from industry experts and professionals." },
+  { icon: Rocket, title: "AI-Powered Growth", desc: "Smart solutions for faster, better decision-making." },
+  { icon: Handshake, title: "Strategic Networking", desc: "Opportunities that create real growth." },
+  { icon: Globe, title: "Scalable Solutions", desc: "Build to grow with your business at every stage." },
+  { icon: TrendingUp, title: "Long-Term Partnership", desc: "We grow when you grow. Your success is ours." },
+];
 
-  return (
-    <motion.div
-      style={{ 
-        y: index === 0 ? y : (progress < start ? entranceY : y), 
-        scale, 
-        opacity: index === 0 ? opacity : (progress < start ? entranceOpacity : opacity),
-        filter: `blur(${blur}px)`,
-        zIndex: steps.length - index 
-      }}
-      className="absolute inset-0 w-full h-full rounded-[40px] overflow-hidden border border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.6)] bg-[#0A0A14]"
-    >
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img src={image} alt={title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-[#020205]" />
-      </div>
+const successStories = [
+  {
+    category: "Digital Transformation",
+    title: "Retail/CRM Solution",
+    highlight: "60%",
+    highlightLabel: "increase in customer management efficiency",
+    desc: "We helped streamline CRM and increase managed customer reach.",
+    tag: "CRM",
+    color: "#2563EB",
+    bg: "#EFF6FF",
+  },
+  {
+    category: "Performance Marketing",
+    title: "Performance Marketing",
+    highlight: "300%",
+    highlightLabel: "increase in deals with targeted campaigns",
+    desc: "Our marketing team delivered results that exceeded expectations.",
+    tag: "MARKETING",
+    color: "#16A34A",
+    bg: "#F0FDF4",
+  },
+  {
+    category: "Networking Impact",
+    title: "Business Networking",
+    highlight: "15+",
+    highlightLabel: "valuable partnerships in 6 months",
+    desc: "Our networking program connected businesses to mutual success.",
+    tag: "NETWORK",
+    color: "#9333EA",
+    bg: "#FDF4FF",
+  },
+];
 
-      {/* Content */}
-      <div className="relative h-full flex flex-col justify-end p-8 md:p-16">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="h-px w-12 bg-cyan-400" />
-          <span className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.6em]">{phase}</span>
-        </div>
-        
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="max-w-2xl">
-            <h3 className="text-5xl md:text-8xl font-black text-white uppercase italic tracking-tighter mb-6 leading-[0.85]">
-              <span className="text-white/10 mr-6 not-italic">{step}</span><br />
-              {title}
-            </h3>
-            <p className="text-base md:text-xl text-white/40 font-medium max-w-lg leading-relaxed uppercase tracking-widest">
-              {desc}
-            </p>
-          </div>
-          
-          <div className="hidden md:flex w-28 h-28 rounded-[32px] bg-white/[0.03] border border-white/10 items-center justify-center backdrop-blur-xl group">
-            <Icon size={44} className="text-white/20 group-hover:text-cyan-400 transition-colors duration-500" />
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+const testimonials = [
+  {
+    name: "Ravi Sharma",
+    title: "CEO, ShopEasy",
+    rating: 5,
+    text: "Akronix transformed our business with an exceptional CRM solution and outstanding support. The team truly understands what we need.",
+    avatar: "RS",
+    color: "#2563EB",
+  },
+  {
+    name: "Priya Nair",
+    title: "Founder, EduBridge",
+    rating: 5,
+    text: "Their networking ecosystem introduced us to valuable partners and new opportunities. We grew our business network 5x in 6 months!",
+    avatar: "PN",
+    color: "#9333EA",
+  },
+  {
+    name: "Arjun Nair",
+    title: "CTO, HealthPlus",
+    rating: 5,
+    text: "From Akronix helped us define our long-term growth partners. Their technical expertise and mentorship is unparalleled.",
+    avatar: "AN",
+    color: "#16A34A",
+  },
+  {
+    name: "Smitha Iyer",
+    title: "Marketing Head, TechCo",
+    rating: 5,
+    text: "The marketing strategies from Akronix delivered amazing results for our brand! Our revenue grew 300% in just 3 months.",
+    avatar: "SI",
+    color: "#EA580C",
+  },
+];
 
+const partners = [
+  { name: "ZOHO", logo: null },
+  { name: "Microsoft", logo: null },
+  { name: "AWS", logo: null },
+  { name: "HubSpot", logo: null },
+  { name: "Google", logo: null },
+  { name: "BNI", logo: null },
+  { name: "Meta", logo: null },
+  { name: "GitHub", logo: null },
+  { name: "Hostinger", logo: null },
+];
 
 /* ── Animated Counter ─────────────────────────────────────────── */
-function AnimatedStat({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
+function AnimatedStat({ value, label }: { value: string; label: string }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   return (
@@ -148,70 +199,46 @@ function AnimatedStat({ value, label, icon: Icon }: { value: string; label: stri
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col items-center gap-2 group"
+      className="text-center"
     >
-      <div className="w-10 h-10 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center mb-1 group-hover:border-cyan-400/30 transition-colors duration-500">
-        <Icon size={16} className="text-white/30 group-hover:text-cyan-400 transition-colors duration-500" />
-      </div>
-      <span className="text-3xl md:text-4xl font-black tracking-tighter text-white">{value}</span>
-      <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/25">{label}</span>
+      <div className="text-3xl md:text-4xl font-black text-[#F59E0B] mb-1">{value}</div>
+      <div className="text-sm text-gray-500 font-medium">{label}</div>
     </motion.div>
+  );
+}
+
+/* ── Testimonial Card ─────────────────────────────────────────── */
+function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] }) {
+  return (
+    <div className="bg-white rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col gap-4 h-full">
+      <div className="flex gap-1">
+        {Array.from({ length: testimonial.rating }).map((_, i) => (
+          <Star key={i} size={14} className="fill-[#F59E0B] text-[#F59E0B]" />
+        ))}
+      </div>
+      <p className="text-gray-600 text-sm leading-relaxed flex-1">"{testimonial.text}"</p>
+      <div className="flex items-center gap-3 pt-2 border-t border-gray-50">
+        <div
+          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+          style={{ backgroundColor: testimonial.color }}
+        >
+          {testimonial.avatar}
+        </div>
+        <div>
+          <p className="text-sm font-bold text-gray-900">{testimonial.name}</p>
+          <p className="text-xs text-gray-400">{testimonial.title}</p>
+        </div>
+      </div>
+    </div>
   );
 }
 
 /* ── Component ────────────────────────────────────────────────── */
 export default function HomePage() {
-  const [selectedCapability, setSelectedCapability] = useState<number | null>(null);
-  const [activeCardIndex, setActiveCardIndex] = useState(0);
-  const executionRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress: cardsProgress } = useScroll({
-    target: executionRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Apply spring physics to smooth out the card transitions (absorbs rigid scroll ticks)
-  const smoothCardsProgress = useSpring(cardsProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
-
-  useMotionValueEvent(cardsProgress, "change", (latest) => {
-    let newIndex = Math.floor(latest / 0.25);
-    if (newIndex > 3) newIndex = 3;
-    if (newIndex < 0) newIndex = 0;
-    setActiveCardIndex(newIndex);
-  });
-
-  const scrollToCard = (index: number) => {
-    if (executionRef.current) {
-      const rect = executionRef.current.getBoundingClientRect();
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const sectionTop = rect.top + scrollTop;
-      const scrollableDistance = window.innerHeight * 4; // 500vh - 100vh
-      const targetY = sectionTop + (index * 0.25 * scrollableDistance) + 5; // +5px buffer
-      
-      window.scrollTo({
-        top: targetY,
-        behavior: "smooth"
-      });
-    }
-  };
-
-  // Separate tracker for the title so it joins *as* the user scrolls to it, before it even pins
-  const { scrollYProgress: titleProgress } = useScroll({
-    target: executionRef,
-    offset: ["start 90%", "start 40%"]
-  });
-
-  // Title join animation values
-  const titleXLeft = useTransform(titleProgress, [0, 1], ["-100%", "0%"]);
-  const titleXRight = useTransform(titleProgress, [0, 1], ["100%", "0%"]);
-  const titleOpacity = useTransform(titleProgress, [0, 0.8], [0, 1]);
-
-
-  // Minimal interactive spotlight
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [testimonialsPerPage] = useState(2);
   const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
   const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
-  const springX = useSpring(mouseX, { stiffness: 30, damping: 15 });
-  const springY = useSpring(mouseY, { stiffness: 30, damping: 15 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -219,388 +246,607 @@ export default function HomePage() {
     mouseY.set(e.clientY - rect.top);
   };
 
+  const totalTestimonialPages = Math.ceil(testimonials.length / testimonialsPerPage);
+  const visibleTestimonials = testimonials.slice(
+    activeTestimonial * testimonialsPerPage,
+    (activeTestimonial + 1) * testimonialsPerPage
+  );
+
   return (
-    <div className="overflow-clip bg-[#020205]">
+    <div className="overflow-clip bg-white">
 
       {/* ── HERO ────────────────────────────────────────────────── */}
-      <section 
-        className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-16 px-4 overflow-hidden"
+      <section
+        className="relative min-h-screen flex flex-col justify-center pt-20 pb-12 px-4 overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #FFFFFF 0%, #F8FAFF 40%, #F0F4FF 100%)",
+        }}
         onMouseMove={handleMouseMove}
       >
-        {/* Minimal Background Layer */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-          {/* Central subtle breathing core */}
-          <motion.div
-            animate={{ opacity: [0.06, 0.12, 0.06], scale: [0.9, 1.05, 0.9] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute w-[80vw] h-[60vh] max-w-[1000px] rounded-[100%] blur-[140px]"
-            style={{ background: "radial-gradient(ellipse, #00F0FF, transparent 65%)" }}
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full opacity-20"
+            style={{ background: "radial-gradient(circle, #DBEAFE, transparent 70%)" }} />
+          <div className="absolute -bottom-20 -left-20 w-[500px] h-[500px] rounded-full opacity-15"
+            style={{ background: "radial-gradient(circle, #EDE9FE, transparent 70%)" }} />
+          {/* Subtle grid */}
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage: "linear-gradient(#1e3a8a 1px, transparent 1px), linear-gradient(90deg, #1e3a8a 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+            }}
           />
         </div>
 
-        {/* Small glowing blobs / stars */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {heroStars.map((star, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full bg-cyan-100"
-              style={{
-                top: star.top,
-                left: star.left,
-                width: star.size,
-                height: star.size,
-                boxShadow: "0 0 10px 2px rgba(0,240,255,0.3)"
-              }}
-              animate={{ opacity: [0.1, 0.6, 0.1] }}
-              transition={{ duration: 3 + star.delay, repeat: Infinity, ease: "easeInOut", delay: star.delay }}
-            />
-          ))}
-        </div>
-        
-        {/* Faint static grid */}
-        <div className="absolute inset-0 grid-bg opacity-[0.03] pointer-events-none" />
-
-        {/* Cursor interactive spotlight */}
-        <motion.div
-          className="absolute top-0 left-0 pointer-events-none w-[600px] h-[600px] rounded-full blur-[90px]"
-          style={{
-            background: "radial-gradient(circle, rgba(157,91,255,0.18), transparent 70%)",
-            x: springX,
-            y: springY,
-            translateX: "-50%",
-            translateY: "-50%",
-            zIndex: 1
-          }}
-        />
-
-        <div className="container-xl relative z-10 text-center">
-          {/* Hero word mark */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="relative h-32 sm:h-44 md:h-56 mb-6"
-          >
-            {/* Constant light blob behind the title */}
-            <div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] max-w-[700px] h-[180px] rounded-[100%] blur-[80px] pointer-events-none z-0"
-              style={{ background: "radial-gradient(ellipse, rgba(0,240,255,0.65), transparent 70%)" }}
-            />
-            <div className="relative z-10 w-full h-full">
-              <InteractiveHeroText />
-            </div>
-          </motion.div>
-
-          {/* Sub-label */}
-          <motion.p
-            {...fadeUp(0.2)}
-            className="text-base sm:text-lg md:text-xl font-medium max-w-xl mx-auto mb-10 leading-relaxed tracking-tight text-white/35"
-          >
-            We help SMEs and startups build and scale premium digital products — from idea to market.
-          </motion.p>
-
-          {/* CTA buttons */}
-          <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
-            <Link href="/contact?type=project" className="btn-primary text-base px-8 py-3.5 w-full sm:w-auto shadow-[0_0_30px_rgba(0,240,255,0.15)]">
-              Execute Vision <ArrowRight size={18} className="ml-1.5" />
-            </Link>
-            <Link href="/contact?type=consultation" className="btn-secondary text-base px-8 py-3.5 w-full sm:w-auto">
-              Engineering Audit
-            </Link>
-          </motion.div>
-
-          {/* Stats row */}
-          <motion.div {...fadeUp(0.4)} className="grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-2xl mx-auto">
-            {stats.map((s) => (
-              <AnimatedStat key={s.label} {...s} />
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Scroll cue */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            className="w-5 h-8 border border-white/10 rounded-full flex items-start justify-center pt-1.5"
-          >
-            <div className="w-1 h-2 bg-white/20 rounded-full" />
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ── CAPABILITIES ────────────────────────────────────────── */}
-      <section className="py-24 relative overflow-hidden border-t border-white/[0.03]">
-        {/* Background ambient */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 right-1/3 w-[500px] h-[500px] bg-cyan-500/[0.04] blur-[100px]" />
-          <div className="absolute bottom-0 left-1/3 w-[500px] h-[500px] bg-purple-500/[0.04] blur-[100px]" />
-        </div>
-
         <div className="container-xl relative z-10">
-          {/* Section header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-            <div className="max-w-lg">
-              <motion.div {...fadeUp()} className="flex items-center gap-3 mb-4">
-                <div className="h-px w-7 bg-cyan-400" />
-                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-cyan-400">Total Acceleration</span>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div>
+              {/* Eyebrow badge */}
+              <motion.div {...fadeIn(0)} className="mb-6">
+                <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-100 px-4 py-2 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
+                  Empowering Startups, Businesses &amp; Institutions
+                </span>
               </motion.div>
-              <motion.h2 {...fadeUp(0.1)} className="text-4xl md:text-6xl font-black tracking-tighter leading-[0.88] uppercase italic text-white/90">
-                Beyond the <span className="gradient-text-primary">Build.</span>
-              </motion.h2>
-            </div>
-            <motion.p {...fadeUp(0.2)} className="text-base text-white/25 max-w-xs font-medium leading-relaxed uppercase tracking-widest md:text-right">
-              Engineering business outcomes,<br />not just code.
-            </motion.p>
-          </div>
 
-          {/* Capability cards - Infinite Auto Carousel */}
-          <div className="relative w-[100vw] left-1/2 -ml-[50vw] mt-12 overflow-hidden">
-            {/* Fade edges */}
-            <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-[#020205] to-transparent z-10 pointer-events-none" />
-            <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-[#020205] to-transparent z-10 pointer-events-none" />
-            
-            <motion.div 
-               animate={{ x: ["0%", "-50%"] }}
-               transition={{ duration: 40, ease: "linear", repeat: Infinity }}
-               className="flex gap-6 w-max py-8 pb-12 px-6"
-            >
-              {[...capabilities, ...capabilities, ...capabilities, ...capabilities].map(({ icon: Icon, title, desc, color, tag }, idx) => {
-                const realIndex = idx % capabilities.length;
-                return (
-                  <motion.div
-                    key={`${title}-${idx}`}
-                    onClick={() => setSelectedCapability(realIndex)}
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    className="shrink-0 w-[85vw] max-w-[340px] group relative p-8 rounded-[32px] bg-[#0A0A14] border border-white/[0.05] overflow-hidden flex flex-col justify-between shadow-[0_20px_40px_rgba(0,0,0,0.5)] cursor-pointer hover:border-white/[0.15] hover:bg-[#0c0c18] transition-colors duration-300 min-h-[380px]"
-                  >
-                    {/* Hover sweep */}
-                    <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                      <motion.div
-                        animate={{ x: ["-120%", "220%"] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/[0.03] to-transparent skew-x-[-20deg]"
-                      />
-                    </div>
-                    {/* Glow dot */}
-                    <motion.div
-                      animate={{ opacity: [0.3, 0.8, 0.3] }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: realIndex * 0.5 }}
-                      className="absolute top-8 right-8 w-1.5 h-1.5 rounded-full"
-                      style={{ background: color, boxShadow: `0 0 12px ${color}` }}
-                    />
-
-                    {/* Watermark Icon — centered background */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.06] pointer-events-none transition-all duration-700 group-hover:opacity-[0.12]">
-                      <Icon size={200} style={{ color }} />
-                    </div>
-
-                    <div className="relative z-10 w-full flex-grow pt-10">
-                      <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic text-white/95">{title}</h3>
-                      <p className="text-[15px] leading-relaxed text-white/40 group-hover:text-white/60 transition-colors duration-500 font-medium">
-                        {desc}
-                      </p>
-                    </div>
-
-                    <div className="relative z-10 flex items-center justify-between mt-8 w-full border-t border-white/[0.05] pt-6">
-                      <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">{tag}</span>
-                      <span className="text-xs text-white/20 uppercase tracking-widest font-black group-hover:text-white flex items-center gap-2 transition-colors duration-300">
-                        Explore <div className="w-3 h-3 rounded-full bg-white/20 group-hover:bg-white flex items-center justify-center transition-colors"><div className="w-1 h-1 bg-black rounded-full" /></div>
-                      </span>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </div>
-
-          {/* Centered Overlay Popup */}
-          <AnimatePresence>
-            {selectedCapability !== null && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                onClick={() => setSelectedCapability(null)}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-black/40 backdrop-blur-sm cursor-pointer"
-              >
-                {(() => {
-                  const { icon: Icon, title, desc, color, tag } = capabilities[selectedCapability];
-                  return (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                      onClick={(e) => e.stopPropagation()}
-                      className="relative w-full max-w-2xl bg-[#0d0d16] p-10 sm:p-14 rounded-[36px] border border-white/20 flex flex-col justify-between shadow-[0_50px_100px_rgba(0,0,0,0.8),inset_0_1px_30px_rgba(255,255,255,0.05)] cursor-default overflow-hidden"
-                    >
-                      {/* Close button */}
-                      <button 
-                        onClick={() => setSelectedCapability(null)}
-                        className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-colors text-white/60 hover:text-white z-50"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                      </button>
-
-                      {/* Ambient modal glow */}
-                      <div 
-                        className="absolute -top-32 -left-32 w-[300px] h-[300px] rounded-full blur-[100px] opacity-20 pointer-events-none"
-                        style={{ background: color }}
-                      />
-
-                      {/* Watermark Icon */}
-                      <div className="absolute -bottom-16 -right-16 opacity-[0.04] pointer-events-none -rotate-12">
-                        <Icon size={500} style={{ color }} />
-                      </div>
-
-                      <div className="relative z-10 w-full mb-10 mt-16">
-                        <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tighter uppercase italic text-white">{title}</h3>
-                        <p className="text-base sm:text-lg leading-relaxed text-white/50 font-medium max-w-lg">
-                          {desc}
-                          <br/><br/>
-                          This is an expanded view. By leveraging our deeply integrated ecosystem approach, we map these specific capabilities directly into your project&apos;s technical architecture, ensuring flawless scale and absolute market superiority.
-                        </p>
-                      </div>
-
-                      <div className="relative z-10 flex items-center justify-between w-full border-t border-white/10 pt-8 mt-4">
-                        <span className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">{tag}</span>
-                        <Link href="/contact" className="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest bg-white/10 hover:bg-white text-white hover:text-black transition-colors border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
-                          Initiate Sequence
-                        </Link>
-                      </div>
-                    </motion.div>
-                  );
-                })()}
+              {/* Headline */}
+              <motion.div {...fadeUp(0.1)}>
+                <h1 className="text-6xl md:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight mb-6">
+                  <span className="text-gray-900">Build.</span>
+                  <br />
+                  <span className="text-gray-900">Connect.</span>
+                  <br />
+                  <span style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                    Scale.
+                  </span>
+                </h1>
               </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
 
-      {/* ── EXECUTION STRATEGY ──────────────────────────────────── */}
-      <section className="relative">
-        <div ref={executionRef} className="h-[500vh] relative bg-[#020205]">
-          <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden pt-24">
-            
-            {/* Side Navigation */}
-            <div className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50">
-              {steps.map((_, i) => (
-                <button 
-                  key={i} 
-                  onClick={() => scrollToCard(i)} 
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-black transition-all duration-300 ${activeCardIndex === i ? 'bg-cyan-400 text-black shadow-[0_0_20px_rgba(0,240,255,0.4)] scale-110' : 'bg-white/5 border border-white/10 text-white/40 hover:text-white hover:border-white/30 hover:bg-white/10'}`}
+              <motion.p {...fadeUp(0.2)} className="text-gray-500 text-lg leading-relaxed mb-8 max-w-lg">
+                Akronix is your complete business growth ecosystem. We deliver software solutions, digital marketing, business networking, mentorship and innovation — under one roof.
+              </motion.p>
+
+              {/* CTA buttons */}
+              <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row gap-3 mb-10">
+                <Link
+                  href="/contact?type=project"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-white text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
+                  style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)", boxShadow: "0 4px 20px rgba(245,158,11,0.35)" }}
                 >
-                  0{i + 1}
+                  Get Started <ArrowRight size={16} />
+                </Link>
+                <Link
+                  href="/services"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-gray-700 text-sm bg-white border border-gray-200 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-gray-300"
+                >
+                  Explore Products <ChevronRight size={16} />
+                </Link>
+                <button
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-bold text-gray-600 text-sm transition-all duration-200 hover:text-gray-900"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center">
+                    <Play size={10} className="text-white fill-white ml-0.5" />
+                  </div>
+                  Watch Demo
                 </button>
-              ))}
+              </motion.div>
+
+              {/* Stats row */}
+              <motion.div {...fadeUp(0.4)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-gray-100">
+                {stats.map((s) => (
+                  <AnimatedStat key={s.label} {...s} />
+                ))}
+              </motion.div>
             </div>
 
-            {/* Background ambient */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen bg-gradient-to-b from-cyan-500/[0.04] to-transparent" />
-              {[...Array(3)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ opacity: [0.05, 0.1, 0.05], scale: [1, 1.2, 1] }}
-                  transition={{ duration: 10 + i * 2, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute w-[800px] h-[800px] rounded-full blur-[160px]"
-                  style={{
-                    background: i % 2 === 0 ? "rgba(0,240,255,0.08)" : "rgba(157,91,255,0.08)",
-                    left: `${i * 20 - 10}%`, top: `${10 + i * 20}%`,
-                  }}
-                />
-              ))}
-            </div>
+            {/* Right — Dashboard Mockup */}
+            <motion.div {...scaleIn(0.3)} className="relative hidden lg:block">
+              {/* Main dashboard card */}
+              <div className="relative rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.15)] bg-white border border-gray-100">
+                {/* Dashboard Header */}
+                <div className="bg-gradient-to-r from-[#1e3a8a] to-[#2563eb] p-4 flex items-center gap-3">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-white/30" />
+                    <div className="w-3 h-3 rounded-full bg-white/30" />
+                    <div className="w-3 h-3 rounded-full bg-white/30" />
+                  </div>
+                  <div className="flex-1 text-center">
+                    <span className="text-white/80 text-xs font-semibold">Akronix Dashboard</span>
+                  </div>
+                  <div className="w-6 h-6 rounded-full bg-[#F59E0B] flex items-center justify-center text-[8px] font-black text-white">A</div>
+                </div>
 
-            <div className="container-xl relative z-10 w-full px-4">
-              {/* Section header with Join Animation */}
-              <div className="text-center mb-12">
-                <motion.div
-                  style={{ opacity: titleOpacity }}
-                  className="flex items-center justify-center gap-3 mb-6"
-                >
-                  <div className="h-px w-10 bg-cyan-400/50" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.6em] text-cyan-400">Execution Strategy</span>
-                  <div className="h-px w-10 bg-cyan-400/50" />
-                </motion.div>
+                <div className="p-6 bg-gray-50">
+                  {/* Revenue metrics */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm">
+                      <p className="text-xs text-gray-400 font-medium mb-1">Total Revenue</p>
+                      <p className="text-2xl font-black text-gray-900">$250,000</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <TrendingUp size={10} className="text-green-500" />
+                        <span className="text-[10px] text-green-500 font-semibold">+18.2%</span>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-2xl p-4 shadow-sm">
+                      <p className="text-xs text-gray-400 font-medium mb-1">New Clients</p>
+                      <p className="text-2xl font-black text-gray-900">1,420</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <TrendingUp size={10} className="text-blue-500" />
+                        <span className="text-[10px] text-blue-500 font-semibold">+12.4%</span>
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="flex flex-col items-center overflow-hidden">
-                  <motion.h2
-                    style={{ x: titleXLeft }}
-                    className="text-5xl sm:text-7xl md:text-9xl font-black leading-tight tracking-tighter italic uppercase text-white"
-                  >
-                    Turning <span className="gradient-text-primary">chaos</span>
-                  </motion.h2>
-                  <motion.h2
-                    style={{ x: titleXRight }}
-                    className="text-5xl sm:text-7xl md:text-9xl font-black leading-tight tracking-tighter italic uppercase text-white -mt-4 md:-mt-8"
-                  >
-                    into code.
-                  </motion.h2>
+                  {/* Mini chart area */}
+                  <div className="bg-white rounded-2xl p-4 shadow-sm mb-4">
+                    <p className="text-xs text-gray-400 font-medium mb-3">Growth Overview</p>
+                    <div className="h-16 flex items-end gap-1.5">
+                      {[40, 55, 45, 70, 60, 85, 75, 90, 80, 95, 88, 100].map((h, i) => (
+                        <div key={i} className="flex-1 rounded-sm transition-all duration-300"
+                          style={{
+                            height: `${h}%`,
+                            background: i >= 9 ? "linear-gradient(135deg, #F59E0B, #EA580C)" : "#DBEAFE",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Services grid */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: "Software", pct: 40, color: "#2563EB" },
+                      { label: "Marketing", pct: 25, color: "#16A34A" },
+                      { label: "Networking", pct: 20, color: "#9333EA" },
+                      { label: "Academy", pct: 15, color: "#EA580C" },
+                    ].map((s) => (
+                      <div key={s.label} className="bg-white rounded-xl p-3 shadow-sm">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-semibold text-gray-500">{s.label}</span>
+                          <span className="text-[10px] font-black" style={{ color: s.color }}>{s.pct}%</span>
+                        </div>
+                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Stacked Cards Deck */}
-              <div className="relative h-[60vh] md:h-[70vh] w-full max-w-6xl mx-auto">
-                {steps.map((step, i) => (
-                  <ExecutionCard 
-                    key={step.step} 
-                    {...step} 
-                    index={i} 
-                    progress={smoothCardsProgress}
-                  />
+              {/* Floating badges */}
+              <motion.div
+                animate={{ y: [-6, 6, -6] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                  <BarChart3 size={18} className="text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-gray-900">Digital Marketing</p>
+                  <p className="text-[10px] text-gray-400">Grow Your Brand</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                animate={{ y: [6, -6, 6] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100"
+              >
+                <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                  <Users size={18} className="text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-gray-900">Business Networking</p>
+                  <p className="text-[10px] text-gray-400">Connect & Grow</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                animate={{ y: [-4, 4, -4] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute top-1/2 -right-8 bg-white rounded-2xl shadow-xl p-3 flex items-center gap-2 border border-gray-100"
+              >
+                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                  <GraduationCap size={14} className="text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-gray-900">Academy</p>
+                  <p className="text-[9px] text-gray-400">Learn & Grow</p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRUSTED BY ──────────────────────────────────────────── */}
+      <section className="py-12 bg-gray-50 border-y border-gray-100">
+        <div className="container-xl">
+          <motion.p {...fadeIn(0)} className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">
+            Trusted by 100+ Businesses &amp; Institutions
+          </motion.p>
+          <div className="relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
+            <motion.div
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+              className="flex gap-12 w-max items-center"
+            >
+              {[...partners, ...partners].map((p, i) => (
+                <div key={i} className="flex items-center justify-center px-4">
+                  <span className="text-lg font-black text-gray-400 tracking-tight whitespace-nowrap hover:text-gray-700 transition-colors duration-200">
+                    {p.name}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AKRONIX ECOSYSTEM ───────────────────────────────────── */}
+      <section className="py-24 bg-white">
+        <div className="container-xl">
+          <motion.div {...fadeUp()} className="text-center mb-16">
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Our Platform</p>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+              The <span style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Akronix</span> Ecosystem
+            </h2>
+            <p className="text-gray-500 text-lg max-w-xl mx-auto">One Platform. Four Pillars of Growth.</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {ecosystem.map((item, i) => (
+              <motion.div
+                key={item.title}
+                {...fadeUp(i * 0.1)}
+                whileHover={{ y: -6, boxShadow: "0 20px 60px rgba(0,0,0,0.12)" }}
+                className="group relative rounded-3xl p-6 border border-gray-100 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col cursor-pointer overflow-hidden"
+              >
+                {/* Background tint on hover */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"
+                  style={{ background: item.bgColor }}
+                />
+
+                <div className="relative z-10">
+                  {/* Icon */}
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                    style={{ backgroundColor: item.accentColor }}
+                  >
+                    <item.icon size={24} style={{ color: item.color }} />
+                  </div>
+
+                  {/* Eyebrow */}
+                  <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: item.color }}>{item.tagline}</p>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-black text-gray-900 mb-3">{item.title}</h3>
+
+                  {/* Desc */}
+                  <p className="text-sm text-gray-500 leading-relaxed mb-5">{item.desc}</p>
+
+                  {/* Features list */}
+                  <ul className="space-y-2 mb-6 flex-1">
+                    {item.features.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+                        <CheckCircle2 size={13} style={{ color: item.color }} className="flex-shrink-0" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA */}
+                  <Link
+                    href={item.href}
+                    className="inline-flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                    style={{
+                      backgroundColor: item.accentColor,
+                      color: item.color,
+                    }}
+                  >
+                    {item.cta} <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PREMIUM PRODUCTS ────────────────────────────────────── */}
+      <section className="py-24 bg-gray-50">
+        <div className="container-xl">
+          <motion.div {...fadeUp()} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">White-Label SaaS</p>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900">Our Premium Products</h2>
+              <p className="text-gray-500 mt-2">White-Label SaaS Products to Simplify Your Business Operations</p>
+            </div>
+            <Link href="/products" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors whitespace-nowrap">
+              View All Products <ArrowRight size={14} />
+            </Link>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {products.map((product, i) => (
+              <motion.div
+                key={product.name}
+                {...fadeUp(i * 0.08)}
+                whileHover={{ y: -4, boxShadow: "0 16px 48px rgba(0,0,0,0.12)" }}
+                className="group bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col items-start gap-3 cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-300">
+                  <product.icon size={18} className="text-blue-600 group-hover:text-white transition-colors duration-300" />
+                </div>
+                <div>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-300 mb-1 block">{product.tag}</span>
+                  <h3 className="text-sm font-black text-gray-900 leading-tight">{product.name}</h3>
+                  <p className="text-xs text-gray-400 mt-1 leading-snug">{product.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHY CHOOSE AKRONIX ──────────────────────────────────── */}
+      <section className="py-24 bg-white">
+        <div className="container-xl">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left - feature grid */}
+            <div>
+              <motion.div {...fadeUp()}>
+                <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Our Advantage</p>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6">
+                  Why Businesses Choose Akronix
+                </h2>
+              </motion.div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {whyChoose.map((item, i) => (
+                  <motion.div
+                    key={item.title}
+                    {...fadeUp(i * 0.08)}
+                    className="flex items-start gap-3 p-4 rounded-2xl hover:bg-gray-50 transition-colors duration-200 group"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600 transition-colors duration-300">
+                      <item.icon size={16} className="text-blue-600 group-hover:text-white transition-colors duration-300" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black text-gray-900 mb-0.5">{item.title}</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                    </div>
+                  </motion.div>
                 ))}
               </div>
+            </div>
+
+            {/* Right - quote card */}
+            <motion.div {...scaleIn(0.2)} className="relative">
+              <div
+                className="relative rounded-3xl overflow-hidden"
+                style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)" }}
+              >
+                <div className="p-10 md:p-12">
+                  <Quote size={40} className="text-white/20 mb-6" />
+                  <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-6">
+                    We don&apos;t just build software. We build relationships, solutions and futures.
+                  </h3>
+                  <button className="inline-flex items-center gap-3 text-sm font-bold text-white">
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+                      <Play size={12} className="text-white fill-white ml-0.5" />
+                    </div>
+                    Play Video
+                  </button>
+                </div>
+
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-white/5 translate-y-1/2 -translate-x-1/2" />
+              </div>
+
+              {/* Stats floating card */}
+              <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-xl p-5 border border-gray-100">
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { v: "500+", l: "Clients" },
+                    { v: "98%", l: "Retention" },
+                    { v: "15+", l: "Partners" },
+                  ].map((s) => (
+                    <div key={s.l} className="text-center">
+                      <p className="text-base font-black text-gray-900">{s.v}</p>
+                      <p className="text-[10px] text-gray-400">{s.l}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SUCCESS STORIES ─────────────────────────────────────── */}
+      <section className="py-24 bg-gray-50">
+        <div className="container-xl">
+          <motion.div {...fadeUp()} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Case Studies</p>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900">Success Stories</h2>
+              <p className="text-gray-500 mt-2">Real Results. Real Impact.</p>
+            </div>
+            <Link href="/contact" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 whitespace-nowrap">
+              View All Stories <ArrowRight size={14} />
+            </Link>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {successStories.map((story, i) => (
+              <motion.div
+                key={story.title}
+                {...fadeUp(i * 0.1)}
+                whileHover={{ y: -6 }}
+                className="group bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col"
+              >
+                {/* Tag */}
+                <div className="flex items-center justify-between mb-6">
+                  <span
+                    className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
+                    style={{ backgroundColor: story.bg, color: story.color }}
+                  >
+                    {story.category}
+                  </span>
+                  <ExternalLink size={14} className="text-gray-300 group-hover:text-gray-600 transition-colors" />
+                </div>
+
+                {/* Metric */}
+                <div className="mb-6 flex-1">
+                  <div className="text-5xl font-black mb-2" style={{ color: story.color }}>
+                    {story.highlight}
+                  </div>
+                  <p className="text-sm font-semibold text-gray-700 mb-3">{story.highlightLabel}</p>
+                  <p className="text-sm text-gray-500 leading-relaxed">{story.desc}</p>
+                </div>
+
+                {/* CTA */}
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 text-sm font-bold transition-colors duration-200"
+                  style={{ color: story.color }}
+                >
+                  Read Story <ChevronRight size={14} />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ────────────────────────────────────────── */}
+      <section className="py-24 bg-white">
+        <div className="container-xl">
+          <motion.div {...fadeUp()} className="text-center mb-12">
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Client Reviews</p>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">What Our Clients Say</h2>
+            <div className="flex items-center justify-center gap-1 mb-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={16} className="fill-[#F59E0B] text-[#F59E0B]" />
+              ))}
+              <span className="ml-2 text-sm font-semibold text-gray-600">4.9/5 from 100+ reviews</span>
+            </div>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <AnimatePresence mode="wait">
+              {visibleTestimonials.map((t, i) => (
+                <motion.div
+                  key={`${activeTestimonial}-${i}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                >
+                  <TestimonialCard testimonial={t} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          {/* Pagination dots */}
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={() => setActiveTestimonial((p) => Math.max(0, p - 1))}
+              className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-40"
+              disabled={activeTestimonial === 0}
+            >
+              <ChevronLeft size={14} className="text-gray-600" />
+            </button>
+            {Array.from({ length: totalTestimonialPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveTestimonial(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${activeTestimonial === i ? "bg-blue-600 w-6" : "bg-gray-300"}`}
+              />
+            ))}
+            <button
+              onClick={() => setActiveTestimonial((p) => Math.min(totalTestimonialPages - 1, p + 1))}
+              className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors disabled:opacity-40"
+              disabled={activeTestimonial === totalTestimonialPages - 1}
+            >
+              <ChevronRight size={14} className="text-gray-600" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TRUSTED PARTNERS ────────────────────────────────────── */}
+      <section className="py-16 bg-gray-50 border-y border-gray-100">
+        <div className="container-xl">
+          <motion.p {...fadeIn(0)} className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">
+            Our Trusted Partners
+          </motion.p>
+          <div className="relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
+            <div className="flex gap-6 overflow-hidden">
+              <motion.div
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{ duration: 25, ease: "linear", repeat: Infinity }}
+                className="flex gap-6 w-max"
+              >
+                {[...partners, ...partners].map((p, i) => (
+                  <div key={i} className="flex-shrink-0 bg-white rounded-xl px-8 py-4 border border-gray-100 shadow-sm flex items-center justify-center min-w-[120px]">
+                    <span className="text-sm font-black text-gray-400 tracking-tight">{p.name}</span>
+                  </div>
+                ))}
+              </motion.div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── BRAND ECOSYSTEM ───────────────────────────────────────── */}
-      <BrandEcosystem />
-
-      {/* ── CTA ───────────────────────────────────────────────────── */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="container-xl relative z-10 px-4">
+      {/* ── CTA BANNER ──────────────────────────────────────────── */}
+      <section className="py-24 bg-white">
+        <div className="container-xl">
           <motion.div
             {...fadeUp()}
-            className="relative rounded-[28px] overflow-hidden text-center py-16 px-8 md:py-20 md:px-16 border border-white/[0.06]"
-            style={{
-              background: "linear-gradient(135deg, rgba(12,12,22,0.98) 0%, rgba(8,8,18,0.98) 100%)",
-              boxShadow: "0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)",
-            }}
+            className="relative overflow-hidden rounded-3xl p-12 md:p-16 text-center"
+            style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #7c3aed 100%)" }}
           >
-            {/* Ambient glows */}
-            <div className="absolute -top-20 left-1/4 w-60 h-60 bg-cyan-500/[0.06] rounded-full blur-[80px] pointer-events-none" />
-            <div className="absolute -bottom-20 right-1/4 w-60 h-60 bg-purple-500/[0.06] rounded-full blur-[80px] pointer-events-none" />
+            {/* Decorative circles */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
 
-            <motion.div {...fadeUp(0.1)} className="flex items-center justify-center gap-3 mb-5">
-              <div className="h-px w-8 bg-gradient-to-r from-transparent to-cyan-400" />
-              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-cyan-400">Ready to Launch</span>
-              <div className="h-px w-8 bg-gradient-to-l from-transparent to-cyan-400" />
-            </motion.div>
-
-            <motion.h2 {...fadeUp(0.15)} className="text-4xl sm:text-6xl font-black mb-5 leading-[0.9] tracking-tighter uppercase">
-              Let&apos;s build your <span className="gradient-text-primary">next big thing.</span>
-            </motion.h2>
-            <motion.p {...fadeUp(0.2)} className="text-sm md:text-base mb-10 max-w-xl mx-auto font-medium text-white/40 uppercase tracking-[0.15em] leading-relaxed">
-              From architecture planning to production scale — we guide your product at every layer.
-            </motion.p>
-            <motion.div {...fadeUp(0.25)} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/contact" className="btn-primary text-base px-10 py-3.5 shadow-[0_0_35px_rgba(0,240,255,0.12)]">
-                Start a Project <ArrowRight size={18} className="ml-1.5" />
-              </Link>
-              <Link href="/services" className="btn-secondary text-base px-10 py-3.5">
-                View Services <ChevronRight size={18} className="ml-1" />
-              </Link>
-            </motion.div>
+            <div className="relative z-10">
+              <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mb-4">Get Started Today</p>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
+                Ready to Build the Future<br />of Your Business?
+              </h2>
+              <p className="text-blue-100 text-base max-w-xl mx-auto mb-10 leading-relaxed">
+                Let&apos;s build software that matters, expand your network and unlock new opportunities — together.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/contact?type=project"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-gray-900 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl"
+                  style={{ background: "linear-gradient(135deg, #F59E0B, #FBBF24)", boxShadow: "0 8px 30px rgba(245,158,11,0.4)" }}
+                >
+                  Get Started Today <ArrowRight size={16} />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-white text-sm bg-white/10 border border-white/20 transition-all duration-200 hover:bg-white/20 hover:-translate-y-0.5"
+                >
+                  Book a Free Consultation
+                </Link>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>

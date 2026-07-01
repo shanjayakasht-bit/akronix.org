@@ -1,31 +1,42 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Zap, Twitter, Instagram, Linkedin, ArrowRight } from "lucide-react";
+import { Twitter, Instagram, Linkedin, ArrowRight, MapPin, PhoneCall, Mail } from "lucide-react";
 
 const footerLinks = {
-  Services: [
-    { label: "SaaS Development", href: "/services/saas-development" },
-    { label: "MVP Development", href: "/services/mvp-development" },
-    { label: "Landing Pages", href: "/services/landing-pages" },
-    { label: "Custom Web Apps", href: "/services/custom-web-apps" },
+  Products: [
+    { label: "Akronix CRM", href: "/products" },
+    { label: "Akronix HRMS", href: "/products" },
+    { label: "Akronix ERP", href: "/products" },
+    { label: "Akronix POS", href: "/products" },
+    { label: "Akronix AI", href: "/products" },
+  ],
+  Solutions: [
+    { label: "SaaS Development", href: "/services" },
+    { label: "Digital Marketing", href: "/services" },
+    { label: "Business Networking", href: "/networking" },
+    { label: "College Projects", href: "/contact" },
+    { label: "AI Automation", href: "/services" },
   ],
   Company: [
-    { label: "About", href: "/about" },
+    { label: "About Us", href: "/about" },
+    { label: "Our Team", href: "/blog" },
+    { label: "Careers", href: "/contact" },
+    { label: "Partners", href: "/contact?type=partner" },
     { label: "Policies", href: "/policies" },
-    { label: "Team", href: "/blog" },
-    { label: "Careers", href: "/careers" },
   ],
   Resources: [
     { label: "Pricing", href: "/pricing" },
-    { label: "Contact", href: "/contact" },
-    { label: "Start a Project", href: "/contact?type=project" },
-    { label: "Client Portal", href: "/portal" },
+    { label: "Case Studies", href: "/contact" },
+    { label: "Testimonials", href: "/pricing/testimonials" },
+    { label: "Privacy Policy", href: "/policies" },
+    { label: "Terms & Conditions", href: "/policies" },
   ],
-  Legal: [
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-    { label: "Cookie Policy", href: "/cookies" },
-  ],
+};
+
+const contact = {
+  email: "hello@akronix.org",
+  phone: "+91 99412-XXXX",
+  address: "Ahmedabad, India",
 };
 
 const socials = [
@@ -36,30 +47,42 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden" style={{ background: "linear-gradient(to bottom, #000, rgba(15, 10, 60, 0.9))" }}>
-      {/* Top Blend Gradient */}
-      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-black to-transparent pointer-events-none" />
-
+    <footer className="relative overflow-hidden bg-gray-900">
       {/* Main Footer Grid */}
-      <div className="container-xl py-20 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
-          {/* Brand */}
-          <div className="col-span-2">
-            <Link href="/" className="flex items-center gap-4 mb-6 group">
+      <div className="container-xl py-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-7 gap-10">
+          {/* Brand — spans 2 cols */}
+          <div className="md:col-span-2">
+            <Link href="/" className="flex items-center gap-3 mb-5 group">
               <Image
                 src="/logo.jpeg"
                 alt="Akronix Logo"
                 width={120}
                 height={40}
-                className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-110 mix-blend-screen"
+                className="h-9 w-auto object-contain transition-all duration-300 group-hover:scale-105 mix-blend-screen"
               />
-              <span className="text-2xl font-black tracking-tighter uppercase transition-colors group-hover:text-cyan-400">
-                Akron<span className="gradient-text-primary">ix</span>
-              </span>
             </Link>
-            <p className="text-sm text-white/45 leading-relaxed mb-5 max-w-xs">
-              We help SMEs and startups build and scale premium digital products from idea to market.
+            <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
+              Your complete business growth ecosystem — software, marketing, networking and mentorship under one roof.
             </p>
+
+            {/* Contact info */}
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center gap-2.5 text-sm text-gray-400">
+                <Mail size={13} className="text-gray-500 flex-shrink-0" />
+                <span>{contact.email}</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-gray-400">
+                <PhoneCall size={13} className="text-gray-500 flex-shrink-0" />
+                <span>{contact.phone}</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-sm text-gray-400">
+                <MapPin size={13} className="text-gray-500 flex-shrink-0" />
+                <span>{contact.address}</span>
+              </div>
+            </div>
+
+            {/* Socials */}
             <div className="flex items-center gap-2">
               {socials.map(({ icon: Icon, href, label }) => (
                 <a
@@ -68,27 +91,26 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-8 h-8 rounded-lg border flex items-center justify-center transition-all duration-200 hover:bg-white/8 hover:border-white/20"
-                  style={{ borderColor: "rgba(255,255,255,0.1)" }}
+                  className="w-8 h-8 rounded-lg border border-gray-700 flex items-center justify-center transition-all duration-200 hover:bg-white/10 hover:border-gray-500"
                 >
-                  <Icon size={14} className="text-white/50" />
+                  <Icon size={14} className="text-gray-400" />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Links */}
+          {/* Link Columns */}
           {Object.entries(footerLinks).map(([section, links]) => (
-            <div key={section}>
-              <p className="text-xs font-semibold uppercase tracking-wider text-white/30 mb-3">
+            <div key={section} className="md:col-span-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">
                 {section}
               </p>
-              <ul className="space-y-2">
+              <ul className="space-y-2.5">
                 {links.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.href + link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/50 hover:text-white transition-colors duration-150"
+                      className="text-sm text-gray-500 hover:text-white transition-colors duration-150"
                     >
                       {link.label}
                     </Link>
@@ -97,20 +119,41 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Newsletter */}
+          <div className="md:col-span-1 md:col-start-7">
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">
+              Subscribe to Newsletter
+            </p>
+            <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+              Get latest news and offers.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-white placeholder:text-gray-500 outline-none focus:border-yellow-400 transition-colors"
+              />
+              <button
+                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 hover:opacity-90"
+                style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)" }}
+                aria-label="Subscribe"
+              >
+                <ArrowRight size={14} className="text-white" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Copyright */}
-      <div
-        className="border-t"
-        style={{ borderColor: "rgba(255,255,255,0.07)" }}
-      >
+      <div className="border-t border-gray-800">
         <div className="container-xl py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-white/30">
-            &copy; {new Date().getFullYear()} Akronix Technologies Ltd. All rights reserved.
+          <p className="text-xs text-gray-500">
+            &copy; {new Date().getFullYear()} Akronix. All Rights Reserved.
           </p>
-          <p className="text-xs text-white/25">
-            
+          <p className="text-xs text-gray-600">
+            Built with ❤️ for businesses everywhere
           </p>
         </div>
       </div>

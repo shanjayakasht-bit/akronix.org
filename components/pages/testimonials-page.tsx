@@ -1,202 +1,300 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Star, Quote, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+
+/* ─── Animation helpers ───────────────────────────────────── */
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 28 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-50px" },
+  transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
+});
+
+/* ─── Gradient pool ───────────────────────────────────────── */
+const accentPool = [
+  { light: "#EFF6FF", text: "#2563EB", border: "#BFDBFE" },
+  { light: "#F0FDF4", text: "#16A34A", border: "#BBF7D0" },
+  { light: "#FFF7ED", text: "#EA580C", border: "#FED7AA" },
+  { light: "#FDF4FF", text: "#9333EA", border: "#E9D5FF" },
+  { light: "#FFF1F2", text: "#E11D48", border: "#FECDD3" },
+  { light: "#F5F3FF", text: "#7C3AED", border: "#DDD6FE" },
+];
 
 const fallbackTestimonials = [
-  {
-    id: 1,
-    content:
-      "Akronix transformed our legacy application into a high-performance modern SaaS platform. Their attention to detail and ability to execute rapidly was phenomenal.",
-    author: "Sarah Jenkins",
-    role: "CTO, TechNova",
-    rating: 5,
-    gradient: "from-blue-500/20 to-purple-500/20",
-  },
-  {
-    id: 2,
-    content:
-      "The landing page they built for us increased our conversion rate by 300% in the first month. The design is absolutely premium and the code is pristine.",
-    author: "Marcus Doe",
-    role: "Founder, GrowthGen",
-    rating: 5,
-    gradient: "from-emerald-500/20 to-cyan-500/20",
-  },
-  {
-    id: 3,
-    content:
-      "Working with Akronix was the best decision we made for our MVP. They guided us through the technical complexities and delivered a week ahead of schedule.",
-    author: "Emily Chen",
-    role: "CEO, InnovateTech",
-    rating: 5,
-    gradient: "from-orange-500/20 to-red-500/20",
-  },
-  {
-    id: 4,
-    content:
-      "Stunning attention to aesthetics without compromising on performance. Our users constantly praise how fluid and snappy the interface feels.",
-    author: "James Wilson",
-    role: "Product Lead, Nexus AI",
-    rating: 5,
-    gradient: "from-pink-500/20 to-rose-500/20",
-  },
-  {
-    id: 5,
-    content:
-      "The dedicated team at Akronix went above and beyond to ensure our multi-tenant architecture was robust, secure, and infinitely scalable.",
-    author: "Alicia Rodriguez",
-    role: "VP Engineering, CloudScale",
-    rating: 5,
-    gradient: "from-indigo-500/20 to-blue-500/20",
-  },
-  {
-    id: 6,
-    content:
-      "From wireframing to deployment, the entire process was seamless. They truly understand what it takes to build a product that stands out.",
-    author: "David Kim",
-    role: "Director, Forward Ventures",
-    rating: 5,
-    gradient: "from-violet-500/20 to-fuchsia-500/20",
-  },
+  { id: 1, content: "Akronix transformed our legacy application into a high-performance modern SaaS platform. Their attention to detail and ability to execute rapidly was phenomenal.", author: "Sarah Jenkins",    role: "CTO",              company: "TechNova",         rating: 5 },
+  { id: 2, content: "The landing page they built for us increased our conversion rate by 300% in the first month. The design is absolutely premium and the code is pristine.",        author: "Marcus Doe",      role: "Founder",          company: "GrowthGen",        rating: 5 },
+  { id: 3, content: "Working with Akronix was the best decision we made for our MVP. They guided us through the technical complexities and delivered a week ahead of schedule.",     author: "Emily Chen",      role: "CEO",              company: "InnovateTech",     rating: 5 },
+  { id: 4, content: "Stunning attention to aesthetics without compromising on performance. Our users constantly praise how fluid and snappy the interface feels.",                    author: "James Wilson",    role: "Product Lead",     company: "Nexus AI",         rating: 5 },
+  { id: 5, content: "The dedicated team at Akronix went above and beyond to ensure our multi-tenant architecture was robust, secure, and infinitely scalable.",                      author: "Alicia Rodriguez",role: "VP Engineering",   company: "CloudScale",       rating: 5 },
+  { id: 6, content: "From wireframing to deployment, the entire process was seamless. They truly understand what it takes to build a product that stands out.",                      author: "David Kim",       role: "Director",         company: "Forward Ventures", rating: 5 },
+  { id: 7, content: "Akronix Network has introduced me to amazing business opportunities and trusted partners. It's a game changer for entrepreneurs!",                              author: "Ravi Sharma",     role: "CEO",              company: "TechNova Solutions",rating: 5 },
+  { id: 8, content: "The mentorship program gave me clarity and confidence to build my own startup. Couldn't have done it without Akronix Academy.",                                 author: "Sneha Rajan",     role: "AI/ML Intern",     company: "Startup.in",       rating: 5 },
+  { id: 9, content: "The workshops and bootcamps improved my skills dramatically and helped me land my dream job at a top product company.",                                         author: "Rohan Patel",     role: "Full Stack Dev",   company: "ProductHive",      rating: 5 },
 ];
 
-const gradientPool = [
-  "from-blue-500/20 to-purple-500/20",
-  "from-emerald-500/20 to-cyan-500/20",
-  "from-orange-500/20 to-red-500/20",
-  "from-pink-500/20 to-rose-500/20",
-  "from-indigo-500/20 to-blue-500/20",
-  "from-violet-500/20 to-fuchsia-500/20"
-];
+/* ─── Featured quote (hero testimonial) ──────────────────── */
+const featured = fallbackTestimonials[0];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
-};
-
-const itemVariants: any = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-};
-
-export default function TestimonialsPage({ 
-  testimonialsData = [] 
-}: { 
-  testimonialsData?: { id: string | number; content: string; authorName: string; authorTitle: string; rating: number; company: string; }[] 
+export default function TestimonialsPage({
+  testimonialsData = [],
+}: {
+  testimonialsData?: { id: string | number; content: string; authorName: string; authorTitle: string; rating: number; company: string }[];
 }) {
-  const dynamicTestimonials = testimonialsData.map((t, index) => ({
+  const [activeFeatured, setActiveFeatured] = useState(0);
+
+  const dynamic = testimonialsData.map((t, idx) => ({
     id: t.id,
     content: t.content,
     author: t.authorName,
-    role: `${t.authorTitle}, ${t.company}`,
+    role: t.authorTitle,
+    company: t.company,
     rating: t.rating,
-    gradient: gradientPool[index % gradientPool.length],
+    accent: accentPool[idx % accentPool.length],
   }));
 
-  // Combine dynamic with static fallbacks
-  const displayTestimonials = dynamicTestimonials.length > 0 
-    ? [...dynamicTestimonials, ...fallbackTestimonials.slice(0, 6 - dynamicTestimonials.length)]
-    : fallbackTestimonials;
+  const all = (dynamic.length > 0
+    ? [...dynamic, ...fallbackTestimonials.slice(0, Math.max(0, 9 - dynamic.length))]
+    : fallbackTestimonials
+  ).map((t, idx) => ({
+    ...t,
+    author: (t as { author?: string; authorName?: string }).author ?? (t as { authorName?: string }).authorName ?? "",
+    accent: accentPool[idx % accentPool.length],
+  }));
+
+  const featuredList = all.slice(0, 3);
 
   return (
-    <div className="min-h-screen pt-32 pb-20 relative overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] -z-10 mix-blend-screen" />
-      <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] -z-10 mix-blend-screen" />
+    <div className="bg-white min-h-screen">
 
-      <div className="container-xl relative z-10 px-4">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-cyan-400 text-sm font-medium mb-6">
-            <Star size={14} className="fill-cyan-400" />
-            <span>Client Success Stories</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white drop-shadow-lg">
-            Don&apos;t just take <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
-              our word for it.
+      {/* ════════ HERO ════════ */}
+      <section className="relative pt-32 pb-16 overflow-hidden">
+        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-amber-100/50 rounded-full blur-[110px] pointer-events-none" />
+        <div className="absolute bottom-0 -left-40 w-[500px] h-[400px] bg-yellow-50/60 rounded-full blur-[80px] pointer-events-none" />
+
+        <div className="container-xl relative z-10 text-center max-w-3xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: -14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-amber-600 bg-amber-50 border border-amber-200 px-3.5 py-1.5 rounded-full mb-7">
+              <Star size={11} fill="#F59E0B" className="text-amber-500" />
+              Client Success Stories
             </span>
-          </h1>
-          <p className="text-lg md:text-xl text-white/70 leading-relaxed font-light">
-            We partner with ambitious startups and enterprises to build category-defining digital products. Here&apos;s what they have to say about working with Akronix.
-          </p>
-        </motion.div>
+          </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {displayTestimonials.map((testimonial) => (
-            <motion.div
-              key={testimonial.id}
-              variants={itemVariants}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="group relative"
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[2.8rem] md:text-[3.5rem] font-black tracking-tight leading-tight text-gray-900 mb-5"
+          >
+            Don&apos;t just take{" "}
+            <motion.span
+              initial={{ backgroundPosition: "200% center" }}
+              animate={{ backgroundPosition: "0% center" }}
+              transition={{ duration: 1.4, delay: 0.5 }}
+              style={{
+                background: "linear-gradient(90deg,#F59E0B,#EA580C,#F59E0B)",
+                backgroundSize: "200%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${testimonial.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-              />
-              <div className="relative h-full glass-card rounded-2xl p-8 border border-white/10 bg-black/40 backdrop-blur-md flex flex-col justify-between hover:border-white/20 transition-all duration-300">
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <Quote size={28} className="text-white/20" />
-                    <div className="flex gap-1">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} size={14} className="fill-yellow-500 text-yellow-500" />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-white/80 text-lg leading-relaxed mb-8">
-                    &quot;{testimonial.content}&quot;
-                  </p>
+              our word
+            </motion.span>{" "}
+            for it.
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-gray-500 text-base leading-relaxed"
+          >
+            We partner with ambitious startups, enterprises and learners to build category-defining solutions.
+            Here&apos;s what they say about working with Akronix.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ════════ FEATURED CAROUSEL ════════ */}
+      <section className="pb-16">
+        <div className="container-xl max-w-3xl">
+          <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl border border-amber-100 p-8 md:p-10 overflow-hidden shadow-sm">
+            <span className="absolute top-4 left-6 text-[90px] font-serif text-amber-200 leading-none select-none">&ldquo;</span>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeFeatured}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="relative z-10 pt-8"
+              >
+                <div className="flex gap-1 mb-5">
+                  {Array.from({ length: featuredList[activeFeatured]?.rating ?? 5 }).map((_, i) => (
+                    <Star key={i} size={16} fill="#F59E0B" className="text-amber-400" />
+                  ))}
                 </div>
-                
-                <div className="flex items-center gap-4 mt-auto">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center text-lg font-bold text-white uppercase">
-                    {testimonial.author.charAt(0)}
+                <p className="text-gray-700 text-lg md:text-xl leading-relaxed mb-7 font-medium">
+                  {featuredList[activeFeatured]?.content}
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center text-white font-black text-base flex-shrink-0"
+                    style={{ background: "linear-gradient(135deg,#F59E0B,#EA580C)" }}>
+                    {(featuredList[activeFeatured]?.author ?? "A")[0]}
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">{testimonial.author}</h4>
-                    <p className="text-sm text-cyan-400/80">{testimonial.role}</p>
+                    <p className="font-black text-gray-900 text-sm">{featuredList[activeFeatured]?.author}</p>
+                    <p className="text-xs text-gray-400">
+                      {featuredList[activeFeatured]?.role} · {featuredList[activeFeatured]?.company}
+                    </p>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            </AnimatePresence>
 
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-24 relative rounded-3xl overflow-hidden glass-card border border-white/10 bg-white/5 p-12 text-center"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 mix-blend-overlay" />
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to build something amazing?</h2>
-            <p className="text-white/70 mb-8 max-w-2xl mx-auto">
-              Join the growing list of successful companies that trust Akronix with their most critical digital products.
-            </p>
-            <a href="/contact" className="inline-block btn-primary px-8 py-3 text-lg">
-              Start Your Project
-            </a>
+            {/* Controls */}
+            <div className="flex items-center gap-3 mt-7">
+              <div className="flex gap-1.5 flex-1">
+                {featuredList.map((_, i) => (
+                  <motion.button
+                    key={i}
+                    onClick={() => setActiveFeatured(i)}
+                    animate={{ width: i === activeFeatured ? 24 : 10 }}
+                    className={`h-1.5 rounded-full transition-colors ${i === activeFeatured ? "bg-amber-500" : "bg-amber-200 hover:bg-amber-300"}`}
+                  />
+                ))}
+              </div>
+              <div className="flex gap-2">
+                {[ChevronLeft, ChevronRight].map((Ic, d) => (
+                  <motion.button
+                    key={d}
+                    whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
+                    onClick={() => setActiveFeatured(p => (p + (d === 0 ? -1 : 1) + featuredList.length) % featuredList.length)}
+                    className="w-8 h-8 rounded-full border border-amber-200 bg-white flex items-center justify-center hover:border-amber-400 hover:bg-amber-50 transition-all"
+                  >
+                    <Ic size={14} />
+                  </motion.button>
+                ))}
+              </div>
+            </div>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </section>
+
+      {/* ════════ ALL TESTIMONIALS GRID ════════ */}
+      <section className="pb-24 bg-gray-50 pt-16">
+        <div className="container-xl">
+          <motion.h2 {...fadeUp(0)} className="text-2xl font-black text-gray-900 mb-10 text-center">
+            What Our Clients &amp; Students Say
+          </motion.h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {all.map((t, i) => (
+              <motion.div
+                key={t.id}
+                {...fadeUp(i * 0.06)}
+                whileHover={{ y: -5, boxShadow: `0 16px 40px ${t.accent.text}18` }}
+                className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col transition-shadow duration-300 cursor-default"
+              >
+                {/* Top row */}
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{ background: t.accent.light }}
+                  >
+                    <Quote size={15} style={{ color: t.accent.text }} />
+                  </div>
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: t.rating }).map((_, j) => (
+                      <Star key={j} size={12} fill="#F59E0B" className="text-amber-400" />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <p className="text-sm text-gray-600 leading-relaxed flex-1 mb-5">
+                  &ldquo;{t.content}&rdquo;
+                </p>
+
+                {/* Author */}
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-50">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
+                    style={{ background: t.accent.light, color: t.accent.text }}
+                  >
+                    {t.author[0]}
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-gray-900">{t.author}</p>
+                    <p className="text-xs" style={{ color: t.accent.text }}>
+                      {t.role} · {t.company}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════ STATS STRIP ════════ */}
+      <section className="py-14 bg-gray-900">
+        <div className="container-xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+            {[
+              { value: "500+", label: "Happy Clients" },
+              { value: "4.9★", label: "Average Rating" },
+              { value: "98%", label: "Would Recommend" },
+              { value: "50+", label: "Cities Served" },
+            ].map((s, i) => (
+              <motion.div key={s.label} {...fadeUp(i * 0.08)} className="text-center">
+                <p className="text-3xl font-black text-white mb-1">{s.value}</p>
+                <p className="text-xs text-gray-400 font-medium">{s.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════ CTA ════════ */}
+      <section className="py-20 bg-amber-50 border-t border-amber-100">
+        <div className="container-xl flex flex-col md:flex-row items-center justify-between gap-8">
+          <motion.div {...fadeUp(0)}>
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">
+              Ready to build something amazing?
+            </h2>
+            <p className="text-gray-500 text-sm max-w-md">
+              Join the growing list of successful companies and learners that trust Akronix.
+            </p>
+          </motion.div>
+          <motion.div {...fadeUp(0.1)} className="flex items-center gap-4 flex-shrink-0 flex-wrap">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="/contact"
+                className="relative inline-flex items-center gap-2 text-sm font-bold text-white px-7 py-3.5 rounded-full overflow-hidden group"
+                style={{ background: "linear-gradient(135deg,#F59E0B,#EA580C)", boxShadow: "0 6px 20px rgba(245,158,11,0.38)" }}
+              >
+                <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
+                Start Your Project
+                <ArrowRight size={16} />
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center gap-2 text-sm font-bold text-gray-800 border-2 border-gray-300 px-7 py-3.5 rounded-full hover:border-gray-500 transition-colors"
+              >
+                View Pricing
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
     </div>
   );
 }
