@@ -1,19 +1,20 @@
 import ContactPage from "@/components/pages/contact-page";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
-import ContactForm from "@/components/ContactForm"; 
-
 import { Suspense } from "react";
+
+export const metadata = {
+  title: "Contact Us — Akronix",
+  description: "Get in touch with Akronix. We build SaaS, AI solutions, digital marketing, and business networking — let's talk about your project.",
+};
 
 export default function Page() {
   return (
     <>
       <Navigation />
-      <main>
-        <Suspense fallback={<div>Loading...</div>}>
-          <ContactPage />
-        </Suspense>
-      </main>
+      <Suspense fallback={<div className="min-h-screen bg-[#0f172a]" />}>
+        <ContactPage />
+      </Suspense>
       <Footer />
     </>
   );

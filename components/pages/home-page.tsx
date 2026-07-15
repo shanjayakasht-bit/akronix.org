@@ -234,7 +234,11 @@ function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] 
 }
 
 /* ── Component ────────────────────────────────────────────────── */
-export default function HomePage() {
+interface HomePageProps {
+  settings?: Record<string, string>;
+}
+
+export default function HomePage({ settings = {} }: HomePageProps) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [testimonialsPerPage] = useState(2);
   const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
@@ -251,6 +255,30 @@ export default function HomePage() {
     activeTestimonial * testimonialsPerPage,
     (activeTestimonial + 1) * testimonialsPerPage
   );
+
+  // Resolve settings with fallbacks to hardcoded defaults
+  const heroBadge = settings["homepage.hero.badge"] || "Empowering Startups, Businesses & Institutions";
+  const heroDesc = settings["homepage.hero.description"] || "Akronix is your complete business growth ecosystem. We deliver software solutions, digital marketing, business networking, mentorship and innovation — under one roof.";
+  const cta1Text = settings["homepage.hero.cta1.text"] || "Get Started";
+  const cta1Href = settings["homepage.hero.cta1.href"] || "/contact?type=project";
+  const cta2Text = settings["homepage.hero.cta2.text"] || "Explore Products";
+  const cta2Href = settings["homepage.hero.cta2.href"] || "/services";
+  const ctaHeadline = settings["homepage.cta.headline"] || "Ready to Build the Future of Your Business?";
+  const ctaDesc = settings["homepage.cta.description"] || "Let's build software that matters, expand your network and unlock new opportunities — together.";
+  const testimonialsLabel = settings["homepage.testimonials.label"] || "4.9/5 from 100+ reviews";
+
+  let activeStats = stats;
+  try {
+    if (settings["homepage.stats"]) activeStats = JSON.parse(settings["homepage.stats"]);
+  } catch {}
+
+  let activePartners = partners;
+  try {
+    if (settings["homepage.partners"]) {
+      const parsed: string[] = JSON.parse(settings["homepage.partners"]);
+      activePartners = parsed.map((name) => ({ name, logo: null }));
+    }
+  } catch {}
 
   return (
     <div className="overflow-clip bg-white">
@@ -287,7 +315,7 @@ export default function HomePage() {
               <motion.div {...fadeIn(0)} className="mb-6">
                 <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-100 px-4 py-2 rounded-full">
                   <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse" />
-                  Empowering Startups, Businesses &amp; Institutions
+                  {heroBadge}
                 </span>
               </motion.div>
 
@@ -305,23 +333,23 @@ export default function HomePage() {
               </motion.div>
 
               <motion.p {...fadeUp(0.2)} className="text-gray-500 text-lg leading-relaxed mb-8 max-w-lg">
-                Akronix is your complete business growth ecosystem. We deliver software solutions, digital marketing, business networking, mentorship and innovation — under one roof.
+                {heroDesc}
               </motion.p>
 
               {/* CTA buttons */}
               <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row gap-3 mb-10">
                 <Link
-                  href="/contact?type=project"
+                  href={cta1Href}
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-white text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
                   style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)", boxShadow: "0 4px 20px rgba(245,158,11,0.35)" }}
                 >
-                  Get Started <ArrowRight size={16} />
+                  {cta1Text} <ArrowRight size={16} />
                 </Link>
                 <Link
-                  href="/services"
+                  href={cta2Href}
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-bold text-gray-700 text-sm bg-white border border-gray-200 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-gray-300"
                 >
-                  Explore Products <ChevronRight size={16} />
+                  {cta2Text} <ChevronRight size={16} />
                 </Link>
                 <button
                   className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-bold text-gray-600 text-sm transition-all duration-200 hover:text-gray-900"
@@ -335,7 +363,7 @@ export default function HomePage() {
 
               {/* Stats row */}
               <motion.div {...fadeUp(0.4)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-gray-100">
-                {stats.map((s) => (
+                {activeStats.map((s) => (
                   <AnimatedStat key={s.label} {...s} />
                 ))}
               </motion.div>
@@ -477,7 +505,7 @@ export default function HomePage() {
               transition={{ duration: 30, ease: "linear", repeat: Infinity }}
               className="flex gap-12 w-max items-center"
             >
-              {[...partners, ...partners].map((p, i) => (
+              {[...activePartners, ...activePartners].map((p, i) => (
                 <div key={i} className="flex items-center justify-center px-4">
                   <span className="text-lg font-black text-gray-400 tracking-tight whitespace-nowrap hover:text-gray-700 transition-colors duration-200">
                     {p.name}
@@ -738,7 +766,7 @@ export default function HomePage() {
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} size={16} className="fill-[#F59E0B] text-[#F59E0B]" />
               ))}
-              <span className="ml-2 text-sm font-semibold text-gray-600">4.9/5 from 100+ reviews</span>
+              <span className="ml-2 text-sm font-semibold text-gray-600">{testimonialsLabel}</span>
             </div>
           </motion.div>
 
@@ -800,7 +828,7 @@ export default function HomePage() {
                 transition={{ duration: 25, ease: "linear", repeat: Infinity }}
                 className="flex gap-6 w-max"
               >
-                {[...partners, ...partners].map((p, i) => (
+                {[...activePartners, ...activePartners].map((p, i) => (
                   <div key={i} className="flex-shrink-0 bg-white rounded-xl px-8 py-4 border border-gray-100 shadow-sm flex items-center justify-center min-w-[120px]">
                     <span className="text-sm font-black text-gray-400 tracking-tight">{p.name}</span>
                   </div>
@@ -826,14 +854,14 @@ export default function HomePage() {
             <div className="relative z-10">
               <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mb-4">Get Started Today</p>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-                Ready to Build the Future<br />of Your Business?
+                {ctaHeadline}
               </h2>
               <p className="text-blue-100 text-base max-w-xl mx-auto mb-10 leading-relaxed">
-                Let&apos;s build software that matters, expand your network and unlock new opportunities — together.
+                {ctaDesc}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
-                  href="/contact?type=project"
+                  href={cta1Href}
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-gray-900 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl"
                   style={{ background: "linear-gradient(135deg, #F59E0B, #FBBF24)", boxShadow: "0 8px 30px rgba(245,158,11,0.4)" }}
                 >

@@ -22,7 +22,7 @@ const navLinks = [
       { label: "Testimonials", href: "/pricing/testimonials", desc: "See what our clients say" },
     ],
   },
-  { label: "Partners", href: "/contact?type=partner" },
+  { label: "Partners", href: "/partners" },
   { label: "About Us", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];

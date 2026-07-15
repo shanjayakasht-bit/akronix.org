@@ -21,7 +21,7 @@ const footerLinks = {
     { label: "About Us", href: "/about" },
     { label: "Our Team", href: "/blog" },
     { label: "Careers", href: "/contact" },
-    { label: "Partners", href: "/contact?type=partner" },
+    { label: "Partners", href: "/partners" },
     { label: "Policies", href: "/policies" },
   ],
   Resources: [
