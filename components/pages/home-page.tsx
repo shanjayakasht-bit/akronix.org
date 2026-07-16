@@ -7,8 +7,9 @@ import {
   ArrowRight, ChevronRight, Play, Star, Globe, TrendingUp, Zap,
   Code2, BarChart3, Users, GraduationCap, CheckCircle2, Quote,
   ChevronLeft, ExternalLink, ShieldCheck, Lightbulb, Handshake, Rocket,
-  Building2, Package, Cpu, MailOpen, PhoneCall, MapPin
+  Building2, Package, Cpu, MailOpen, PhoneCall, MapPin, Database, Bot, Layers,
 } from "lucide-react";
+import type { PublishedTestimonial } from "@/lib/site-settings";
 
 /* ── Animation Variants ──────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
@@ -233,12 +234,22 @@ function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] 
   );
 }
 
+/* ── Icon map for DB-driven products ─────────────────────────── */
+const ICON_MAP: Record<string, React.ElementType> = {
+  Users, Building2, Package, Cpu, ShieldCheck, Zap,
+  Globe, BarChart3, Code2, Database, Bot, Layers,
+  Lightbulb, Handshake, Rocket, TrendingUp, GraduationCap,
+};
+
 /* ── Component ────────────────────────────────────────────────── */
 interface HomePageProps {
   settings?: Record<string, string>;
+  dbTestimonials?: PublishedTestimonial[];
 }
 
-export default function HomePage({ settings = {} }: HomePageProps) {
+const TESTIMONIAL_COLORS = ["#2563EB", "#9333EA", "#16A34A", "#EA580C"];
+
+export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePageProps) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [testimonialsPerPage] = useState(2);
   const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
@@ -249,12 +260,6 @@ export default function HomePage({ settings = {} }: HomePageProps) {
     mouseX.set(e.clientX - rect.left);
     mouseY.set(e.clientY - rect.top);
   };
-
-  const totalTestimonialPages = Math.ceil(testimonials.length / testimonialsPerPage);
-  const visibleTestimonials = testimonials.slice(
-    activeTestimonial * testimonialsPerPage,
-    (activeTestimonial + 1) * testimonialsPerPage
-  );
 
   // Resolve settings with fallbacks to hardcoded defaults
   const heroBadge = settings["homepage.hero.badge"] || "Empowering Startups, Businesses & Institutions";
@@ -279,6 +284,49 @@ export default function HomePage({ settings = {} }: HomePageProps) {
       activePartners = parsed.map((name) => ({ name, logo: null }));
     }
   } catch {}
+
+  // Products — load from settings (JSON) or fall back to hardcoded
+  type ActiveProduct = { name: string; desc: string; tag: string; Icon: React.ElementType };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let activeProducts: ActiveProduct[] = products.map(p => ({ name: p.name, desc: p.desc, tag: p.tag, Icon: p.icon as any }));
+  try {
+    if (settings["homepage.products"]) {
+      const parsed: { name: string; desc: string; tag: string; icon: string }[] =
+        JSON.parse(settings["homepage.products"]);
+      activeProducts = parsed.map(p => ({
+        name: p.name,
+        desc: p.desc,
+        tag: p.tag,
+        Icon: ICON_MAP[p.icon] ?? Package,
+      }));
+    }
+  } catch {}
+
+  // Success stories — load from settings or fall back to hardcoded
+  let activeStories = successStories;
+  try {
+    if (settings["homepage.success_stories"]) {
+      activeStories = JSON.parse(settings["homepage.success_stories"]);
+    }
+  } catch {}
+
+  // Testimonials — use DB records if any, else fall back to hardcoded
+  const activeTestimonialsList = dbTestimonials.length > 0
+    ? dbTestimonials.map((t, i) => ({
+        name: t.authorName,
+        title: `${t.authorTitle}${t.company ? `, ${t.company}` : ""}`,
+        rating: t.rating,
+        text: t.content,
+        avatar: t.authorName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase(),
+        color: TESTIMONIAL_COLORS[i % TESTIMONIAL_COLORS.length],
+      }))
+    : testimonials;
+
+  const totalTestimonialPages = Math.ceil(activeTestimonialsList.length / testimonialsPerPage);
+  const visibleTestimonials = activeTestimonialsList.slice(
+    activeTestimonial * testimonialsPerPage,
+    (activeTestimonial + 1) * testimonialsPerPage
+  );
 
   return (
     <div className="overflow-clip bg-white">
@@ -603,15 +651,15 @@ export default function HomePage({ settings = {} }: HomePageProps) {
           </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {products.map((product, i) => (
+            {activeProducts.map((product, i) => (
               <motion.div
-                key={product.name}
+                key={`${product.name}-${i}`}
                 {...fadeUp(i * 0.08)}
                 whileHover={{ y: -4, boxShadow: "0 16px 48px rgba(0,0,0,0.12)" }}
                 className="group bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col items-start gap-3 cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-300">
-                  <product.icon size={18} className="text-blue-600 group-hover:text-white transition-colors duration-300" />
+                  <product.Icon size={18} className="text-blue-600 group-hover:text-white transition-colors duration-300" />
                 </div>
                 <div>
                   <span className="text-[9px] font-black uppercase tracking-widest text-gray-300 mb-1 block">{product.tag}</span>
@@ -715,9 +763,9 @@ export default function HomePage({ settings = {} }: HomePageProps) {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {successStories.map((story, i) => (
+            {activeStories.map((story, i) => (
               <motion.div
-                key={story.title}
+                key={`${story.title}-${i}`}
                 {...fadeUp(i * 0.1)}
                 whileHover={{ y: -6 }}
                 className="group bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col"

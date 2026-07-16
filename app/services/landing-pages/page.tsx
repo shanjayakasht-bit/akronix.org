@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion";
-import { CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowRight, Monitor, Smartphone, ShoppingBag, Palette } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState, useMemo } from "react";
@@ -14,6 +14,20 @@ const features = [
   { title: "Blazing Fast Performance", desc: "Sub-second load times engineered to capture every single visitor without drop-off." },
   { title: "A/B Testing Ready",       desc: "Built with a technical framework to easily test headlines, CTAs, and complex layouts." },
   { title: "Fully Responsive",        desc: "A flawless, high-contrast experience across desktop, ultra-wide, and mobile devices." },
+];
+
+const offerings = [
+  { icon: Monitor,     title: "Web Applications",    desc: "Scalable, performant web apps built with modern full-stack frameworks." },
+  { icon: Smartphone,  title: "Mobile Apps",         desc: "Cross-platform iOS & Android apps with native-level performance." },
+  { icon: ShoppingBag, title: "E-Commerce",          desc: "Conversion-optimised storefronts and headless commerce solutions." },
+  { icon: Palette,     title: "UI/UX Design",        desc: "Beautiful, user-tested interfaces that delight and convert." },
+];
+
+const stats = [
+  { value: "100+", label: "Sites Launched" },
+  { value: "< 1s", label: "Avg Load Time" },
+  { value: "5★",   label: "Client Rating" },
+  { value: "50+",  label: "UI Designs Delivered" },
 ];
 
 /* ─── Parallax image panel ───────────────────────────────────────── */
@@ -198,17 +212,17 @@ export default function LandingPagesPage() {
             <motion.div style={{ y: heroY, opacity: heroOpacity }} className="max-w-5xl">
               <div className="flex items-center gap-3 mb-8">
                 <motion.div initial={{ width: 0 }} animate={{ width: "48px" }} transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} className="h-px bg-fuchsia-500" />
-                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">Landing Pages</motion.span>
+                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="text-[10px] font-black uppercase tracking-[0.5em] text-amber-400">Web & Mobile Development</motion.span>
               </div>
 
               <div className="overflow-visible mb-8">
                 <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter uppercase italic text-white/90 whitespace-nowrap">
-                  High-Converting <span className="gradient-text-primary">Engines</span>
+                  Web &amp; Mobile <span className="gradient-text-primary">Mastery</span>
                 </motion.h1>
               </div>
 
               <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.6, ease: [0.22, 1, 0.36, 1] }} className="text-base md:text-lg text-white/35 max-w-xl leading-relaxed font-medium uppercase tracking-widest">
-                Designing psychological-led digital experiences that drive ROI.
+                High-performance websites, apps and experiences built to convert and scale.
               </motion.p>
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 1 }} className="mt-14 flex items-center gap-4">
@@ -218,6 +232,49 @@ export default function LandingPagesPage() {
                 <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">Scroll to explore</span>
               </motion.div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ── WHAT WE OFFER ────────────────────────────────────── */}
+        <section className="relative z-10 py-20 border-t border-white/[0.04]">
+          <div className="container-xl px-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-10">
+              <div className="h-px w-7 bg-amber-400" />
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-amber-400">What We Offer</span>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {offerings.map(({ icon: Icon, title, desc }, i) => (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -6, borderColor: "rgba(245,158,11,0.25)" }}
+                  className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm cursor-default transition-colors duration-300 group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4 group-hover:bg-amber-500/15 transition-colors">
+                    <Icon size={20} className="text-amber-400" />
+                  </div>
+                  <h3 className="font-black text-sm text-white/90 mb-2">{title}</h3>
+                  <p className="text-xs text-white/35 leading-relaxed">{desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── STATS STRIP ──────────────────────────────────────── */}
+        <section className="relative z-10 py-14 border-y border-white/[0.04]">
+          <div className="container-xl px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {stats.map(({ value, label }, i) => (
+                <motion.div key={label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>
+                  <p className="text-3xl md:text-4xl font-black text-amber-400 mb-1">{value}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/25">{label}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 

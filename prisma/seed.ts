@@ -1,7 +1,15 @@
-import { PrismaClient, UserRole, ServiceType, ProjectStatus, ProjectPriority } from "@prisma/client";
+import { PrismaClient, UserRole, ServiceType } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { hash } from "bcryptjs";
+import { config } from "dotenv";
 
-const prisma = new PrismaClient();
+config({ path: ".env.local" });
+config({ path: ".env" });
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("🌱 Seeding database...");

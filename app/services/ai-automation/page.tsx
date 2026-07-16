@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion";
-import { CheckCircle, ArrowRight, Brain, Zap, Shield, BarChart3 } from "lucide-react";
+import { CheckCircle, ArrowRight, Brain, Zap, Shield, BarChart3, Bot, Workflow, TrendingUp, Plug } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState, useMemo } from "react";
@@ -14,6 +14,20 @@ const features = [
   { title: "Predictive Scaling",  desc: "Analyzes traffic patterns to anticipate spikes before they happen, ensuring zero downtime." },
   { title: "Anomaly Detection",   desc: "Real-time monitoring to identify security threats or data inconsistencies within shards." },
   { title: "Intelligent Layer",  desc: "Core AI integration within our multi-tenant architecture for seamless data processing." },
+];
+
+const offerings = [
+  { icon: Bot,       title: "AI Chatbots",          desc: "Custom-trained conversational AI for support, sales and onboarding." },
+  { icon: Workflow,  title: "Workflow Automation",  desc: "End-to-end process automation that eliminates repetitive manual tasks." },
+  { icon: TrendingUp,title: "Business Intelligence",desc: "AI-powered dashboards and predictive analytics for smarter decisions." },
+  { icon: Plug,      title: "AI Integrations",      desc: "Plug OpenAI, Gemini, Claude and custom models into your existing stack." },
+];
+
+const stats = [
+  { value: "70%",  label: "Avg Time Saved" },
+  { value: "10+",  label: "AI Tools Integrated" },
+  { value: "5+",   label: "Industries Served" },
+  { value: "100%", label: "Custom-Built Models" },
 ];
 
 /* ─── Parallax image panel ───────────────────────────────────────── */
@@ -224,6 +238,49 @@ export default function AISolutionsPage() {
                 <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">Scroll to explore</span>
               </motion.div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ── WHAT WE OFFER ────────────────────────────────────── */}
+        <section className="relative z-10 py-20 border-t border-white/[0.04]">
+          <div className="container-xl px-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-10">
+              <div className="h-px w-7 bg-cyan-400" />
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-cyan-400">What We Offer</span>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {offerings.map(({ icon: Icon, title, desc }, i) => (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -6, borderColor: "rgba(0,240,255,0.25)" }}
+                  className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm cursor-default transition-colors duration-300 group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4 group-hover:bg-cyan-500/15 transition-colors">
+                    <Icon size={20} className="text-cyan-400" />
+                  </div>
+                  <h3 className="font-black text-sm text-white/90 mb-2">{title}</h3>
+                  <p className="text-xs text-white/35 leading-relaxed">{desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── STATS STRIP ──────────────────────────────────────── */}
+        <section className="relative z-10 py-14 border-y border-white/[0.04]">
+          <div className="container-xl px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {stats.map(({ value, label }, i) => (
+                <motion.div key={label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>
+                  <p className="text-3xl md:text-4xl font-black text-cyan-400 mb-1">{value}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/25">{label}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 

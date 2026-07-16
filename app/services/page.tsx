@@ -65,7 +65,7 @@ const mainServices = [
     color: "#EA580C",
     bgColor: "#FFF7ED",
     accentColor: "#FFEDD5",
-    href: "/contact?type=mentorship",
+    href: "/services/mentorship-training",
   },
   {
     title: "Web & Mobile Development",
@@ -105,7 +105,7 @@ const mainServices = [
     color: "#4F46E5",
     bgColor: "#EEF2F6",
     accentColor: "#E0E7FF",
-    href: "/contact",
+    href: "/services/it-consulting",
   },
 ];
 

@@ -34,9 +34,9 @@ const footerLinks = {
 };
 
 const contact = {
-  email: "hello@akronix.org",
-  phone: "+91 99412-XXXX",
-  address: "Ahmedabad, India",
+  email: "akronix.in@gmail.com",
+  phone: "+91 93607 45895",
+  address: "Chennai, Tamil Nadu, India",
 };
 
 const socials = [

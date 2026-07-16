@@ -176,10 +176,27 @@ const values = [
   "Impact that matters",
 ];
 
+/* ─── CMS team type ─────────────────────────────────────── */
+type CmsTeamMember = { name: string; title: string; bio: string; photo: string; linkedin: string; twitter: string; instagram: string; color: string; avatar: string };
+
 /* ─── Page ───────────────────────────────────────────────── */
 export default function AboutPage() {
   const [videoOpen, setVideoOpen] = useState(false);
   const [hoveredMember, setHoveredMember] = useState<number | null>(null);
+  const [cmsTeam, setCmsTeam] = useState<CmsTeamMember[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/site-settings?prefix=site.")
+      .then(r => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["site.leadership"]) {
+          try { setCmsTeam(JSON.parse(data["site.leadership"])); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const activeTeam = cmsTeam ?? team;
 
   return (
     <>
@@ -448,52 +465,63 @@ export default function AboutPage() {
             </motion.div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-              {team.map((member, i) => (
-                <TiltCard key={member.name}>
-                  <motion.div
-                    {...scaleIn(i * 0.08)}
-                    onMouseEnter={() => setHoveredMember(i)}
-                    onMouseLeave={() => setHoveredMember(null)}
-                    className="bg-white rounded-2xl border border-gray-100 overflow-hidden group transition-shadow duration-300"
-                    style={{ boxShadow: hoveredMember === i ? "0 16px 48px rgba(0,0,0,0.1)" : "" }}
-                  >
-                    {/* Photo */}
-                    <div className="relative aspect-square overflow-hidden bg-gray-100">
-                      <Image
-                        src={member.photo}
-                        alt={member.name}
-                        fill
-                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/30 to-transparent" />
-                    </div>
-
-                    {/* Info */}
-                    <div className="p-4">
-                      <p className="text-[13px] font-black text-gray-900">{member.name}</p>
-                      <p className="text-[11px] text-amber-600 font-semibold mb-2">{member.role}</p>
-                      <p className="text-[10px] text-gray-400 leading-relaxed mb-3">{member.desc}</p>
-                      {/* Social */}
-                      <div className="flex items-center gap-2">
-                        {[
-                          { key: "linkedin", icon: <IconLinkedin />, href: "#" },
-                          { key: "x",        icon: <IconX />,        href: "#" },
-                          { key: "instagram",icon: <IconInstagram />, href: "#" },
-                        ].map((s) => (
-                          <motion.a
-                            key={s.key}
-                            href={s.href}
-                            whileHover={{ scale: 1.2, color: "#F59E0B" }}
-                            className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-amber-50 hover:text-amber-500 transition-colors"
-                          >
-                            {s.icon}
-                          </motion.a>
-                        ))}
+              {activeTeam.map((member, i) => {
+                const m = member as CmsTeamMember & { role?: string; desc?: string; photo?: string };
+                const role = m.title ?? m.role ?? "";
+                const desc = m.bio ?? m.desc ?? "";
+                const photoSrc = m.photo ?? "";
+                const socials = [
+                  { key: "linkedin",  icon: <IconLinkedin />, href: m.linkedin  || "#" },
+                  { key: "twitter",   icon: <IconX />,        href: m.twitter   || "#" },
+                  { key: "instagram", icon: <IconInstagram />, href: m.instagram || "#" },
+                ];
+                return (
+                  <TiltCard key={member.name + i}>
+                    <motion.div
+                      {...scaleIn(i * 0.08)}
+                      onMouseEnter={() => setHoveredMember(i)}
+                      onMouseLeave={() => setHoveredMember(null)}
+                      className="bg-white rounded-2xl border border-gray-100 overflow-hidden group transition-shadow duration-300"
+                      style={{ boxShadow: hoveredMember === i ? "0 16px 48px rgba(0,0,0,0.1)" : "" }}
+                    >
+                      {/* Photo or initials */}
+                      <div className="relative aspect-square overflow-hidden bg-gray-100">
+                        {photoSrc ? (
+                          <>
+                            <Image src={photoSrc} alt={member.name} fill className="object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/30 to-transparent" />
+                          </>
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: (m.color ?? "#F59E0B") + "22" }}>
+                            <span className="text-4xl font-black" style={{ color: m.color ?? "#F59E0B" }}>{m.avatar ?? member.name[0]}</span>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </motion.div>
-                </TiltCard>
-              ))}
+
+                      {/* Info */}
+                      <div className="p-4">
+                        <p className="text-[13px] font-black text-gray-900">{member.name}</p>
+                        <p className="text-[11px] text-amber-600 font-semibold mb-2">{role}</p>
+                        <p className="text-[10px] text-gray-400 leading-relaxed mb-3">{desc}</p>
+                        <div className="flex items-center gap-2">
+                          {socials.map((s) => (
+                            <motion.a
+                              key={s.key}
+                              href={s.href}
+                              target={s.href !== "#" ? "_blank" : undefined}
+                              rel="noopener noreferrer"
+                              whileHover={{ scale: 1.2 }}
+                              className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-amber-50 hover:text-amber-500 transition-colors"
+                            >
+                              {s.icon}
+                            </motion.a>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </TiltCard>
+                );
+              })}
             </div>
 
             <motion.div {...fadeUp(0.2)} className="flex justify-center">

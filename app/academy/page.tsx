@@ -12,6 +12,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
+/* ─── CMS content type (matches admin/academy editor) ─────────── */
+type AcademySiteContent = {
+  hero_line1?: string;
+  hero_highlight?: string;
+  hero_line2?: string;
+  hero_subtext?: string;
+  hero_stats?: { value: string; suffix: string; label: string }[];
+  programs?: { title: string; desc: string; features: string }[];
+  why_headline?: string;
+  why_reasons?: { title: string; desc: string }[];
+  numbers?: { value: string; suffix: string; label: string }[];
+  cta_headline?: string;
+  cta_desc?: string;
+  testimonials?: { name: string; role: string; img: string; text: string; stars: number }[];
+};
+
 /* ─── Animation helpers ───────────────────────────────────────── */
 const fadeUp = (delay = 0, y = 28) => ({
   initial: { opacity: 0, y },
@@ -208,86 +224,128 @@ const partnerLogos = [
   { id: "ict",       Component: LogoICT },
 ];
 
-/* ─── Data ─────────────────────────────────────────────────────── */
-const heroStats = [
-  { value: 500, suffix: "+", label: "Students Mentored",    icon: Users },
-  { value: 100, suffix: "+", label: "Projects Guided",      icon: BookOpen },
-  { value: 50,  suffix: "+", label: "Workshops Conducted",  icon: Award },
-  { value: 95,  suffix: "%", label: "Student Satisfaction", icon: Star },
+/* ─── Static design config (icons / colours — not CMS-editable) ── */
+const HERO_STAT_ICONS = [Users, BookOpen, Award, Star];
+const WHY_REASON_ICONS = [UserCheck, BookOpen, Award, TrendingUp, Zap, Heart];
+const NUMBER_ICONS = [Users, BookOpen, Award, UserCheck, Star, GraduationCap];
+
+const PROGRAM_CONFIG = [
+  { icon: UserCheck, color: "#10B981", bg: "#ECFDF5", href: "/contact?type=mentorship" },
+  { icon: Code2,     color: "#6366F1", bg: "#EEF2FF", href: "/contact?type=projects"   },
+  { icon: Rocket,    color: "#8B5CF6", bg: "#F5F3FF", href: "/contact?type=startup"    },
+  { icon: Monitor,   color: "#2563EB", bg: "#EFF6FF", href: "/contact?type=courses"    },
+  { icon: Users,     color: "#EC4899", bg: "#FDF2F8", href: "/contact?type=workshops"  },
+  { icon: Briefcase, color: "#EA580C", bg: "#FFF7ED", href: "/contact?type=internship" },
 ];
 
-const programs = [
-  {
-    icon: UserCheck, color: "#10B981", bg: "#ECFDF5",
-    title: "Mentorship Programs",
-    desc: "Learn from industry experts and successful founders.",
-    features: ["Startup Mentorship", "Career Mentorship", "Personal Branding", "1:1 Guidance"],
-    href: "/contact?type=mentorship",
-  },
-  {
-    icon: Code2, color: "#6366F1", bg: "#EEF2FF",
-    title: "Academic Projects",
-    desc: "Guiding students in building real-world academic projects.",
-    features: ["Mini Projects", "Final Year Projects", "Research Projects", "Project Documentation"],
-    href: "/contact?type=projects",
-  },
-  {
-    icon: Rocket, color: "#8B5CF6", bg: "#F5F3FF",
-    title: "Startup Incubation",
-    desc: "From idea to launch — we support your startup journey.",
-    features: ["Idea Validation", "MVP Development", "Business Strategy", "Fundraising Support"],
-    href: "/contact?type=startup",
-  },
-  {
-    icon: Monitor, color: "#2563EB", bg: "#EFF6FF",
-    title: "Technical Courses",
-    desc: "Build in-demand technical skills from scratch.",
-    features: ["Web Development", "Data Science & AI", "Cloud & DevOps", "Cybersecurity"],
-    href: "/contact?type=courses",
-  },
-  {
-    icon: Users, color: "#EC4899", bg: "#FDF2F8",
-    title: "Workshops & Bootcamps",
-    desc: "Hands-on learning through intensive workshops.",
-    features: ["AI & ML Bootcamps", "Hackathons", "Coding Workshops", "Industry Sessions"],
-    href: "/contact?type=workshops",
-  },
-  {
-    icon: Briefcase, color: "#EA580C", bg: "#FFF7ED",
-    title: "Internships & Placements",
-    desc: "Gain real-world experience and career opportunities.",
-    features: ["Industry Internships", "Resume Building", "Interview Prep", "Placement Support"],
-    href: "/contact?type=internship",
-  },
+/* ─── Default content (shown until CMS data loads) ────────────── */
+const DEFAULT_HERO_STATS = [
+  { value: 500, suffix: "+", label: "Students Mentored"   },
+  { value: 100, suffix: "+", label: "Projects Guided"     },
+  { value: 50,  suffix: "+", label: "Workshops Conducted" },
+  { value: 95,  suffix: "%", label: "Student Satisfaction"},
 ];
 
-const whyReasons = [
-  { icon: UserCheck,  title: "Industry Experts",      desc: "Learn from professionals with real-world experience." },
-  { icon: BookOpen,   title: "Practical Learning",    desc: "Hands-on projects and real-world case studies." },
-  { icon: Award,      title: "Personalized Guidance", desc: "1:1 mentorship tailored to your goals." },
-  { icon: TrendingUp, title: "Career Growth",         desc: "Build skills that help you get hired." },
-  { icon: Zap,        title: "Innovation Focus",      desc: "Work on cutting-edge technologies." },
-  { icon: Heart,      title: "Supportive Community",  desc: "Collaborate, network and grow together." },
+const DEFAULT_PROGRAMS = [
+  { title: "Mentorship Programs",     desc: "Learn from industry experts and successful founders.",            features: ["Startup Mentorship","Career Mentorship","Personal Branding","1:1 Guidance"] },
+  { title: "Academic Projects",       desc: "Guiding students in building real-world academic projects.",     features: ["Mini Projects","Final Year Projects","Research Projects","Project Documentation"] },
+  { title: "Startup Incubation",      desc: "From idea to launch — we support your startup journey.",        features: ["Idea Validation","MVP Development","Business Strategy","Fundraising Support"] },
+  { title: "Technical Courses",       desc: "Build in-demand technical skills from scratch.",                features: ["Web Development","Data Science & AI","Cloud & DevOps","Cybersecurity"] },
+  { title: "Workshops & Bootcamps",   desc: "Hands-on learning through intensive workshops.",                features: ["AI & ML Bootcamps","Hackathons","Coding Workshops","Industry Sessions"] },
+  { title: "Internships & Placements",desc: "Gain real-world experience and career opportunities.",          features: ["Industry Internships","Resume Building","Interview Prep","Placement Support"] },
 ];
 
-const testimonials = [
+const DEFAULT_WHY_REASONS = [
+  { title: "Industry Experts",      desc: "Learn from professionals with real-world experience." },
+  { title: "Practical Learning",    desc: "Hands-on projects and real-world case studies."       },
+  { title: "Personalized Guidance", desc: "1:1 mentorship tailored to your goals."               },
+  { title: "Career Growth",         desc: "Build skills that help you get hired."                },
+  { title: "Innovation Focus",      desc: "Work on cutting-edge technologies."                   },
+  { title: "Supportive Community",  desc: "Collaborate, network and grow together."              },
+];
+
+const DEFAULT_TESTIMONIALS = [
   { name: "Karthik M.",  role: "Final Year Student",   img: "/bharath pic.jpeg",  text: "Akronix Academy helped me build my final year project and secure a great placement opportunity.", stars: 5 },
   { name: "Sneha R.",    role: "AI/ML Intern",         img: "/Sarvika pic.jpeg",  text: "The mentorship program gave me clarity and confidence to build my own startup.", stars: 5 },
   { name: "Rohan P.",    role: "Full Stack Developer", img: "/pranav pic.jpeg",   text: "The workshops and bootcamps improved my skills and helped me land my dream job.", stars: 5 },
 ];
 
-const byNumbers = [
-  { value: 500, suffix: "+", label: "Students Mentored",    icon: Users },
-  { value: 100, suffix: "+", label: "Projects Guided",      icon: BookOpen },
-  { value: 50,  suffix: "+", label: "Workshops",            icon: Award },
-  { value: 25,  suffix: "+", label: "Industry Experts",     icon: UserCheck },
-  { value: 95,  suffix: "%", label: "Student Satisfaction", icon: Star },
-  { value: 10,  suffix: "+", label: "Partner Institutions", icon: GraduationCap },
+const DEFAULT_BY_NUMBERS = [
+  { value: 500, suffix: "+", label: "Students Mentored"    },
+  { value: 100, suffix: "+", label: "Projects Guided"      },
+  { value: 50,  suffix: "+", label: "Workshops"            },
+  { value: 25,  suffix: "+", label: "Industry Experts"     },
+  { value: 95,  suffix: "%", label: "Student Satisfaction" },
+  { value: 10,  suffix: "+", label: "Partner Institutions" },
 ];
 
 /* ─── Page ─────────────────────────────────────────────────────── */
 export default function AcademyPage() {
   const progRef = useRef<HTMLDivElement>(null);
+
+  /* ── CMS data from admin ───────────────────────────────────── */
+  const [cms, setCms] = useState<AcademySiteContent | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/site-settings?prefix=academy.")
+      .then(r => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["academy.content"]) {
+          try { setCms(JSON.parse(data["academy.content"])); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  /* ── Derived content (cms overrides defaults) ──────────────── */
+  const heroLine1    = cms?.hero_line1    ?? "Learn. Innovate.";
+  const heroHighlight = cms?.hero_highlight ?? "Lead";
+  const heroLine2    = cms?.hero_line2    ?? "the Future.";
+  const heroSubtext  = cms?.hero_subtext  ??
+    "Akronix Academy empowers students, entrepreneurs and professionals with the skills, mentorship and real-world experience to build innovative solutions and successful careers.";
+  const whyHeadline  = cms?.why_headline  ?? "Why Join Akronix Academy?";
+  const ctaHeadline  = cms?.cta_headline  ?? "Start Your Learning Journey Today";
+  const ctaDesc      = cms?.cta_desc      ??
+    "Join thousands of learners who are building skills, creating solutions and shaping their future with Akronix Academy.";
+
+  const heroStats = cms?.hero_stats
+    ? cms.hero_stats.map((s, i) => ({
+        value:  parseInt(s.value)  || DEFAULT_HERO_STATS[i]?.value  || 0,
+        suffix: s.suffix           || DEFAULT_HERO_STATS[i]?.suffix || "+",
+        label:  s.label            || DEFAULT_HERO_STATS[i]?.label  || "",
+        icon:   HERO_STAT_ICONS[i] || Users,
+      }))
+    : DEFAULT_HERO_STATS.map((s, i) => ({ ...s, icon: HERO_STAT_ICONS[i] }));
+
+  const programs = cms?.programs
+    ? cms.programs.map((p, i) => ({
+        ...(PROGRAM_CONFIG[i] ?? PROGRAM_CONFIG[0]),
+        title:    p.title || DEFAULT_PROGRAMS[i]?.title || "",
+        desc:     p.desc  || DEFAULT_PROGRAMS[i]?.desc  || "",
+        features: p.features.split(",").map(f => f.trim()).filter(Boolean).length > 0
+          ? p.features.split(",").map(f => f.trim()).filter(Boolean)
+          : (DEFAULT_PROGRAMS[i]?.features ?? []),
+      }))
+    : DEFAULT_PROGRAMS.map((p, i) => ({ ...PROGRAM_CONFIG[i], ...p }));
+
+  const whyReasons = cms?.why_reasons
+    ? cms.why_reasons.map((r, i) => ({
+        icon:  WHY_REASON_ICONS[i] || UserCheck,
+        title: r.title || DEFAULT_WHY_REASONS[i]?.title || "",
+        desc:  r.desc  || DEFAULT_WHY_REASONS[i]?.desc  || "",
+      }))
+    : DEFAULT_WHY_REASONS.map((r, i) => ({ ...r, icon: WHY_REASON_ICONS[i] }));
+
+  const byNumbers = cms?.numbers
+    ? cms.numbers.map((n, i) => ({
+        value:  parseInt(n.value)  || DEFAULT_BY_NUMBERS[i]?.value  || 0,
+        suffix: n.suffix           || DEFAULT_BY_NUMBERS[i]?.suffix || "+",
+        label:  n.label            || DEFAULT_BY_NUMBERS[i]?.label  || "",
+        icon:   NUMBER_ICONS[i]    || Users,
+      }))
+    : DEFAULT_BY_NUMBERS.map((n, i) => ({ ...n, icon: NUMBER_ICONS[i] }));
+
+  const activeTestimonials = cms?.testimonials ?? DEFAULT_TESTIMONIALS;
 
   function scrollPrograms(dir: "left" | "right") {
     progRef.current?.scrollBy({ left: dir === "right" ? 280 : -280, behavior: "smooth" });
@@ -323,7 +381,7 @@ export default function AcademyPage() {
                 transition={{ duration: 0.8, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
                 className="text-[2.9rem] md:text-[3.5rem] font-black leading-[1.08] tracking-tight text-gray-900 mb-5"
               >
-                Learn. Innovate.{" "}
+                {heroLine1}{" "}
                 <br />
                 <motion.span
                   initial={{ backgroundPosition: "200% center" }}
@@ -337,9 +395,9 @@ export default function AcademyPage() {
                     backgroundClip: "text",
                   }}
                 >
-                  Lead
+                  {heroHighlight}
                 </motion.span>{" "}
-                the Future.
+                {heroLine2}
               </motion.h1>
 
               <motion.p
@@ -348,7 +406,7 @@ export default function AcademyPage() {
                 transition={{ duration: 0.7, delay: 0.18 }}
                 className="text-gray-500 text-[1rem] leading-relaxed mb-9 max-w-[480px]"
               >
-                Akronix Academy empowers students, entrepreneurs and professionals with the skills, mentorship and real-world experience to build innovative solutions and successful careers.
+                {heroSubtext}
               </motion.p>
 
               {/* 4 mini stats */}
@@ -497,7 +555,7 @@ export default function AcademyPage() {
 
             {/* Left */}
             <motion.div {...fadeLeft(0)}>
-              <h2 className="text-3xl md:text-[2.2rem] font-black text-gray-900 mb-2">Why Join Akronix Academy?</h2>
+              <h2 className="text-3xl md:text-[2.2rem] font-black text-gray-900 mb-2">{whyHeadline}</h2>
               <div className="w-14 h-1 rounded-full mb-8" style={{ background: "linear-gradient(90deg,#F59E0B,#EA580C)" }} />
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 {whyReasons.map((r, i) => (
@@ -616,7 +674,7 @@ export default function AcademyPage() {
               </div>
 
               <div className="space-y-4">
-                {testimonials.map((t, i) => (
+                {activeTestimonials.map((t, i) => (
                   <motion.div
                     key={t.name}
                     {...fadeLeft(0.07 + i * 0.09)}
@@ -720,9 +778,9 @@ export default function AcademyPage() {
                   <GraduationCap size={26} className="text-white" />
                 </motion.div>
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-black text-white leading-tight mb-2">Start Your Learning Journey Today</h2>
+                  <h2 className="text-2xl md:text-3xl font-black text-white leading-tight mb-2">{ctaHeadline}</h2>
                   <p className="text-gray-400 leading-relaxed max-w-lg">
-                    Join thousands of learners who are building skills, creating solutions and shaping their future with Akronix Academy.
+                    {ctaDesc}
                   </p>
                 </div>
               </div>

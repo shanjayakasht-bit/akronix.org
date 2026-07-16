@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-import LoadingScreen from "@/components/ui/loading-screen";
 
 export const metadata: Metadata = {
   title: {
@@ -52,7 +51,6 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head />
       <body className="antialiased">
-        <LoadingScreen />
         <Providers>{children}</Providers>
       </body>
     </html>

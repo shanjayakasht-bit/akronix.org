@@ -1,16 +1,19 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import HomePage from "@/components/pages/home-page";
-import { getHomepageSettings } from "@/lib/site-settings";
+import { getHomepageSettings, getPublishedTestimonials } from "@/lib/site-settings";
 
 export default async function Page() {
-  const settings = await getHomepageSettings();
+  const [settings, dbTestimonials] = await Promise.all([
+    getHomepageSettings(),
+    getPublishedTestimonials(),
+  ]);
 
   return (
     <>
       <Navigation />
       <main>
-        <HomePage settings={settings} />
+        <HomePage settings={settings} dbTestimonials={dbTestimonials} />
       </main>
       <Footer />
     </>

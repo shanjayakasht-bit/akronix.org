@@ -39,9 +39,9 @@ const CONTACT_INFO = [
   {
     icon: Mail,
     label: "Email Us",
-    value: "hello@akronix.org",
+    value: "akronix.in@gmail.com",
     sub: "We reply within 24 hours",
-    href: "mailto:hello@akronix.org",
+    href: "mailto:akronix.in@gmail.com",
     color: "text-blue-400",
     bg: "bg-blue-500/10",
   },
@@ -87,42 +87,32 @@ const PROCESS = [
   { step: "04", title: "Proposal & Kickoff", desc: "Receive a tailored proposal and start building together." },
 ];
 
-const FAQS = [
-  {
-    q: "How long does it take to start a project?",
-    a: "Most projects kick off within 1–2 weeks after the initial discovery call and proposal approval.",
-  },
-  {
-    q: "Do you work with international clients?",
-    a: "Yes! We work with clients across 15+ countries. All communication happens over Zoom, email and Slack.",
-  },
-  {
-    q: "What is the minimum project budget?",
-    a: "Our projects start from ₹30,000 for landing pages. Custom SaaS and enterprise solutions are priced based on scope.",
-  },
-  {
-    q: "Can I request changes after the project starts?",
-    a: "Absolutely. We follow an agile process with regular check-ins and allow scope adjustments within reasonable bounds.",
-  },
+const DEFAULT_FAQS = [
+  { q: "How long does it take to start a project?",      a: "Most projects kick off within 1–2 weeks after the initial discovery call and proposal approval." },
+  { q: "Do you work with international clients?",         a: "Yes! We work with clients across 15+ countries. All communication happens over Zoom, email and Slack." },
+  { q: "What is the minimum project budget?",             a: "Our projects start from ₹30,000 for landing pages. Custom SaaS and enterprise solutions are priced based on scope." },
+  { q: "Can I request changes after the project starts?", a: "Absolutely. We follow an agile process with regular check-ins and allow scope adjustments within reasonable bounds." },
 ];
 
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <button
+    <div
+      className={`border rounded-xl overflow-hidden transition-all duration-200 cursor-pointer ${open ? "border-amber-300 shadow-sm shadow-amber-100" : "border-gray-200 hover:border-amber-200 hover:shadow-sm"}`}
       onClick={() => setOpen(!open)}
-      className="w-full text-left border border-white/8 rounded-xl overflow-hidden transition-all"
     >
-      <div className="flex items-center justify-between px-5 py-4">
-        <span className="text-sm font-semibold text-white/80">{q}</span>
-        {open ? <ChevronUp size={16} className="text-amber-400 shrink-0" /> : <ChevronDown size={16} className="text-white/30 shrink-0" />}
+      <div className="flex items-center justify-between px-5 py-4 bg-white">
+        <span className="text-sm font-semibold text-gray-800 text-left">{q}</span>
+        {open
+          ? <ChevronUp size={16} className="text-amber-500 shrink-0 ml-3" />
+          : <ChevronDown size={16} className="text-gray-400 shrink-0 ml-3" />}
       </div>
       {open && (
-        <div className="px-5 pb-4 text-sm text-white/50 leading-relaxed border-t border-white/5">
+        <div className="px-5 pb-4 pt-3 text-sm text-gray-600 leading-relaxed border-t border-amber-100 bg-amber-50/40">
           {a}
         </div>
       )}
-    </button>
+    </div>
   );
 }
 
@@ -131,6 +121,7 @@ export default function ContactPage() {
   const requestedService = searchParams.get("service");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [cmsFaqs, setCmsFaqs] = useState<{ q: string; a: string }[] | null>(null);
   const { toast } = useToast();
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
@@ -141,6 +132,19 @@ export default function ContactPage() {
   useEffect(() => {
     if (requestedService) setValue("serviceType", requestedService);
   }, [requestedService, setValue]);
+
+  useEffect(() => {
+    fetch("/api/admin/site-settings?prefix=contact.")
+      .then(r => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["contact.faqs"]) {
+          try { setCmsFaqs(JSON.parse(data["contact.faqs"])); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const activeFaqs = cmsFaqs ?? DEFAULT_FAQS;
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -279,7 +283,7 @@ export default function ContactPage() {
               <div>
                 <h2 className="text-xl font-black text-gray-900 mb-4">Frequently Asked Questions</h2>
                 <div className="space-y-2">
-                  {FAQS.map((faq) => (
+                  {activeFaqs.map((faq) => (
                     <FaqItem key={faq.q} q={faq.q} a={faq.a} />
                   ))}
                 </div>

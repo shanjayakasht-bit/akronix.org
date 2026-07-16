@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion";
-import { CheckCircle, ArrowRight, UserPlus, Settings2, Cpu, Rocket } from "lucide-react";
+import { CheckCircle, ArrowRight, UserPlus, Settings2, Cpu, Rocket, BarChart3, Globe, Layers, Key } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState, useMemo } from "react";
@@ -14,6 +14,20 @@ const features = [
   { title: "Subscription Management",   desc: "Integrated Stripe/Paddle for tiered billing and seat-based pricing engines." },
   { title: "Advanced Analytics",         desc: "Real-time insights for your users and your business metrics via custom dashboards." },
   { title: "API-First Design",           desc: "Built with modern APIs for easy integration and third-party ecosystem growth." },
+];
+
+const offerings = [
+  { icon: Layers,   title: "Custom SaaS Build",   desc: "End-to-end development of multi-tenant platforms from idea to production." },
+  { icon: Key,      title: "White-Label Solutions", desc: "Rebrandable SaaS products ready to deploy under your brand." },
+  { icon: Globe,    title: "API & Integrations",   desc: "REST/GraphQL APIs and third-party integrations that extend your ecosystem." },
+  { icon: BarChart3,title: "Analytics & BI",       desc: "Embedded dashboards and business intelligence for you and your users." },
+];
+
+const stats = [
+  { value: "50+",   label: "SaaS Platforms Built" },
+  { value: "99.9%", label: "Uptime SLA" },
+  { value: "1M+",   label: "Users Handled" },
+  { value: "10+",   label: "Countries Served" },
 ];
 
 /* ─── Parallax image panel (original effect) ────────────────────── */
@@ -305,6 +319,49 @@ export default function SaaSDevelopmentPage() {
                 <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">Scroll to explore</span>
               </motion.div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ── WHAT WE OFFER ────────────────────────────────────── */}
+        <section className="relative z-10 py-20 border-t border-white/[0.04]">
+          <div className="container-xl px-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-10">
+              <div className="h-px w-7 bg-cyan-400" />
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-cyan-400">What We Offer</span>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {offerings.map(({ icon: Icon, title, desc }, i) => (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -6, borderColor: "rgba(0,240,255,0.25)" }}
+                  className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm cursor-default transition-colors duration-300 group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4 group-hover:bg-cyan-500/15 transition-colors">
+                    <Icon size={20} className="text-cyan-400" />
+                  </div>
+                  <h3 className="font-black text-sm text-white/90 mb-2">{title}</h3>
+                  <p className="text-xs text-white/35 leading-relaxed">{desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── STATS STRIP ──────────────────────────────────────── */}
+        <section className="relative z-10 py-14 border-y border-white/[0.04]">
+          <div className="container-xl px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {stats.map(({ value, label }, i) => (
+                <motion.div key={label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>
+                  <p className="text-3xl md:text-4xl font-black text-cyan-400 mb-1">{value}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/25">{label}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 

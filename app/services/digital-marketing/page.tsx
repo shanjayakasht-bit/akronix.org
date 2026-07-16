@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } from "framer-motion";
-import { CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowRight, Search, Megaphone, BarChart2, Share2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRef, useEffect, useState, useMemo } from "react";
@@ -14,6 +14,20 @@ const features = [
   { title: "Multi-Channel Integration", desc: "API-first design allows for seamless connection to CRM and email marketing tools like Stripe or Paddle." },
   { title: "User Lifecycle Tracking",  desc: "Detailed mapping of the user journey from initial sign-up to premium upgrade with precise analytics." },
   { title: "Growth Ecosystem",        desc: "A full suite of tools designed to convert visitors into long-term, loyal subscribers." },
+];
+
+const offerings = [
+  { icon: Search,    title: "SEO & SEM",           desc: "Dominate search rankings with technical SEO and precision paid campaigns." },
+  { icon: Share2,    title: "Social Media",         desc: "Content strategy and community management across all major platforms." },
+  { icon: Megaphone, title: "Google & Meta Ads",   desc: "High-ROAS ad campaigns engineered for maximum conversion at scale." },
+  { icon: BarChart2, title: "Content & Growth",    desc: "Long-form content, email sequences and growth loops that compound." },
+];
+
+const stats = [
+  { value: "2×",   label: "Average ROI" },
+  { value: "200+", label: "Campaigns Launched" },
+  { value: "50+",  label: "Clients Served" },
+  { value: "15+",  label: "Platforms Managed" },
 ];
 
 /* ─── Parallax image panel ───────────────────────────────────────── */
@@ -224,6 +238,49 @@ export default function DigitalMarketingPage() {
                 <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">Scroll to explore</span>
               </motion.div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* ── WHAT WE OFFER ────────────────────────────────────── */}
+        <section className="relative z-10 py-20 border-t border-white/[0.04]">
+          <div className="container-xl px-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-10">
+              <div className="h-px w-7 bg-fuchsia-400" />
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-fuchsia-400">What We Offer</span>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {offerings.map(({ icon: Icon, title, desc }, i) => (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -6, borderColor: "rgba(217,70,239,0.25)" }}
+                  className="p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm cursor-default transition-colors duration-300 group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center mb-4 group-hover:bg-fuchsia-500/15 transition-colors">
+                    <Icon size={20} className="text-fuchsia-400" />
+                  </div>
+                  <h3 className="font-black text-sm text-white/90 mb-2">{title}</h3>
+                  <p className="text-xs text-white/35 leading-relaxed">{desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── STATS STRIP ──────────────────────────────────────── */}
+        <section className="relative z-10 py-14 border-y border-white/[0.04]">
+          <div className="container-xl px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {stats.map(({ value, label }, i) => (
+                <motion.div key={label} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>
+                  <p className="text-3xl md:text-4xl font-black text-fuchsia-400 mb-1">{value}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/25">{label}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
