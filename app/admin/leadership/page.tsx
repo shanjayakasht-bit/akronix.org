@@ -1,29 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Save, Loader2, CheckCircle2, Plus, Trash2, Camera } from "lucide-react";
+import { Users, Save, Loader2, CheckCircle2, Plus, Trash2, Camera, ChevronUp, ChevronDown, Upload, Eye, EyeOff } from "lucide-react";
+import { DEFAULT_LEADERSHIP, type LeadershipMember } from "@/lib/leadership-defaults";
 
-type TeamMember = {
-  name: string;
-  title: string;
-  bio: string;
-  photo: string;
-  avatar: string;
-  linkedin: string;
-  twitter: string;
-  instagram: string;
-  color: string;
-};
+type TeamMember = LeadershipMember;
 
 const COLOR_PRESETS = ["#2563EB", "#9333EA", "#16A34A", "#EA580C", "#0D9488", "#DC2626", "#F59E0B"];
 
-const DEFAULT_TEAM: TeamMember[] = [
-  { name: "Shanjay Akash T.", title: "Founder & CEO", bio: "Visionary leader with a passion for technology, innovation and building strategic ecosystems.", photo: "/shanjay pic.jpeg", avatar: "SA", linkedin: "", twitter: "", instagram: "", color: "#F59E0B" },
-  { name: "Ritika Sharma",     title: "COO",           bio: "Operations expert ensuring excellence in execution and customer success.",                     photo: "/avanthika pic.jpeg", avatar: "RS", linkedin: "", twitter: "", instagram: "", color: "#2563EB" },
-  { name: "Arun Prakash",      title: "CTO",           bio: "Technology leader driving innovation and building future-ready solutions.",                    photo: "/Mareeswaran pic.jpeg", avatar: "AP", linkedin: "", twitter: "", instagram: "", color: "#9333EA" },
-  { name: "Neha Verma",        title: "Head of Growth", bio: "Growth strategist focused on partnerships, marketing and community building.",               photo: "/Dakshitha pic.jpg",   avatar: "NV", linkedin: "", twitter: "", instagram: "", color: "#16A34A" },
-];
+const DEFAULT_TEAM: TeamMember[] = DEFAULT_LEADERSHIP;
 
 function Field({ label, value, onChange, placeholder, multiline }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; multiline?: boolean;
@@ -41,9 +27,13 @@ function Field({ label, value, onChange, placeholder, multiline }: {
 
 export default function LeadershipAdmin() {
   const [team, setTeam]     = useState<TeamMember[]>(DEFAULT_TEAM);
+  const [visible, setVisible] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving]   = useState(false);
   const [saved, setSaved]     = useState(false);
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRefs = useRef<Record<number, HTMLInputElement | null>>({});
 
   useEffect(() => {
     fetch("/api/admin/site-settings?prefix=site.")
@@ -55,6 +45,7 @@ export default function LeadershipAdmin() {
             setTeam(parsed.map((m: TeamMember) => ({ ...DEFAULT_TEAM[0], ...m })));
           } catch {}
         }
+        if (data["site.leadership.visible"] === "false") setVisible(false);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -66,7 +57,10 @@ export default function LeadershipAdmin() {
       const res = await fetch("/api/admin/site-settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "site.leadership": JSON.stringify(team) }),
+        body: JSON.stringify({
+          "site.leadership": JSON.stringify(team),
+          "site.leadership.visible": String(visible),
+        }),
       });
       if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000); }
     } finally { setSaving(false); }
@@ -78,6 +72,37 @@ export default function LeadershipAdmin() {
   const addMember = () => setTeam(prev => [...prev, {
     name: "", title: "", bio: "", photo: "", avatar: "?", linkedin: "", twitter: "", instagram: "", color: "#2563EB",
   }]);
+
+  const moveMember = (i: number, dir: -1 | 1) => {
+    const target = i + dir;
+    if (target < 0 || target >= team.length) return;
+    setTeam(prev => {
+      const next = [...prev];
+      [next[i], next[target]] = [next[target], next[i]];
+      return next;
+    });
+  };
+
+  const handlePhotoUpload = async (i: number, file: File) => {
+    setUploadError(null);
+    setUploadingIdx(i);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "leadership");
+      const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        update(i, "photo", data.url);
+      } else {
+        setUploadError(data.error ?? "Upload failed.");
+      }
+    } catch {
+      setUploadError("Upload failed.");
+    } finally {
+      setUploadingIdx(null);
+    }
+  };
 
   if (loading) return (
     <div className="flex items-center justify-center h-40">
@@ -104,6 +129,18 @@ export default function LeadershipAdmin() {
         <div className="flex items-center gap-3">
           <motion.button
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+            onClick={() => setVisible(v => !v)}
+            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg border transition-colors ${
+              visible
+                ? "text-green-400 bg-green-500/10 border-green-500/20 hover:bg-green-500/15"
+                : "text-white/40 bg-white/5 border-white/10 hover:bg-white/10"
+            }`}
+          >
+            {visible ? <Eye size={12} /> : <EyeOff size={12} />}
+            {visible ? "Shown on About page" : "Hidden on About page"}
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             onClick={addMember}
             className="flex items-center gap-1.5 text-xs font-bold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded-lg transition-colors"
           >
@@ -120,9 +157,13 @@ export default function LeadershipAdmin() {
         </div>
       </motion.div>
 
-      <div className="bg-amber-500/5 border border-amber-500/15 rounded-xl px-4 py-3 text-xs text-amber-300/70">
-        Add a <span className="font-bold text-amber-400">Photo URL</span> to show a real photo on the About page. Leave blank to show the coloured initials avatar instead.
+      <div className="bg-amber-500/5 border border-amber-500/15 rounded-xl px-4 py-3 text-xs text-amber-300/70 space-y-1">
+        <p>Upload a <span className="font-bold text-amber-400">photo</span> directly, or paste a URL. Leave blank to show the coloured initials avatar instead.</p>
+        <p>Use the <span className="font-bold text-amber-400">arrows</span> on each card to reorder members — order here matches the order shown on the site. This section also powers the full <span className="font-bold text-amber-400">/team</span> page.</p>
       </div>
+      {uploadError && (
+        <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-xs text-red-400">{uploadError}</div>
+      )}
 
       {/* Team grid */}
       <motion.div
@@ -159,13 +200,34 @@ export default function LeadershipAdmin() {
                     <p className="text-[10px] text-white/35">{m.title || "Title"}</p>
                   </div>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  onClick={() => setTeam(prev => prev.filter((_, idx) => idx !== i))}
-                  className="text-white/20 hover:text-red-400 transition-colors p-1"
-                >
-                  <Trash2 size={13} />
-                </motion.button>
+                <div className="flex items-center gap-1">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    onClick={() => moveMember(i, -1)}
+                    disabled={i === 0}
+                    className="text-white/20 hover:text-amber-400 transition-colors p-1 disabled:opacity-20 disabled:hover:text-white/20"
+                    title="Move up"
+                  >
+                    <ChevronUp size={14} />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    onClick={() => moveMember(i, 1)}
+                    disabled={i === team.length - 1}
+                    className="text-white/20 hover:text-amber-400 transition-colors p-1 disabled:opacity-20 disabled:hover:text-white/20"
+                    title="Move down"
+                  >
+                    <ChevronDown size={14} />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    onClick={() => setTeam(prev => prev.filter((_, idx) => idx !== i))}
+                    className="text-white/20 hover:text-red-400 transition-colors p-1"
+                    title="Remove"
+                  >
+                    <Trash2 size={13} />
+                  </motion.button>
+                </div>
               </div>
 
               {/* Fields */}
@@ -178,9 +240,31 @@ export default function LeadershipAdmin() {
                   <Field label="Job Title / Role" value={m.title} onChange={v => update(i, "title", v)} placeholder="Founder & CEO" />
                 </div>
                 <Field label="Short Bio" value={m.bio} onChange={v => update(i, "bio", v)} multiline placeholder="Brief description..." />
-                <div className="relative">
-                  <Field label="Photo URL (optional)" value={m.photo} onChange={v => update(i, "photo", v)} placeholder="/team-photo.jpg or https://..." />
-                  <Camera size={12} className="absolute right-3 top-[26px] text-white/20 pointer-events-none" />
+                <div className="flex gap-2 items-end">
+                  <div className="relative flex-1">
+                    <Field label="Photo URL (optional)" value={m.photo} onChange={v => update(i, "photo", v)} placeholder="/team-photo.jpg or https://..." />
+                    <Camera size={12} className="absolute right-3 top-[26px] text-white/20 pointer-events-none" />
+                  </div>
+                  <input
+                    ref={el => { fileInputRefs.current[i] = el; }}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) handlePhotoUpload(i, file);
+                      e.target.value = "";
+                    }}
+                  />
+                  <motion.button
+                    whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                    onClick={() => fileInputRefs.current[i]?.click()}
+                    disabled={uploadingIdx === i}
+                    className="flex items-center gap-1.5 text-xs font-bold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded-lg transition-colors disabled:opacity-60 whitespace-nowrap"
+                  >
+                    {uploadingIdx === i ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                    {uploadingIdx === i ? "Uploading…" : "Upload"}
+                  </motion.button>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <Field label="LinkedIn URL" value={m.linkedin} onChange={v => update(i, "linkedin", v)} placeholder="https://..." />

@@ -10,6 +10,7 @@ import {
   Building2, Package, Cpu, MailOpen, PhoneCall, MapPin, Database, Bot, Layers,
 } from "lucide-react";
 import type { PublishedTestimonial } from "@/lib/site-settings";
+import { generateSlug } from "@/lib/utils";
 
 /* ── Animation Variants ──────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
@@ -35,7 +36,7 @@ const scaleIn = (delay = 0) => ({
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const stats = [
-  { value: "500+", label: "Businesses Empowered" },
+  { value: "50+", label: "Businesses Empowered" },
   { value: "15+", label: "Valuable Partnerships" },
   { value: "98%", label: "Client Retention" },
   { value: "60%", label: "Avg. Efficiency Gain" },
@@ -267,7 +268,7 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
   const cta1Text = settings["homepage.hero.cta1.text"] || "Get Started";
   const cta1Href = settings["homepage.hero.cta1.href"] || "/contact?type=project";
   const cta2Text = settings["homepage.hero.cta2.text"] || "Explore Products";
-  const cta2Href = settings["homepage.hero.cta2.href"] || "/services";
+  const cta2Href = settings["homepage.hero.cta2.href"] || "/products";
   const ctaHeadline = settings["homepage.cta.headline"] || "Ready to Build the Future of Your Business?";
   const ctaDesc = settings["homepage.cta.description"] || "Let's build software that matters, expand your network and unlock new opportunities — together.";
   const testimonialsLabel = settings["homepage.testimonials.label"] || "4.9/5 from 100+ reviews";
@@ -399,14 +400,6 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
                 >
                   {cta2Text} <ChevronRight size={16} />
                 </Link>
-                <button
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-bold text-gray-600 text-sm transition-all duration-200 hover:text-gray-900"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center">
-                    <Play size={10} className="text-white fill-white ml-0.5" />
-                  </div>
-                  Watch Demo
-                </button>
               </motion.div>
 
               {/* Stats row */}
@@ -757,7 +750,7 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
               <h2 className="text-4xl md:text-5xl font-black text-gray-900">Success Stories</h2>
               <p className="text-gray-500 mt-2">Real Results. Real Impact.</p>
             </div>
-            <Link href="/contact" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 whitespace-nowrap">
+            <Link href="/pricing/testimonials#success-stories" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 whitespace-nowrap">
               View All Stories <ArrowRight size={14} />
             </Link>
           </motion.div>
@@ -792,7 +785,7 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
 
                 {/* CTA */}
                 <Link
-                  href="/contact"
+                  href={`/pricing/testimonials#story-${generateSlug(story.title)}`}
                   className="inline-flex items-center gap-2 text-sm font-bold transition-colors duration-200"
                   style={{ color: story.color }}
                 >

@@ -26,7 +26,7 @@ export async function sendLeadNotificationEmail(
   const { firstName, lastName, email, phone, company, message, source } =
     payload;
  
-  const adminEmail = process.env.ADMIN_EMAIL ?? process.env.EMAIL_USER;
+  const adminEmail = process.env.RECEIVER_EMAIL ?? process.env.ADMIN_EMAIL ?? process.env.EMAIL_USER;
  
   await transporter.sendMail({
     from: `"Akronix Leads" <${process.env.EMAIL_USER}>`,

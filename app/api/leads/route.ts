@@ -41,22 +41,27 @@ export async function POST(req: NextRequest) {
  
     const data = parsed.data;
  
-    // 3. Save lead to database
-    // const lead = await db.lead.create({
-    //   data: {
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     email: data.email,
-    //     phone: data.phone ?? null,
-    //     company: data.company ?? null,
-    //     message: data.message,
-    //     budget: data.budget ?? null,
-    //     source: data.source ?? "contact-page",
-    //     status: "NEW",
-    //   },
-    // });
- 
-    const lead = { id: "test-123" };
+    // 3. Save lead to database — best-effort so a DB outage doesn't block
+    // email delivery, which is the part visitors actually depend on.
+    let leadId = "unsaved";
+    try {
+      const lead = await db.lead.create({
+        data: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone ?? null,
+          company: data.company ?? null,
+          message: data.message,
+          budget: data.budget ?? null,
+          source: data.source ?? "contact-page",
+          status: "NEW",
+        },
+      });
+      leadId = lead.id;
+    } catch (dbError) {
+      console.error("[POST /api/leads] Failed to save lead to database:", dbError);
+    }
 
     // 4. Send emails (non-blocking — don't fail the request if email fails)
     const emailPayload = {
@@ -69,13 +74,19 @@ export async function POST(req: NextRequest) {
       source: data.source,
     };
  
-    await Promise.allSettled([
+    const [notifyResult, confirmResult] = await Promise.allSettled([
       sendLeadNotificationEmail(emailPayload),
       sendLeadConfirmationEmail({ firstName: data.firstName, email: data.email }),
     ]);
- 
+    if (notifyResult.status === "rejected") {
+      console.error("[POST /api/leads] Failed to send admin notification email:", notifyResult.reason);
+    }
+    if (confirmResult.status === "rejected") {
+      console.error("[POST /api/leads] Failed to send visitor confirmation email:", confirmResult.reason);
+    }
+
     return NextResponse.json(
-      { success: true, leadId: lead.id },
+      { success: true, leadId },
       { status: 201 }
     );
   } catch (error) {

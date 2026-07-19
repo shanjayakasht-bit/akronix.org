@@ -32,6 +32,7 @@ const SERVICES = [
   { value: "business-networking", label: "Business Networking" },
   { value: "automation-systems", label: "Automation Systems" },
   { value: "landing-pages", label: "Landing Pages" },
+  { value: "cloud-development", label: "Cloud Development" },
   { value: "product-early-access", label: "Product Early Access" },
 ];
 

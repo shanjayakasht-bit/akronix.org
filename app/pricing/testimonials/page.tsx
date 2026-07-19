@@ -2,6 +2,7 @@ import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import TestimonialsPage from "@/components/pages/testimonials-page";
 import { db } from "@/lib/db";
+import { getSetting } from "@/lib/site-settings";
 
 export const metadata = {
   title: "Testimonials | Akronix",
@@ -21,11 +22,18 @@ export default async function Page() {
     // DB unavailable — fall back to static testimonials in the component
   }
 
+  let successStories: { category: string; title: string; highlight: string; highlightLabel: string; desc: string; color: string; bg: string }[] = [];
+  try {
+    successStories = JSON.parse(await getSetting("homepage.success_stories"));
+  } catch {
+    // fall back to static stories in the component
+  }
+
   return (
     <>
       <Navigation />
       <main>
-        <TestimonialsPage testimonialsData={testimonialsData} />
+        <TestimonialsPage testimonialsData={testimonialsData} successStories={successStories} />
       </main>
       <Footer />
     </>

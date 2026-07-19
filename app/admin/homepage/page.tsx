@@ -174,7 +174,7 @@ export default function HomepageCMS() {
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Secondary CTA Text" value={settings["homepage.hero.cta2.text"]} onChange={(v) => set("homepage.hero.cta2.text", v)} placeholder="Explore Products" />
-          <Field label="Secondary CTA Link" value={settings["homepage.hero.cta2.href"]} onChange={(v) => set("homepage.hero.cta2.href", v)} placeholder="/services" />
+          <Field label="Secondary CTA Link" value={settings["homepage.hero.cta2.href"]} onChange={(v) => set("homepage.hero.cta2.href", v)} placeholder="/products" />
         </div>
       </SectionCard>
 

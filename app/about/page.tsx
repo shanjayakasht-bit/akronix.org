@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
+import { DEFAULT_LEADERSHIP } from "@/lib/leadership-defaults";
 
 /* ─── Animation helpers ──────────────────────────────────── */
 const fadeUp = (delay = 0, y = 28) => ({
@@ -121,36 +122,7 @@ function IconInstagram() {
 }
 
 /* ─── Team data ──────────────────────────────────────────── */
-const team = [
-  {
-    name: "Shanjay Akash T.",
-    role: "Founder & CEO",
-    desc: "Visionary leader with a passion for technology, innovation and building strategic ecosystems.",
-    photo: "/shanjay pic.jpeg",
-    socials: ["linkedin", "x", "instagram"],
-  },
-  {
-    name: "Ritika Sharma",
-    role: "COO",
-    desc: "Operations expert ensuring excellence in execution and customer success.",
-    photo: "/avanthika pic.jpeg",
-    socials: ["linkedin", "x", "instagram"],
-  },
-  {
-    name: "Arun Prakash",
-    role: "CTO",
-    desc: "Technology leader driving innovation and building future-ready solutions.",
-    photo: "/Mareeswaran pic.jpeg",
-    socials: ["linkedin", "x", "instagram"],
-  },
-  {
-    name: "Neha Verma",
-    role: "Head of Growth",
-    desc: "Growth strategist focused on partnerships, marketing and community building.",
-    photo: "/Dakshitha pic.jpg",
-    socials: ["linkedin", "x", "instagram"],
-  },
-];
+const team = DEFAULT_LEADERSHIP;
 
 const journey = [
   { year: "2021", icon: Flag,      title: "The Beginning",          desc: "Akronix was founded with a vision to empower businesses through technology and strategic connections." },
@@ -184,14 +156,16 @@ export default function AboutPage() {
   const [videoOpen, setVideoOpen] = useState(false);
   const [hoveredMember, setHoveredMember] = useState<number | null>(null);
   const [cmsTeam, setCmsTeam] = useState<CmsTeamMember[] | null>(null);
+  const [leadershipVisible, setLeadershipVisible] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/site-settings?prefix=site.")
+    fetch("/api/site-settings?prefix=site.")
       .then(r => r.json())
       .then((data: Record<string, string>) => {
         if (data["site.leadership"]) {
           try { setCmsTeam(JSON.parse(data["site.leadership"])); } catch {}
         }
+        if (data["site.leadership.visible"] === "false") setLeadershipVisible(false);
       })
       .catch(() => {});
   }, []);
@@ -457,6 +431,7 @@ export default function AboutPage() {
         </section>
 
         {/* ═══════════ LEADERSHIP ═══════════ */}
+        {leadershipVisible && (
         <section className="py-20 bg-gray-50 border-t border-gray-100">
           <div className="container-xl">
             <motion.div {...fadeUp(0)} className="text-center mb-12">
@@ -465,7 +440,7 @@ export default function AboutPage() {
             </motion.div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-              {activeTeam.map((member, i) => {
+              {activeTeam.slice(0, 4).map((member, i) => {
                 const m = member as CmsTeamMember & { role?: string; desc?: string; photo?: string };
                 const role = m.title ?? m.role ?? "";
                 const desc = m.bio ?? m.desc ?? "";
@@ -527,7 +502,7 @@ export default function AboutPage() {
             <motion.div {...fadeUp(0.2)} className="flex justify-center">
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
                 <Link
-                  href="/contact"
+                  href="/team"
                   className="inline-flex items-center gap-2 text-sm font-bold text-gray-700 border-2 border-gray-300 px-8 py-3.5 rounded-full hover:border-amber-400 hover:text-amber-600 transition-all"
                 >
                   Meet the Team
@@ -537,6 +512,7 @@ export default function AboutPage() {
             </motion.div>
           </div>
         </section>
+        )}
 
         {/* ═══════════ WHY CHOOSE ═══════════ */}
         <section className="py-20">

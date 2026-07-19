@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Quote, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Quote, ArrowRight, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { generateSlug } from "@/lib/utils";
 
 /* ─── Animation helpers ───────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
@@ -35,15 +36,45 @@ const fallbackTestimonials = [
   { id: 9, content: "The workshops and bootcamps improved my skills dramatically and helped me land my dream job at a top product company.",                                         author: "Rohan Patel",     role: "Full Stack Dev",   company: "ProductHive",      rating: 5 },
 ];
 
-/* ─── Featured quote (hero testimonial) ──────────────────── */
-const featured = fallbackTestimonials[0];
+const fallbackStories = [
+  {
+    category: "Digital Transformation",
+    title: "Retail/CRM Solution",
+    highlight: "60%",
+    highlightLabel: "increase in customer management efficiency",
+    desc: "We helped streamline CRM and increase managed customer reach.",
+    color: "#2563EB",
+    bg: "#EFF6FF",
+  },
+  {
+    category: "Performance Marketing",
+    title: "Performance Marketing",
+    highlight: "300%",
+    highlightLabel: "increase in deals with targeted campaigns",
+    desc: "Our marketing team delivered results that exceeded expectations.",
+    color: "#16A34A",
+    bg: "#F0FDF4",
+  },
+  {
+    category: "Networking Impact",
+    title: "Business Networking",
+    highlight: "15+",
+    highlightLabel: "valuable partnerships in 6 months",
+    desc: "Our networking program connected businesses to mutual success.",
+    color: "#9333EA",
+    bg: "#FDF4FF",
+  },
+];
 
 export default function TestimonialsPage({
   testimonialsData = [],
+  successStories = [],
 }: {
   testimonialsData?: { id: string | number; content: string; authorName: string; authorTitle: string; rating: number; company: string }[];
+  successStories?: { category: string; title: string; highlight: string; highlightLabel: string; desc: string; color: string; bg: string }[];
 }) {
   const [activeFeatured, setActiveFeatured] = useState(0);
+  const stories = successStories.length > 0 ? successStories : fallbackStories;
 
   const dynamic = testimonialsData.map((t, idx) => ({
     id: t.id,
@@ -55,10 +86,7 @@ export default function TestimonialsPage({
     accent: accentPool[idx % accentPool.length],
   }));
 
-  const all = (dynamic.length > 0
-    ? [...dynamic, ...fallbackTestimonials.slice(0, Math.max(0, 9 - dynamic.length))]
-    : fallbackTestimonials
-  ).map((t, idx) => ({
+  const all = (dynamic.length > 0 ? dynamic : fallbackTestimonials).map((t, idx) => ({
     ...t,
     author: (t as { author?: string; authorName?: string }).author ?? (t as { authorName?: string }).authorName ?? "",
     accent: accentPool[idx % accentPool.length],
@@ -115,6 +143,45 @@ export default function TestimonialsPage({
             We partner with ambitious startups, enterprises and learners to build category-defining solutions.
             Here&apos;s what they say about working with Akronix.
           </motion.p>
+        </div>
+      </section>
+
+      {/* ════════ SUCCESS STORIES ════════ */}
+      <section id="success-stories" className="pb-20 scroll-mt-24">
+        <div className="container-xl">
+          <motion.div {...fadeUp(0)} className="text-center max-w-2xl mx-auto mb-12">
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Case Studies</p>
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900">Real Results. Real Impact.</h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {stories.map((story, i) => (
+              <motion.div
+                key={story.title}
+                id={`story-${generateSlug(story.title)}`}
+                {...fadeUp(i * 0.1)}
+                className="scroll-mt-24 bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-shadow duration-300 flex flex-col hover:shadow-[0_12px_36px_rgba(0,0,0,0.08)]"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <span
+                    className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
+                    style={{ backgroundColor: story.bg, color: story.color }}
+                  >
+                    {story.category}
+                  </span>
+                  <ExternalLink size={14} className="text-gray-300" />
+                </div>
+
+                <div className="flex-1">
+                  <div className="text-5xl font-black mb-2" style={{ color: story.color }}>
+                    {story.highlight}
+                  </div>
+                  <p className="text-sm font-semibold text-gray-700 mb-3">{story.highlightLabel}</p>
+                  <p className="text-sm text-gray-500 leading-relaxed">{story.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 

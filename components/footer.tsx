@@ -19,7 +19,7 @@ const footerLinks = {
   ],
   Company: [
     { label: "About Us", href: "/about" },
-    { label: "Our Team", href: "/blog" },
+    { label: "Our Team", href: "/team" },
     { label: "Careers", href: "/contact" },
     { label: "Partners", href: "/partners" },
     { label: "Policies", href: "/policies" },
@@ -55,11 +55,11 @@ export default function Footer() {
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-5 group">
               <Image
-                src="/logo.jpeg"
+                src="/logo-new.png"
                 alt="Akronix Logo"
-                width={120}
-                height={40}
-                className="h-9 w-auto object-contain transition-all duration-300 group-hover:scale-105 mix-blend-screen"
+                width={555}
+                height={407}
+                className="h-9 w-auto object-contain invert transition-all duration-300 group-hover:scale-105"
               />
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">

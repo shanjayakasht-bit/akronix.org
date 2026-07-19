@@ -9,6 +9,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
+  { label: "Home", href: "/" },
   { label: "Products", href: "/products" },
   { label: "Solutions", href: "/services" },
   { label: "Networking", href: "/networking" },
@@ -55,11 +56,11 @@ export default function Navigation() {
       <nav className="container-xl flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2.5 group">
           <Image
-            src="/logo.jpeg"
+            src="/logo-new.png"
             alt="Akronix Logo"
-            width={120}
-            height={40}
-            className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-105 mix-blend-screen"
+            width={555}
+            height={407}
+            className="h-8 w-auto object-contain transition-all duration-300 group-hover:scale-105"
             priority
           />
         </Link>

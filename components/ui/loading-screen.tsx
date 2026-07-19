@@ -59,11 +59,11 @@ export default function LoadingScreen() {
                 style={{ background: "linear-gradient(135deg, #5B4DFF, #9B8FFF)" }}
               />
               <Image
-                src="/logo.jpeg"
+                src="/logo-new.png"
                 alt="Akronix"
-                width={88}
-                height={88}
-                className="relative rounded-2xl border border-white/10 object-contain"
+                width={555}
+                height={407}
+                className="relative h-[88px] w-auto object-contain invert"
                 priority
               />
             </div>

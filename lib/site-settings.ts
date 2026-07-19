@@ -7,9 +7,9 @@ export const DEFAULT_HOMEPAGE: Record<string, string> = {
   "homepage.hero.cta1.text": "Get Started",
   "homepage.hero.cta1.href": "/contact?type=project",
   "homepage.hero.cta2.text": "Explore Products",
-  "homepage.hero.cta2.href": "/services",
+  "homepage.hero.cta2.href": "/products",
   "homepage.stats": JSON.stringify([
-    { value: "500+", label: "Businesses Empowered" },
+    { value: "50+", label: "Businesses Empowered" },
     { value: "15+", label: "Valuable Partnerships" },
     { value: "98%", label: "Client Retention" },
     { value: "60%", label: "Avg. Efficiency Gain" },

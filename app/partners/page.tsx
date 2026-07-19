@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 /* ─── Animations ────────────────────────────────────────── */
 const fadeUp = (delay = 0, y = 28) => ({
@@ -228,37 +228,76 @@ function LogoFicci() {
   </div>;
 }
 
+/* ─── Preset logo library (keyed by partner name) ────────── */
+const PRESET_LOGOS: Record<string, React.ComponentType> = {
+  "aws": LogoAWS,
+  "microsoft": LogoMicrosoft,
+  "google cloud": LogoGoogleCloud,
+  "digitalocean": LogoDigitalOcean,
+  "srm university": LogoSRM,
+  "vit university": LogoVIT,
+  "pes university": LogoPES,
+  "christ university": LogoChrist,
+  "t-hub": LogoThub,
+  "10,000 startups": Logo10k,
+  "nasscom foundation": LogoNasscom,
+  "invest india": LogoInvestIndia,
+  "zoho": LogoZoho,
+  "payu": LogoPayU,
+  "razorpay": LogoRazorpay,
+  "tally": LogoTally,
+  "bni": LogoBNI,
+  "tie": LogoTiE,
+  "localcircles": LogoLocalCircles,
+  "ficci": LogoFicci,
+};
+
+function GenericLogo({ name }: { name: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="w-6 h-6 rounded-md bg-gray-200 flex items-center justify-center flex-shrink-0">
+        <span className="text-[9px] font-black text-gray-500">{name.slice(0, 2).toUpperCase()}</span>
+      </div>
+      <span className="text-[11px] font-bold text-gray-700 truncate">{name}</span>
+    </div>
+  );
+}
+
+function getLogo(name: string): React.ComponentType {
+  return PRESET_LOGOS[name.trim().toLowerCase()] ?? (() => <GenericLogo name={name} />);
+}
+
 /* ─── Ecosystem data ─────────────────────────────────────── */
 const ecosystem = [
   {
     icon: Code2, color: "#8B5CF6", bg: "#F5F3FF",
     title: "Technology Partners",
     desc: "Leading technology providers and innovators powering digital transformation.",
-    logos: [LogoAWS, LogoMicrosoft, LogoGoogleCloud, LogoDigitalOcean],
+    logos: ["AWS", "Microsoft", "Google Cloud", "DigitalOcean"],
   },
   {
     icon: GraduationCap, color: "#0EA5E9", bg: "#F0F9FF",
     title: "Educational Partners",
     desc: "Partnering with top institutions to empower students and drive innovation.",
-    logos: [LogoSRM, LogoVIT, LogoPES, LogoChrist],
+    logos: ["SRM University", "VIT University", "PES University", "Christ University"],
   },
   {
     icon: Users, color: "#10B981", bg: "#ECFDF5",
     title: "Startup Ecosystem Partners",
     desc: "Collaborating with incubators, accelerators and startup communities.",
-    logos: [LogoThub, Logo10k, LogoNasscom, LogoInvestIndia],
+    logos: ["T-Hub", "10,000 Startups", "NASSCOM Foundation", "Invest India"],
   },
   {
     icon: Building2, color: "#2563EB", bg: "#EFF6FF",
     title: "Business Partners",
     desc: "Working with businesses to deliver solutions, create value and scale together.",
-    logos: [LogoZoho, LogoPayU, LogoRazorpay, LogoTally],
+    logos: ["Zoho", "PayU", "Razorpay", "Tally"],
   },
   {
     icon: Share2, color: "#F59E0B", bg: "#FFFBEB",
     title: "Networking Partners",
     desc: "Joining hands with networking organizations to build strong communities.",
-    logos: [LogoBNI, LogoTiE, LogoLocalCircles, LogoFicci],
+    logos: ["BNI", "TiE", "LocalCircles", "FICCI"],
   },
 ];
 
@@ -281,36 +320,63 @@ const steps = [
 
 const spotlights = [
   {
-    LogoComponent: LogoAWS,
+    partnerName: "AWS",
     quote: "Akronix is a valuable partner with deep technical expertise and a strong commitment to delivering innovative solutions.",
     by: "AWS Partner Network",
   },
   {
-    LogoComponent: LogoSRM,
+    partnerName: "SRM University",
     quote: "Our partnership with Akronix Academy empowers students with real-world skills and industry exposure.",
     by: "SRM Institute of Science & Technology",
   },
   {
-    LogoComponent: LogoThub,
+    partnerName: "T-Hub",
     quote: "Akronix has been a catalyst for our startup community — connecting founders with the right resources and mentors.",
     by: "T-Hub Foundation",
   },
   {
-    LogoComponent: LogoBNI,
+    partnerName: "BNI",
     quote: "The Akronix networking community has added tremendous value to our members' business growth.",
     by: "BNI Partner Network",
   },
   {
-    LogoComponent: LogoNasscom,
+    partnerName: "NASSCOM Foundation",
     quote: "Akronix's commitment to innovation aligns perfectly with NASSCOM's vision for India's digital future.",
     by: "NASSCOM Foundation",
   },
 ];
 
+/* ─── CMS content type (matches admin/partners editor) ───── */
+type PartnersSiteContent = {
+  ecosystem?: { title: string; desc: string; logos: string[] }[];
+  spotlights?: { partnerName: string; quote: string; by: string }[];
+};
+
 /* ─── Page ───────────────────────────────────────────────── */
 export default function PartnersPage() {
   const [spotlight, setSpotlight] = useState(0);
   const [hoverStep, setHoverStep] = useState<number | null>(null);
+  const [cms, setCms] = useState<PartnersSiteContent | null>(null);
+
+  useEffect(() => {
+    fetch("/api/site-settings?prefix=partners.")
+      .then(r => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["partners.content"]) {
+          try { setCms(JSON.parse(data["partners.content"])); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const activeEcosystem = ecosystem.map((cat, i) => ({
+    ...cat,
+    title: cms?.ecosystem?.[i]?.title ?? cat.title,
+    desc: cms?.ecosystem?.[i]?.desc ?? cat.desc,
+    logos: cms?.ecosystem?.[i]?.logos ?? cat.logos,
+  }));
+
+  const activeSpotlights = cms?.spotlights ?? spotlights;
 
   return (
     <>
@@ -446,8 +512,8 @@ export default function PartnersPage() {
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-              {ecosystem.map((cat, i) => (
-                <TiltCard key={cat.title}>
+              {activeEcosystem.map((cat, i) => (
+                <TiltCard key={i}>
                   <motion.div
                     {...scaleIn(i * 0.08)}
                     whileHover={{ y: -5, boxShadow: `0 16px 40px ${cat.color}20` }}
@@ -462,15 +528,18 @@ export default function PartnersPage() {
 
                     {/* Logo grid */}
                     <div className="grid grid-cols-2 gap-3 mt-auto">
-                      {cat.logos.map((Logo, j) => (
-                        <motion.div
-                          key={j}
-                          whileHover={{ scale: 1.06, backgroundColor: "#FFFBEB" }}
-                          className="bg-gray-50 border border-gray-100 rounded-xl p-2.5 flex items-center justify-center transition-colors min-h-[44px]"
-                        >
-                          <Logo />
-                        </motion.div>
-                      ))}
+                      {cat.logos.map((name, j) => {
+                        const Logo = getLogo(name);
+                        return (
+                          <motion.div
+                            key={j}
+                            whileHover={{ scale: 1.06, backgroundColor: "#FFFBEB" }}
+                            className="bg-gray-50 border border-gray-100 rounded-xl p-2.5 flex items-center justify-center transition-colors min-h-[44px]"
+                          >
+                            <Logo />
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   </motion.div>
                 </TiltCard>
@@ -603,7 +672,7 @@ export default function PartnersPage() {
                           exit={{ opacity: 0, y: -10 }}
                           transition={{ duration: 0.3 }}
                         >
-                          {(() => { const L = spotlights[spotlight].LogoComponent; return <L />; })()}
+                          {(() => { const L = getLogo(activeSpotlights[spotlight].partnerName); return <L />; })()}
                         </motion.div>
                       </AnimatePresence>
                     </div>
@@ -613,7 +682,7 @@ export default function PartnersPage() {
                         <motion.button
                           key={d}
                           whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}
-                          onClick={() => setSpotlight(p => (p + (d === 0 ? -1 : 1) + spotlights.length) % spotlights.length)}
+                          onClick={() => setSpotlight(p => (p + (d === 0 ? -1 : 1) + activeSpotlights.length) % activeSpotlights.length)}
                           className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-amber-400 hover:bg-amber-50 transition-all"
                         >
                           <Ic size={14} />
@@ -631,15 +700,15 @@ export default function PartnersPage() {
                       transition={{ duration: 0.35 }}
                     >
                       <p className="text-gray-700 text-base leading-relaxed mb-5 italic">
-                        &ldquo;{spotlights[spotlight].quote}&rdquo;
+                        &ldquo;{activeSpotlights[spotlight].quote}&rdquo;
                       </p>
-                      <p className="text-sm font-bold text-amber-600">— {spotlights[spotlight].by}</p>
+                      <p className="text-sm font-bold text-amber-600">— {activeSpotlights[spotlight].by}</p>
                     </motion.div>
                   </AnimatePresence>
 
                   {/* Dot indicators */}
                   <div className="flex gap-1.5 mt-6">
-                    {spotlights.map((_, i) => (
+                    {activeSpotlights.map((_, i) => (
                       <motion.button
                         key={i}
                         onClick={() => setSpotlight(i)}

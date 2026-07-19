@@ -5,7 +5,7 @@ import Footer from "@/components/footer";
 import { motion } from "framer-motion";
 import {
   Code, Megaphone, Users, GraduationCap, Monitor, Zap, Cloud,
-  ShieldAlert, ShieldCheck, ArrowRight, Play, CheckCircle2, TrendingUp,
+  ShieldAlert, ShieldCheck, ArrowRight, CheckCircle2, TrendingUp,
   Award, HeartHandshake, Eye, Map, FileText, ClipboardList
 } from "lucide-react";
 import Link from "next/link";
@@ -88,14 +88,14 @@ const mainServices = [
     href: "/services/ai-automation",
   },
   {
-    title: "Cloud & DevOps",
+    title: "Cloud Development",
     desc: "Reliable cloud infrastructure and DevOps services for performance and scale.",
     icon: Cloud,
     features: ["Cloud Migration", "DevOps Automation", "CI/CD Pipelines", "Monitoring & Security"],
     color: "#0D9488",
     bgColor: "#F0FDFA",
     accentColor: "#CCFBF1",
-    href: "/services/saas-development",
+    href: "/services/cloud-development",
   },
   {
     title: "IT Consulting",
@@ -118,10 +118,10 @@ const approachSteps = [
 ];
 
 const metrics = [
-  { value: "150+", label: "Projects Delivered" },
-  { value: "50+", label: "Business Partners" },
+  { value: "15+", label: "Projects Delivered" },
+  { value: "15+", label: "Business Partners" },
   { value: "500+", label: "Students Mentored" },
-  { value: "100+", label: "Networking Connections" },
+  { value: "50+", label: "Networking Connections" },
   { value: "95%", label: "Client Satisfaction" },
 ];
 
@@ -393,7 +393,7 @@ export default function ServicesPage() {
                 <p className="text-gray-500 text-sm leading-relaxed mb-8 max-w-lg mx-auto">
                   Partner with Akronix and experience the power of innovative solutions, strategic growth and meaningful connections.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex justify-center">
                   <Link
                     href="/contact"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-white text-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
@@ -401,12 +401,6 @@ export default function ServicesPage() {
                   >
                     Book a Free Consultation <ArrowRight size={14} />
                   </Link>
-                  <button
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-gray-700 text-xs bg-white border border-gray-200 hover:bg-gray-50 transition-all duration-200 hover:-translate-y-0.5"
-                  >
-                    <Play size={12} className="fill-gray-600 text-gray-600" />
-                    Watch Our Video
-                  </button>
                 </div>
               </div>
             </div>

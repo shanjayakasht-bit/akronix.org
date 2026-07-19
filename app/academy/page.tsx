@@ -287,7 +287,7 @@ export default function AcademyPage() {
   const [cms, setCms] = useState<AcademySiteContent | null>(null);
 
   useEffect(() => {
-    fetch("/api/admin/site-settings?prefix=academy.")
+    fetch("/api/site-settings?prefix=academy.")
       .then(r => r.json())
       .then((data: Record<string, string>) => {
         if (data["academy.content"]) {
@@ -464,7 +464,7 @@ export default function AcademyPage() {
               className="relative hidden lg:block"
             >
               <div className="relative rounded-3xl overflow-hidden shadow-[0_28px_80px_rgba(0,0,0,0.16)]" style={{ aspectRatio: "4/3" }}>
-                <Image src="/team.png" alt="Akronix Academy" fill className="object-cover object-top" priority />
+                <Image src="/academy image.jpg" alt="Akronix Academy" fill className="object-cover object-top" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5 flex items-center gap-3">
                   <motion.div
@@ -629,7 +629,7 @@ export default function AcademyPage() {
                       </div>
                     </div>
                     <div className="flex items-center justify-center gap-1.5 py-0.5">
-                      <Image src="/logo.jpeg" alt="Akronix" width={16} height={16} className="rounded mix-blend-screen" />
+                      <Image src="/logo-new.png" alt="Akronix" width={555} height={407} className="h-4 w-auto rounded invert" />
                       <span className="text-white text-[9px] font-black tracking-[0.15em]">AKRONIX ACADEMY</span>
                     </div>
                   </div>
