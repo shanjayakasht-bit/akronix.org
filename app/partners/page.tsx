@@ -7,7 +7,7 @@ import {
   Code2, GraduationCap, Rocket, Building2, Share2,
   ArrowRight, Handshake, TrendingUp, Megaphone, Zap,
   Headphones, FileText, Users, BarChart3, ChevronLeft, ChevronRight,
-  Globe,
+  Globe, LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -267,37 +267,45 @@ function getLogo(name: string): React.ComponentType {
   return PRESET_LOGOS[name.trim().toLowerCase()] ?? (() => <GenericLogo name={name} />);
 }
 
+type PartnerLogoEntry = { name: string; imageUrl?: string };
+
+/** Accepts both the legacy string[] format and the current {name, imageUrl}[] format. */
+function normalizeLogos(logos: unknown): PartnerLogoEntry[] {
+  if (!Array.isArray(logos)) return [];
+  return logos.map((l) => (typeof l === "string" ? { name: l } : l as PartnerLogoEntry));
+}
+
 /* ─── Ecosystem data ─────────────────────────────────────── */
-const ecosystem = [
+const ecosystem: { icon: LucideIcon; color: string; bg: string; title: string; desc: string; logos: PartnerLogoEntry[] }[] = [
   {
     icon: Code2, color: "#8B5CF6", bg: "#F5F3FF",
     title: "Technology Partners",
     desc: "Leading technology providers and innovators powering digital transformation.",
-    logos: ["AWS", "Microsoft", "Google Cloud", "DigitalOcean"],
+    logos: [{ name: "AWS" }, { name: "Microsoft" }, { name: "Google Cloud" }, { name: "DigitalOcean" }],
   },
   {
     icon: GraduationCap, color: "#0EA5E9", bg: "#F0F9FF",
     title: "Educational Partners",
     desc: "Partnering with top institutions to empower students and drive innovation.",
-    logos: ["SRM University", "VIT University", "PES University", "Christ University"],
+    logos: [{ name: "SRM University" }, { name: "VIT University" }, { name: "PES University" }, { name: "Christ University" }],
   },
   {
     icon: Users, color: "#10B981", bg: "#ECFDF5",
     title: "Startup Ecosystem Partners",
     desc: "Collaborating with incubators, accelerators and startup communities.",
-    logos: ["T-Hub", "10,000 Startups", "NASSCOM Foundation", "Invest India"],
+    logos: [{ name: "T-Hub" }, { name: "10,000 Startups" }, { name: "NASSCOM Foundation" }, { name: "Invest India" }],
   },
   {
     icon: Building2, color: "#2563EB", bg: "#EFF6FF",
     title: "Business Partners",
     desc: "Working with businesses to deliver solutions, create value and scale together.",
-    logos: ["Zoho", "PayU", "Razorpay", "Tally"],
+    logos: [{ name: "Zoho" }, { name: "PayU" }, { name: "Razorpay" }, { name: "Tally" }],
   },
   {
     icon: Share2, color: "#F59E0B", bg: "#FFFBEB",
     title: "Networking Partners",
     desc: "Joining hands with networking organizations to build strong communities.",
-    logos: ["BNI", "TiE", "LocalCircles", "FICCI"],
+    logos: [{ name: "BNI" }, { name: "TiE" }, { name: "LocalCircles" }, { name: "FICCI" }],
   },
 ];
 
@@ -321,7 +329,7 @@ const steps = [
 
 /* ─── CMS content type (matches admin/partners editor) ───── */
 type PartnersSiteContent = {
-  ecosystem?: { title: string; desc: string; logos: string[] }[];
+  ecosystem?: { title: string; desc: string; logos: (PartnerLogoEntry | string)[] }[];
   spotlights?: { partnerName: string; quote: string; by: string }[];
 };
 
@@ -346,7 +354,7 @@ export default function PartnersPage() {
     ...cat,
     title: cms?.ecosystem?.[i]?.title ?? cat.title,
     desc: cms?.ecosystem?.[i]?.desc ?? cat.desc,
-    logos: cms?.ecosystem?.[i]?.logos ?? cat.logos,
+    logos: cms?.ecosystem?.[i]?.logos ? normalizeLogos(cms.ecosystem[i].logos) : cat.logos,
   }));
 
   const activeSpotlights = (cms?.spotlights ?? []).filter((s) => s.partnerName && s.quote);
@@ -500,15 +508,20 @@ export default function PartnersPage() {
 
                     {/* Logo grid */}
                     <div className="grid grid-cols-2 gap-3 mt-auto">
-                      {cat.logos.map((name, j) => {
-                        const Logo = getLogo(name);
+                      {cat.logos.map((logo, j) => {
+                        const Logo = getLogo(logo.name);
                         return (
                           <motion.div
                             key={j}
                             whileHover={{ scale: 1.06, backgroundColor: "#FFFBEB" }}
                             className="bg-gray-50 border border-gray-100 rounded-xl p-2.5 flex items-center justify-center transition-colors min-h-[44px]"
                           >
-                            <Logo />
+                            {logo.imageUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={logo.imageUrl} alt={logo.name} className="max-h-8 max-w-full object-contain" />
+                            ) : (
+                              <Logo />
+                            )}
                           </motion.div>
                         );
                       })}
