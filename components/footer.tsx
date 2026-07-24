@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { Twitter, Instagram, Linkedin, ArrowRight, MapPin, PhoneCall, Mail } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Twitter, Instagram, Linkedin, Facebook, Youtube, ArrowRight, MapPin, PhoneCall, Mail } from "lucide-react";
 
 const footerLinks = {
   Products: [
@@ -39,13 +42,38 @@ const contact = {
   address: "Chennai, Tamil Nadu, India",
 };
 
-const socials = [
-  { icon: Twitter, href: "https://twitter.com/akronix", label: "Twitter" },
-  { icon: Instagram, href: "https://www.instagram.com/akronix_org?igsh=ZHVsZzg0dmxqZG1i", label: "Instagram" },
-  { icon: Linkedin, href: "https://linkedin.com/company/akronix", label: "LinkedIn" },
-];
+const DEFAULT_SOCIALS = {
+  "site.social.twitter": "https://twitter.com/akronix",
+  "site.social.instagram": "https://www.instagram.com/akronix_org?igsh=ZHVsZzg0dmxqZG1i",
+  "site.social.linkedin": "https://linkedin.com/company/akronix",
+  "site.social.facebook": "",
+  "site.social.youtube": "",
+};
+
+const SOCIAL_ICONS = [
+  { key: "site.social.twitter", icon: Twitter, label: "Twitter" },
+  { key: "site.social.instagram", icon: Instagram, label: "Instagram" },
+  { key: "site.social.linkedin", icon: Linkedin, label: "LinkedIn" },
+  { key: "site.social.facebook", icon: Facebook, label: "Facebook" },
+  { key: "site.social.youtube", icon: Youtube, label: "YouTube" },
+] as const;
 
 export default function Footer() {
+  const [social, setSocial] = useState<Record<string, string>>(DEFAULT_SOCIALS);
+
+  useEffect(() => {
+    fetch("/api/site-settings?prefix=site.social.")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (Object.keys(data).length > 0) setSocial((prev) => ({ ...prev, ...data }));
+      })
+      .catch(() => {});
+  }, []);
+
+  const socials = SOCIAL_ICONS
+    .map(({ key, icon, label }) => ({ icon, label, href: social[key] }))
+    .filter((s) => s.href);
+
   return (
     <footer className="relative overflow-hidden bg-gray-900">
       {/* Main Footer Grid */}
