@@ -2,34 +2,19 @@
 
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
-import { motion, useInView, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
   Users, UserPlus, Send, Handshake, TrendingUp,
-  ArrowRight, Play, Check, ChevronLeft, ChevronRight,
-  Eye, Shield, Lightbulb, Calendar, Star, MapPin, Clock,
+  ArrowRight, Play, Check,
+  Eye, Shield, Lightbulb, Calendar, Star,
   Award, Zap, Building2
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import VideoModal from "@/components/ui/video-modal";
 
-/* ── Helpers ──────────────────────────────────────────────────── */
-function useCountUp(target: number, inView: boolean) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const duration = 1800;
-    const step = target / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) { setCount(target); clearInterval(timer); }
-      else setCount(Math.floor(start));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [inView, target]);
-  return count;
-}
+type NetworkingHeroContent = { hero_image?: string; hero_video_url?: string };
 
 const fadeUp = (delay = 0, y = 32) => ({
   initial: { opacity: 0, y },
@@ -91,51 +76,6 @@ const plans = [
   },
 ];
 
-const events = [
-  { day: "25", month: "MAY", title: "Business Networking Meetup",    location: "Ahmedabad, Gujarat",  time: "6:00 PM – 8:30 PM" },
-  { day: "08", month: "JUN", title: "Founder Connect Summit",        location: "Bangalore, Karnataka", time: "10:00 AM – 1:00 PM" },
-  { day: "22", month: "JUN", title: "Referral Networking Workshop",  location: "Online Event",         time: "4:00 PM – 6:00 PM" },
-];
-
-const testimonials = [
-  { quote: "Akronix Network has introduced me to amazing business opportunities and trusted partners. It's a game changer for entrepreneurs!", name: "Ravi Sharma",   role: "CEO, TechNova Solutions" },
-  { quote: "The referral community here is unmatched. Within 3 months I grew my client base by 40% purely through Akronix connections.",       name: "Priya Mehta",   role: "Founder, BrightEdge Marketing" },
-  { quote: "Monthly events are incredibly well organized. The quality of professionals you meet here is truly extraordinary.",                  name: "Anil Kapoor",   role: "Director, InnovateTech Solutions" },
-];
-
-const statsData = [
-  { value: 1250, suffix: "+", label: "Active Members",       icon: Users },
-  { value: 3450, suffix: "+", label: "Referrals Given",      icon: Send },
-  { value: 860,  suffix: "+", label: "Partnerships Created", icon: Handshake },
-  { value: 120,  suffix: "+", label: "Monthly Meetings",     icon: Calendar },
-  { value: 25,   suffix: "+", label: "Cities Covered",       icon: MapPin },
-  { value: 95,   suffix: "%", label: "Member Satisfaction",  icon: Star },
-];
-
-/* ── Stat counter component ───────────────────────────────────── */
-function StatItem({ value, suffix, label, icon: Icon, delay }: { value: number; suffix: string; label: string; icon: React.ElementType; delay: number }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  const count = useCountUp(value, inView);
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col items-center text-center group"
-    >
-      <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-3 group-hover:bg-amber-500/20 transition-colors duration-300">
-        <Icon size={20} className="text-amber-400" />
-      </div>
-      <p className="text-3xl font-black text-white leading-none mb-1">
-        {count.toLocaleString()}{suffix}
-      </p>
-      <p className="text-xs text-gray-400 font-medium">{label}</p>
-    </motion.div>
-  );
-}
-
 /* ── Tilt card wrapper ────────────────────────────────────────── */
 function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -170,14 +110,23 @@ function TiltCard({ children, className }: { children: React.ReactNode; classNam
 
 /* ── Page ─────────────────────────────────────────────────────── */
 export default function NetworkingPage() {
-  const [activeT, setActiveT] = useState(0);
   const [hoverStep, setHoverStep] = useState<number | null>(null);
+  const [cms, setCms] = useState<NetworkingHeroContent | null>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
 
-  /* Auto-advance testimonials */
   useEffect(() => {
-    const id = setInterval(() => setActiveT(p => (p + 1) % testimonials.length), 5000);
-    return () => clearInterval(id);
+    fetch("/api/site-settings?prefix=networking.")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["networking.content"]) {
+          try { setCms(JSON.parse(data["networking.content"])); } catch {}
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  const heroImage = cms?.hero_image || "/blog-networking.png";
+  const heroVideoUrl = cms?.hero_video_url || "";
 
   return (
     <>
@@ -311,7 +260,7 @@ export default function NetworkingPage() {
               {/* Main image */}
               <div className="relative rounded-3xl overflow-hidden aspect-[4/3] shadow-[0_32px_80px_rgba(0,0,0,0.18)]">
                 <Image
-                  src="/blog-networking.png"
+                  src={heroImage}
                   alt="Business Networking"
                   fill
                   className="object-cover"
@@ -319,7 +268,10 @@ export default function NetworkingPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-transparent to-gray-900/40" />
                 {/* Play button */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <button
+                  onClick={() => setVideoOpen(true)}
+                  className="absolute inset-0 flex flex-col items-center justify-center group"
+                >
                   <motion.div
                     whileHover={{ scale: 1.12 }}
                     whileTap={{ scale: 0.95 }}
@@ -328,15 +280,13 @@ export default function NetworkingPage() {
                     <Play size={22} className="text-amber-500 ml-1" fill="#F59E0B" />
                   </motion.div>
                   <p className="text-white/70 text-xs font-semibold mt-3 tracking-wide">Watch Overview</p>
-                </div>
+                </button>
               </div>
 
-              {/* Floating stat cards */}
+              {/* Floating info cards */}
               {[
-                { top: "-16px", right: "-16px", icon: Users,    value: "1,250+", label: "Active Members",      delay: 0.5 },
-                { top: "-16px", right: "148px",  icon: ArrowRight, value: "3,450+", label: "Referrals Given", delay: 0.6 },
-                { bottom: "-16px", left: "16px", icon: Handshake, value: "860+",  label: "Partnerships Created", delay: 0.7 },
-                { bottom: "-16px", right: "16px", icon: Calendar, value: "120+",  label: "Business Meetings",  delay: 0.8 },
+                { top: "-16px", right: "-16px", icon: Send,      value: "Referrals",    label: "Given & received",     delay: 0.5 },
+                { bottom: "-16px", left: "16px", icon: Handshake, value: "Partnerships", label: "Built through trust",  delay: 0.7 },
               ].map(({ top, right, bottom, left, icon: Ic, value, label, delay }) => (
                 <motion.div
                   key={label}
@@ -351,7 +301,7 @@ export default function NetworkingPage() {
                     <Ic size={16} className="text-amber-500" />
                   </div>
                   <div>
-                    <p className="text-[17px] font-black text-gray-900 leading-none">{value}</p>
+                    <p className="text-[13px] font-black text-gray-900 leading-none">{value}</p>
                     <p className="text-[10px] text-gray-400 mt-0.5">{label}</p>
                   </div>
                 </motion.div>
@@ -557,139 +507,33 @@ export default function NetworkingPage() {
         </section>
 
         {/* ═══════════════════ EVENTS + TESTIMONIALS ═══════════════════ */}
-        <section className="py-24">
-          <div className="container-xl grid lg:grid-cols-2 gap-16">
-
-            {/* Events */}
-            <div>
-              <div className="flex items-center justify-between mb-7">
-                <motion.h3 {...fadeUp(0)} className="text-xl font-black text-gray-900">Upcoming Networking Events</motion.h3>
-                <motion.div {...fadeUp(0.1)}>
-                  <Link href="/contact?type=events" className="text-sm font-semibold text-amber-500 hover:text-amber-600 flex items-center gap-1 group">
-                    View All Events
-                    <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </motion.div>
+        <section className="py-24 bg-gray-50">
+          <div className="container-xl grid lg:grid-cols-2 gap-10">
+            <motion.div {...fadeLeft(0)} className="bg-white rounded-3xl p-8 border border-gray-100">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center mb-4">
+                <Calendar size={20} className="text-amber-500" />
               </div>
-              <div className="space-y-4">
-                {events.map((ev, i) => (
-                  <motion.div
-                    key={ev.title}
-                    {...fadeLeft(0.05 + i * 0.1)}
-                    whileHover={{ x: 6, boxShadow: "0 8px 28px rgba(245,158,11,0.12)" }}
-                    className="flex items-center gap-5 bg-white rounded-2xl p-4 border border-gray-100 hover:border-amber-200 transition-all duration-200 cursor-default group"
-                  >
-                    {/* Date block */}
-                    <div
-                      className="w-14 flex-shrink-0 rounded-xl py-2 text-center"
-                      style={{ background: "linear-gradient(135deg,#FEF3C7,#FDE68A)" }}
-                    >
-                      <p className="text-2xl font-black text-amber-700 leading-none">{ev.day}</p>
-                      <p className="text-[9px] font-black uppercase tracking-wider text-amber-500 mt-0.5">{ev.month}</p>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-gray-800 group-hover:text-amber-600 transition-colors">{ev.title}</p>
-                      <div className="flex items-center gap-1 mt-0.5 text-xs text-gray-400">
-                        <MapPin size={10} />
-                        {ev.location}
-                        <span className="mx-1 text-gray-300">·</span>
-                        <Clock size={10} />
-                        {ev.time}
-                      </div>
-                    </div>
-                    <motion.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.95 }}>
-                      <Link
-                        href="/contact?type=events"
-                        className="text-xs font-bold text-gray-700 border border-gray-200 px-3.5 py-2 rounded-xl hover:border-amber-400 hover:text-amber-600 transition-all flex-shrink-0 whitespace-nowrap"
-                      >
-                        Register Now
-                      </Link>
-                    </motion.div>
-                  </motion.div>
-                ))}
+              <h3 className="text-lg font-black text-gray-900 mb-2">Upcoming Networking Events</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-5">
+                We run regular meetups and referral sessions for members. Reach out and we&apos;ll let you know what&apos;s next.
+              </p>
+              <Link href="/contact?type=events" className="inline-flex items-center gap-2 text-sm font-bold text-amber-500 hover:text-amber-600 group">
+                Ask About Events <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
+
+            <motion.div {...fadeUp(0.1)} className="bg-white rounded-3xl p-8 border border-gray-100">
+              <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center mb-4">
+                <Star size={20} className="text-amber-500" />
               </div>
-            </div>
-
-            {/* Testimonials */}
-            <div>
-              <div className="flex items-center justify-between mb-7">
-                <motion.h3 {...fadeUp(0)} className="text-xl font-black text-gray-900">What Our Members Say</motion.h3>
-                <motion.div {...fadeUp(0.1)}>
-                  <Link href="/pricing/testimonials" className="text-sm font-semibold text-amber-500 hover:text-amber-600 flex items-center gap-1 group">
-                    View All Testimonials
-                    <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </motion.div>
-              </div>
-
-              <motion.div {...scaleIn(0.1)} className="bg-gray-50 rounded-3xl p-8 border border-gray-100 relative overflow-hidden min-h-[260px]">
-                {/* Giant quote mark */}
-                <span className="absolute top-3 left-5 text-[80px] font-serif text-amber-200 leading-none select-none">&ldquo;</span>
-
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeT}
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -30 }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    className="relative z-10 pt-10"
-                  >
-                    <p className="text-gray-700 leading-relaxed text-[0.97rem] mb-6">
-                      {testimonials[activeT].quote}
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-black text-sm">
-                        {testimonials[activeT].name[0]}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">{testimonials[activeT].name}</p>
-                        <p className="text-xs text-gray-400">{testimonials[activeT].role}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* Controls */}
-                <div className="flex items-center gap-3 mt-7">
-                  <div className="flex gap-1.5 flex-1">
-                    {testimonials.map((_, i) => (
-                      <motion.button
-                        key={i}
-                        onClick={() => setActiveT(i)}
-                        animate={{ width: i === activeT ? 24 : 10 }}
-                        className={`h-1.5 rounded-full transition-colors ${i === activeT ? "bg-amber-500" : "bg-gray-200 hover:bg-amber-200"}`}
-                      />
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    {[ChevronLeft, ChevronRight].map((Ic, d) => (
-                      <motion.button
-                        key={d}
-                        whileHover={{ scale: 1.15 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setActiveT(p => (p + (d === 0 ? -1 : 1) + testimonials.length) % testimonials.length)}
-                        className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-amber-400 hover:bg-amber-50 transition-all"
-                      >
-                        <Ic size={14} />
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════ STATS BAR ═══════════════════ */}
-        <section className="py-16 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#111827,#1f2937)" }}>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.06),transparent_70%)] pointer-events-none" />
-          <div className="container-xl relative z-10">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10">
-              {statsData.map((s, i) => (
-                <StatItem key={s.label} {...s} delay={i * 0.08} />
-              ))}
-            </div>
+              <h3 className="text-lg font-black text-gray-900 mb-2">What Our Members Say</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-5">
+                Member reviews are published as they come in.
+              </p>
+              <Link href="/pricing/testimonials" className="inline-flex items-center gap-2 text-sm font-bold text-amber-500 hover:text-amber-600 group">
+                View Testimonials <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
           </div>
         </section>
 
@@ -745,6 +589,7 @@ export default function NetworkingPage() {
         </section>
 
       </main>
+      <VideoModal open={videoOpen} onClose={() => setVideoOpen(false)} videoUrl={heroVideoUrl} title="Akronix Network — Overview" />
       <Footer />
     </>
   );

@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Network, Save, Loader2, CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { Network, Save, Loader2, CheckCircle2, Plus, Trash2, Play } from "lucide-react";
+import Image from "next/image";
+import VideoModal from "@/components/ui/video-modal";
 
 type Event = { title: string; date: string; location: string; desc: string };
 type Content = {
   hero_headline: string;
   hero_subtext: string;
+  hero_image: string;
+  hero_video_url: string;
   stats_members: string;
   stats_events: string;
   stats_cities: string;
@@ -19,15 +23,13 @@ type Content = {
 const DEFAULTS: Content = {
   hero_headline: "Connect. Collaborate. Grow.",
   hero_subtext: "Join the Akronix business networking community — meet founders, investors, and industry leaders driving growth.",
-  stats_members: "2,000+",
-  stats_events: "50+",
-  stats_cities: "20+",
-  stats_countries: "10+",
-  events: [
-    { title: "Startup Founders Mixer", date: "2026-02-15", location: "Kochi, Kerala", desc: "Monthly meetup for early-stage founders to share ideas and find co-founders." },
-    { title: "Investor Connect Night", date: "2026-03-10", location: "Bangalore, Karnataka", desc: "Network with angel investors and VCs actively looking for promising startups." },
-    { title: "Tech & Business Summit", date: "2026-04-05", location: "Chennai, Tamil Nadu", desc: "Annual summit bringing together 500+ business leaders and innovators." },
-  ],
+  hero_image: "/blog-networking.png",
+  hero_video_url: "",
+  stats_members: "",
+  stats_events: "",
+  stats_cities: "",
+  stats_countries: "",
+  events: [],
   cta_headline: "Ready to Grow Your Network?",
   cta_desc: "Join thousands of entrepreneurs and business leaders who are building the future together.",
 };
@@ -60,6 +62,7 @@ export default function NetworkingAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/site-settings?prefix=networking.")
@@ -124,6 +127,31 @@ export default function NetworkingAdmin() {
         <Field label="Subtext" value={content.hero_subtext} onChange={v => set("hero_subtext", v)} multiline placeholder="Join the Akronix networking community..." />
       </Card>
 
+      <Card title="Hero Media">
+        <div className="grid sm:grid-cols-[1fr_140px] gap-4 items-start">
+          <Field label="Hero Image URL" value={content.hero_image} onChange={v => set("hero_image", v)} placeholder="/blog-networking.png" />
+          {content.hero_image && (
+            <div className="relative w-full sm:w-[140px] aspect-[4/3] rounded-xl overflow-hidden border border-white/10 bg-white/5">
+              <Image src={content.hero_image} alt="Hero preview" fill className="object-cover" />
+            </div>
+          )}
+        </div>
+        <div className="flex items-end gap-3">
+          <div className="flex-1">
+            <Field label="Overview Video URL" value={content.hero_video_url} onChange={v => set("hero_video_url", v)} placeholder="https://youtube.com/watch?v=... or a direct .mp4 link" />
+          </div>
+          <button
+            onClick={() => setPreviewOpen(true)}
+            className="flex items-center gap-1.5 text-xs font-bold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-2.5 rounded-lg transition-colors mb-0.5 flex-shrink-0"
+          >
+            <Play size={12} /> Live Preview
+          </button>
+        </div>
+        <p className="text-[11px] text-white/25">
+          Supports YouTube, Vimeo, or a direct video file link. Leave blank to show &quot;Video coming soon&quot; when visitors click play.
+        </p>
+      </Card>
+
       <Card title="Community Stats">
         <div className="grid grid-cols-2 gap-4">
           <Field label="Members" value={content.stats_members} onChange={v => set("stats_members", v)} placeholder="2,000+" />
@@ -161,6 +189,8 @@ export default function NetworkingAdmin() {
       </Card>
 
       <div className="flex justify-end pb-8"><SaveBtn full /></div>
+
+      <VideoModal open={previewOpen} onClose={() => setPreviewOpen(false)} videoUrl={content.hero_video_url} title="Live Preview — Akronix Network" />
     </div>
   );
 }

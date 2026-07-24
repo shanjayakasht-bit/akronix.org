@@ -26,13 +26,6 @@ const features = [
   { title: "Growth Ecosystem",          desc: "A full suite of tools designed to convert visitors into long-term, loyal subscribers." },
 ];
 
-const stats = [
-  { value: "2x",   label: "Average ROI" },
-  { value: "200+", label: "Campaigns Launched" },
-  { value: "50+",  label: "Clients Served" },
-  { value: "15+",  label: "Platforms Managed" },
-];
-
 export default function DigitalMarketingPage() {
   return (
     <>
@@ -54,12 +47,6 @@ export default function DigitalMarketingPage() {
           { icon: TrendingUp, label: "Proven ROI",           sub: "Data-backed growth strategies." },
           { icon: Users,      label: "Full-Funnel",          sub: "From awareness to conversion." },
         ]}
-        floatingStats={[
-          { icon: TrendingUp, value: "2x",   label: "Average ROI" },
-          { icon: Megaphone,  value: "200+", label: "Campaigns Launched" },
-          { icon: Users,      value: "50+",  label: "Clients Served" },
-          { icon: Share2,     value: "15+",  label: "Platforms Managed" },
-        ]}
         offerings={offerings}
         steps={steps}
         featuresTitlePre="More Than Ads."
@@ -67,7 +54,6 @@ export default function DigitalMarketingPage() {
         featuresTitlePost="Growth."
         featuresIntro="We build marketing systems that get smarter and more efficient with every campaign."
         features={features}
-        stats={stats}
         ctaTitlePre="Ready to Accelerate Your"
         ctaTitleHighlight="Growth?"
         ctaHref="/contact?service=digital-marketing"

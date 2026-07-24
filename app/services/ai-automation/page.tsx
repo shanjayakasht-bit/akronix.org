@@ -26,13 +26,6 @@ const features = [
   { title: "Intelligent Layer",   desc: "Core AI integration within your architecture for seamless data processing." },
 ];
 
-const stats = [
-  { value: "70%",  label: "Avg Time Saved" },
-  { value: "10+",  label: "AI Tools Integrated" },
-  { value: "5+",   label: "Industries Served" },
-  { value: "100%", label: "Custom-Built Models" },
-];
-
 export default function AiAutomationPage() {
   return (
     <>
@@ -54,12 +47,6 @@ export default function AiAutomationPage() {
           { icon: Zap,   label: "Zero Manual Work",   sub: "Automate the repetitive stuff." },
           { icon: Plug,  label: "Plug & Play",        sub: "Integrates with your stack." },
         ]}
-        floatingStats={[
-          { icon: Zap,        value: "70%",  label: "Avg Time Saved" },
-          { icon: Plug,       value: "10+",  label: "AI Tools Integrated" },
-          { icon: TrendingUp, value: "5+",   label: "Industries Served" },
-          { icon: Brain,      value: "100%", label: "Custom-Built Models" },
-        ]}
         offerings={offerings}
         steps={steps}
         featuresTitlePre="More Than Automation."
@@ -67,7 +54,6 @@ export default function AiAutomationPage() {
         featuresTitlePost="Layer."
         featuresIntro="We embed AI directly into your operations so every decision is faster and smarter."
         features={features}
-        stats={stats}
         ctaTitlePre="Ready to Automate Your"
         ctaTitleHighlight="Business?"
         ctaHref="/contact?service=ai-automation"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Handshake, Save, Loader2, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { Handshake, Save, Loader2, CheckCircle2, ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 
 type EcosystemCategory = { title: string; desc: string; logos: string[] };
 type Spotlight = { partnerName: string; quote: string; by: string };
@@ -20,11 +20,9 @@ const DEFAULTS: Content = {
     { title: "Networking Partners", desc: "Joining hands with networking organizations to build strong communities.", logos: ["BNI", "TiE", "LocalCircles", "FICCI"] },
   ],
   spotlights: [
-    { partnerName: "AWS", quote: "Akronix is a valuable partner with deep technical expertise and a strong commitment to delivering innovative solutions.", by: "AWS Partner Network" },
-    { partnerName: "SRM University", quote: "Our partnership with Akronix Academy empowers students with real-world skills and industry exposure.", by: "SRM Institute of Science & Technology" },
-    { partnerName: "T-Hub", quote: "Akronix has been a catalyst for our startup community — connecting founders with the right resources and mentors.", by: "T-Hub Foundation" },
-    { partnerName: "BNI", quote: "The Akronix networking community has added tremendous value to our members' business growth.", by: "BNI Partner Network" },
-    { partnerName: "NASSCOM Foundation", quote: "Akronix's commitment to innovation aligns perfectly with NASSCOM's vision for India's digital future.", by: "NASSCOM Foundation" },
+    { partnerName: "", quote: "", by: "" },
+    { partnerName: "", quote: "", by: "" },
+    { partnerName: "", quote: "", by: "" },
   ],
 };
 
@@ -130,6 +128,18 @@ export default function PartnersAdmin() {
     set("ecosystem", next);
   };
 
+  const addLogo = (catIndex: number) => {
+    const next = [...content.ecosystem];
+    next[catIndex] = { ...next[catIndex], logos: [...next[catIndex].logos, ""] };
+    set("ecosystem", next);
+  };
+
+  const removeLogo = (catIndex: number, logoIndex: number) => {
+    const next = [...content.ecosystem];
+    next[catIndex] = { ...next[catIndex], logos: next[catIndex].logos.filter((_, idx) => idx !== logoIndex) };
+    set("ecosystem", next);
+  };
+
   const updateSpotlight = (i: number, field: keyof Spotlight, val: string) => {
     const next = [...content.spotlights];
     next[i] = { ...next[i], [field]: val };
@@ -177,7 +187,7 @@ export default function PartnersAdmin() {
       {/* ─── 1. Partner Ecosystem ─── */}
       <Section title="Partner Ecosystem" badge="5 categories" defaultOpen>
         <p className="text-xs text-white/25 -mt-1">
-          Each category has a preset icon and colour theme. Edit the title, description, and the 4 partner names shown per category.
+          Each category has a preset icon and colour theme. Edit the title, description, and add or remove the company/college logos shown per category.
         </p>
         <div className="space-y-3">
           {content.ecosystem.map((cat, i) => (
@@ -185,16 +195,26 @@ export default function PartnersAdmin() {
               <p className="text-[10px] font-bold text-amber-500/60 uppercase tracking-widest">{CATEGORY_LABELS[i]}</p>
               <Field label="Title" value={cat.title} onChange={v => updateCategory(i, "title", v)} />
               <Field label="Description" value={cat.desc} onChange={v => updateCategory(i, "desc", v)} multiline />
-              <div className="grid grid-cols-2 gap-3">
-                {cat.logos.map((name, j) => (
-                  <Field
-                    key={j}
-                    label={`Partner ${j + 1}`}
-                    value={name}
-                    onChange={v => updateLogo(i, j, v)}
-                    placeholder="Partner name"
-                  />
-                ))}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-white/40">Logos ({cat.logos.length})</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {cat.logos.map((name, j) => (
+                    <div key={j} className="flex items-center gap-1.5">
+                      <input
+                        value={name}
+                        onChange={e => updateLogo(i, j, e.target.value)}
+                        placeholder="Partner name"
+                        className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-amber-500/40 transition-colors"
+                      />
+                      <button onClick={() => removeLogo(i, j)} className="text-white/20 hover:text-red-400 transition-colors flex-shrink-0">
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => addLogo(i)} className="flex items-center gap-1.5 text-[11px] font-bold text-amber-400/70 hover:text-amber-400 transition-colors mt-1">
+                  <Plus size={11} /> Add Logo
+                </button>
               </div>
             </div>
           ))}
@@ -202,8 +222,13 @@ export default function PartnersAdmin() {
       </Section>
 
       {/* ─── 2. Partner Spotlight ─── */}
-      <Section title="Partner Spotlight" badge="5 quotes">
+      <Section title="Partner Spotlight" badge="3 quotes">
         <p className="text-xs text-white/25 -mt-1">Shown as the rotating quote carousel on the public Partners page.</p>
+        <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4">
+          <p className="text-xs text-red-300/80">
+            ⚠️ Only enter a quote here if the named partner actually said it and agreed to be quoted. Publishing an invented quote attributed to a real organization is misleading and can create legal exposure. Leave blank (section stays hidden) until you have a real, approved quote.
+          </p>
+        </div>
         <div className="space-y-4">
           {content.spotlights.map((s, i) => (
             <div key={i} className="bg-white/[0.03] border border-white/5 rounded-xl p-4 space-y-3">

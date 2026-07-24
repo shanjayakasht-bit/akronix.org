@@ -1,12 +1,12 @@
 // Akronix SaaS Platform - Prisma Schema
-// Database: PostgreSQL
+// Database: MySQL
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 // ─── Enums ───────────────────────────────────────────────────────────────────
@@ -175,7 +175,7 @@ model Project {
   budget          Float?
   deadline        DateTime?
   requirements    String?         @db.Text
-  attachments     String[]        // Array of file URLs
+  attachments     Json            @default("[]") // Array of file URLs
   notes           String?         @db.Text
   
   // Progress tracking
@@ -220,7 +220,7 @@ model Service {
   type        ServiceType @unique
   description String      @db.Text
   shortDesc   String
-  features    String[]    // Array of feature strings
+  features    Json        @default("[]") // Array of feature strings
   icon        String?
   isActive    Boolean     @default(true)
   isComingSoon Boolean    @default(false)
@@ -243,7 +243,7 @@ model PricingPlan {
   price       Float
   currency    String   @default("USD")
   billingCycle String  @default("monthly") // monthly, quarterly, yearly, one-time
-  features    String[]
+  features    Json     @default("[]")
   isPopular   Boolean  @default(false)
   isActive    Boolean  @default(true)
   maxProjects Int?
@@ -346,7 +346,7 @@ model BlogPost {
   // SEO
   metaTitle     String?
   metaDescription String?
-  keywords      String[]
+  keywords      Json       @default("[]")
   
   // Relations
   authorId      String
@@ -384,8 +384,8 @@ model CaseStudy {
   results       String   @db.Text
   metrics       Json?    // e.g., {"revenue": "+120%", "users": "50K"}
   coverImage    String?
-  images        String[]
-  techStack     String[]
+  images        Json     @default("[]")
+  techStack     Json     @default("[]")
   isPublished   Boolean  @default(false)
   isFeatured    Boolean  @default(false)
   testimonialId String?

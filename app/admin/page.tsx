@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import AdminDashboardClient from "@/components/admin/dashboard-client";
 
+export const dynamic = "force-dynamic";
+
 async function getDashboardData() {
   try {
     const [leadCount, newLeadCount, subscriberCount, testimonialCount, userCount, recentLeads] = await Promise.all([

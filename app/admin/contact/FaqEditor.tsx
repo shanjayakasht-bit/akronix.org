@@ -7,7 +7,7 @@ type Faq = { q: string; a: string };
 
 const DEFAULT_FAQS: Faq[] = [
   { q: "How long does it take to start a project?",    a: "Most projects kick off within 1–2 weeks after the initial discovery call and proposal approval." },
-  { q: "Do you work with international clients?",       a: "Yes! We work with clients across 15+ countries. All communication happens over Zoom, email and Slack." },
+  { q: "Do you work with international clients?",       a: "Yes! We work with international clients remotely. All communication happens over Zoom, email and Slack." },
   { q: "What is the minimum project budget?",           a: "Our projects start from ₹30,000 for landing pages. Custom SaaS and enterprise solutions are priced based on scope." },
   { q: "Can I request changes after the project starts?", a: "Absolutely. We follow an agile process with regular check-ins and allow scope adjustments within reasonable bounds." },
 ];

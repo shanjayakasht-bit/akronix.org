@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { formatDistanceToNow } from "date-fns";
 import { FileText, Search } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 async function getLeads() {
   try {
     return await db.lead.findMany({

@@ -114,7 +114,7 @@ export interface ServicePageProps {
   heroImage: string;
   heroImageAlt: string;
   featureBadges: { icon: LucideIcon; label: string; sub: string }[];
-  floatingStats: { icon: LucideIcon; value: string; label: string }[];
+  floatingStats?: { icon: LucideIcon; value: string; label: string }[];
   color: string;
   colorDark: string;
   colorSoft: string;
@@ -129,7 +129,7 @@ export interface ServicePageProps {
   featuresTitlePost?: string;
   featuresIntro: string;
   features: { title: string; desc: string }[];
-  stats: { value: string; label: string }[];
+  stats?: { value: string; label: string }[];
   ctaTitlePre: string;
   ctaTitleHighlight: string;
   ctaHref: string;
@@ -141,6 +141,8 @@ export default function ServicePageTemplate(p: ServicePageProps) {
   const [hoverStep, setHoverStep] = useState<number | null>(null);
   const gradient = `linear-gradient(135deg,${p.color},${p.colorDark})`;
   const gradientText = { background: gradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" } as const;
+  const floatingStats = p.floatingStats ?? [];
+  const stats = p.stats ?? [];
 
   return (
     <main className="bg-white text-gray-900 overflow-x-hidden">
@@ -251,7 +253,7 @@ export default function ServicePageTemplate(p: ServicePageProps) {
               <div className="absolute inset-0" style={{ background: `linear-gradient(135deg,${p.colorDark}33,transparent,rgba(17,24,39,0.4))` }} />
             </div>
 
-            {p.floatingStats.map(({ icon: Ic, value, label }, i) => {
+            {floatingStats.map(({ icon: Ic, value, label }, i) => {
               const positions = [
                 { top: "-16px", right: "-16px" },
                 { top: "-16px", right: "148px" },
@@ -405,16 +407,18 @@ export default function ServicePageTemplate(p: ServicePageProps) {
       </section>
 
       {/* ═══════════════════ STATS BAR ═══════════════════ */}
+      {stats.length > 0 && (
       <section className="py-16 relative overflow-hidden" style={{ background: "linear-gradient(135deg,#111827,#1f2937)" }}>
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse at center, ${p.color}18, transparent 70%)` }} />
         <div className="container-xl relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-            {p.stats.map((s, i) => (
+            {stats.map((s, i) => (
               <StatItem key={s.label} {...s} delay={i * 0.08} />
             ))}
           </div>
         </div>
       </section>
+      )}
 
       {/* ═══════════════════ FINAL CTA ═══════════════════ */}
       <section className="py-24 relative overflow-hidden">

@@ -7,11 +7,10 @@ import {
   AnimatePresence,
   useMotionValue,
   useSpring,
-  useInView,
 } from "framer-motion";
 import {
   Rocket, Target, Eye, Gem, CheckCircle2, ArrowRight, Play,
-  Users, Globe, Trophy, Award, Zap, Headphones, Building2,
+  Users, Globe, Zap, Headphones, Building2,
   Flag,
 } from "lucide-react";
 import Link from "next/link";
@@ -44,41 +43,6 @@ const scaleIn = (delay = 0) => ({
   viewport: { once: true, margin: "-50px" },
   transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
 });
-
-/* ─── Count-up hook ──────────────────────────────────────── */
-function useCountUp(end: number, duration = 1800) {
-  const [val, setVal] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
-  useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const step = Math.ceil(end / (duration / 16));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= end) { setVal(end); clearInterval(timer); } else setVal(start);
-    }, 16);
-    return () => clearInterval(timer);
-  }, [inView, end, duration]);
-  return { val, ref };
-}
-
-/* ─── Stat Item ──────────────────────────────────────────── */
-function StatItem({ icon: Ic, value, label, suffix = "" }: { icon: React.ElementType; value: number | string; label: string; suffix?: string }) {
-  const isNumber = typeof value === "number";
-  const { val, ref } = useCountUp(isNumber ? (value as number) : 0);
-  return (
-    <div className="flex flex-col items-center text-center gap-2">
-      <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center mb-1">
-        <Ic size={22} className="text-amber-500" />
-      </div>
-      <p className="text-2xl font-black text-gray-900 leading-none">
-        {isNumber ? <span ref={ref}>{val}</span> : <span>{value}</span>}{suffix}
-      </p>
-      <p className="text-xs text-gray-400 font-medium">{label}</p>
-    </div>
-  );
-}
 
 /* ─── 3-D tilt ───────────────────────────────────────────── */
 function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -127,15 +91,15 @@ const team = DEFAULT_LEADERSHIP;
 const journey = [
   { year: "2021", icon: Flag,      title: "The Beginning",          desc: "Akronix was founded with a vision to empower businesses through technology and strategic connections." },
   { year: "2022", icon: Building2, title: "Building the Foundation", desc: "Expanded our services, built a strong team and launched our first set of products." },
-  { year: "2023", icon: Users,     title: "Growing Together",        desc: "Launched Akronix Academy and Networking Platform. Reached 250+ clients across industries." },
-  { year: "2024", icon: Globe,     title: "Expanding Horizons",      desc: "Strengthened global partnerships and served clients in 10+ countries worldwide." },
+  { year: "2023", icon: Users,     title: "Growing Together",        desc: "Launched Akronix Academy and our networking community, expanding beyond software into mentorship and connections." },
+  { year: "2024", icon: Globe,     title: "Expanding Horizons",      desc: "Took on projects and partnerships beyond our home market, working with clients remotely." },
   { year: "2025 & Beyond", icon: Rocket, title: "Shaping the Future", desc: "Continuing our mission to innovate, connect and create long-term impact at scale." },
 ];
 
 const whyChoose = [
   { icon: Zap,        title: "End-to-End Solutions", desc: "From strategy to execution, we've got you covered." },
   { icon: Users,      title: "Expert Team",           desc: "Industry experts with deep knowledge and experience." },
-  { icon: Globe,      title: "Global Reach",          desc: "Serving clients across 15+ countries." },
+  { icon: Globe,      title: "Remote-Ready",          desc: "We work with clients in person or fully remote." },
   { icon: Headphones, title: "Customer First",        desc: "We prioritize your success in everything we do." },
   { icon: Rocket,     title: "Innovation Driven",     desc: "We leverage technology to create impact." },
 ];
@@ -222,7 +186,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.6, delay: 0.18 }}
                 className="text-gray-500 text-base leading-relaxed mb-9 max-w-md"
               >
-                Akronix is a technology and growth enabler on a mission to empower businesses, individuals and communities through innovative solutions, meaningful connections and knowledge.
+                We help startups and growing companies build reliable digital products, run practical marketing, and connect with the right people. Software, marketing, networking and mentorship — from one team that works with founders and organizations who need clear execution.
               </motion.p>
 
               <motion.div
@@ -282,25 +246,6 @@ export default function AboutPage() {
                   We believe in the power of collaboration, innovation and continuous learning to create lasting impact.
                 </p>
               </motion.div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ═══════════ STATS BAR ═══════════ */}
-        <section className="py-10 border-t border-b border-gray-100">
-          <div className="container-xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-white rounded-3xl border border-gray-100 shadow-sm px-8 py-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 divide-x divide-gray-100"
-            >
-              <StatItem icon={Award}    value="2021"  label="Founded"             suffix="" />
-              <StatItem icon={Rocket}   value={500}   label="Projects Delivered"   suffix="+" />
-              <StatItem icon={Globe}    value={15}    label="Countries Served"     suffix="+" />
-              <StatItem icon={Users}    value={50}    label="Industry Experts"     suffix="+" />
-              <StatItem icon={Trophy}   value={95}    label="Client Satisfaction"  suffix="%" />
             </motion.div>
           </div>
         </section>

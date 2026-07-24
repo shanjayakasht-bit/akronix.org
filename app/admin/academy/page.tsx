@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { GraduationCap, Save, Loader2, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { GraduationCap, Save, Loader2, CheckCircle2, ChevronDown, ChevronUp, Play, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
+import VideoModal from "@/components/ui/video-modal";
+import PartnerLogo from "@/components/ui/partner-logo";
 
 type HeroStat  = { value: string; suffix: string; label: string };
 type Program   = { title: string; desc: string; features: string };
@@ -14,6 +17,9 @@ type Content = {
   hero_highlight: string;
   hero_line2: string;
   hero_subtext: string;
+  hero_image: string;
+  hero_video_url: string;
+  partner_logos: string[];
   hero_stats: HeroStat[];
   programs: Program[];
   why_headline: string;
@@ -29,12 +35,15 @@ const DEFAULTS: Content = {
   hero_highlight: "Lead",
   hero_line2: "the Future.",
   hero_subtext:
-    "Akronix Academy empowers students, entrepreneurs and professionals with the skills, mentorship and real-world experience to build innovative solutions and successful careers.",
+    "We help students, early founders and professionals build practical skills through mentorship, real project work and hands-on training.",
+  hero_image: "/academy image.jpg",
+  hero_video_url: "",
+  partner_logos: ["SRM University", "VIT University", "Google", "AWS", "Microsoft", "NASSCOM", "ICT Academy"],
   hero_stats: [
-    { value: "500", suffix: "+", label: "Students Mentored" },
-    { value: "100", suffix: "+", label: "Projects Guided" },
-    { value: "50",  suffix: "+", label: "Workshops Conducted" },
-    { value: "95",  suffix: "%", label: "Student Satisfaction" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
   ],
   programs: [
     { title: "Mentorship Programs",       desc: "Learn from industry experts and successful founders.",            features: "Startup Mentorship,Career Mentorship,Personal Branding,1:1 Guidance" },
@@ -54,20 +63,20 @@ const DEFAULTS: Content = {
     { title: "Supportive Community",  desc: "Collaborate, network and grow together." },
   ],
   numbers: [
-    { value: "500", suffix: "+", label: "Students Mentored" },
-    { value: "100", suffix: "+", label: "Projects Guided" },
-    { value: "50",  suffix: "+", label: "Workshops" },
-    { value: "25",  suffix: "+", label: "Industry Experts" },
-    { value: "95",  suffix: "%", label: "Student Satisfaction" },
-    { value: "10",  suffix: "+", label: "Partner Institutions" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
+    { value: "", suffix: "", label: "" },
   ],
   cta_headline: "Start Your Learning Journey Today",
   cta_desc:
-    "Join thousands of learners who are building skills, creating solutions and shaping their future with Akronix Academy.",
+    "Tell us what you want to learn or build, and we'll help you find the right program.",
   testimonials: [
-    { name: "Karthik M.", role: "Final Year Student",   img: "/bharath pic.jpeg",  text: "Akronix Academy helped me build my final year project and secure a great placement opportunity.", stars: 5 },
-    { name: "Sneha R.",   role: "AI/ML Intern",         img: "/Sarvika pic.jpeg",  text: "The mentorship program gave me clarity and confidence to build my own startup.", stars: 5 },
-    { name: "Rohan P.",   role: "Full Stack Developer", img: "/pranav pic.jpeg",   text: "The workshops and bootcamps improved my skills and helped me land my dream job.", stars: 5 },
+    { name: "", role: "", img: "", text: "", stars: 5 },
+    { name: "", role: "", img: "", text: "", stars: 5 },
+    { name: "", role: "", img: "", text: "", stars: 5 },
   ],
 };
 
@@ -132,6 +141,7 @@ export default function AcademyAdmin() {
   const [loading, setLoading]  = useState(true);
   const [saving,  setSaving]   = useState(false);
   const [saved,   setSaved]    = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/site-settings?prefix=academy.")
@@ -159,6 +169,14 @@ export default function AcademyAdmin() {
       if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000); }
     } finally { setSaving(false); }
   };
+
+  const updatePartnerLogo = (i: number, val: string) => {
+    const next = [...content.partner_logos];
+    next[i] = val;
+    set("partner_logos", next);
+  };
+  const addPartnerLogo = () => set("partner_logos", [...content.partner_logos, ""]);
+  const removePartnerLogo = (i: number) => set("partner_logos", content.partner_logos.filter((_, idx) => idx !== i));
 
   const updateHeroStat = (i: number, field: keyof HeroStat, val: string) => {
     const next = [...content.hero_stats];
@@ -256,6 +274,73 @@ export default function AcademyAdmin() {
           multiline
           placeholder="Akronix Academy empowers students…"
         />
+      </Section>
+
+      {/* ─── 1b. Hero Media ─── */}
+      <Section title="Hero Media" defaultOpen>
+        <div className="grid sm:grid-cols-[1fr_140px] gap-4 items-start">
+          <Field label="Hero Image URL" value={content.hero_image} onChange={v => set("hero_image", v)} placeholder="/academy image.jpg" />
+          {content.hero_image && (
+            <div className="relative w-full sm:w-[140px] aspect-[4/3] rounded-xl overflow-hidden border border-white/10 bg-white/5">
+              <Image src={content.hero_image} alt="Hero preview" fill className="object-cover object-top" />
+            </div>
+          )}
+        </div>
+        <div className="flex items-end gap-3">
+          <div className="flex-1">
+            <Field label="Overview Video URL" value={content.hero_video_url} onChange={v => set("hero_video_url", v)} placeholder="https://youtube.com/watch?v=... or a direct .mp4 link" />
+          </div>
+          <button
+            onClick={() => setPreviewOpen(true)}
+            className="flex items-center gap-1.5 text-xs font-bold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3.5 py-2.5 rounded-lg transition-colors mb-0.5 flex-shrink-0"
+          >
+            <Play size={12} /> Live Preview
+          </button>
+        </div>
+        <p className="text-[11px] text-white/25">
+          Supports YouTube, Vimeo, or a direct video file link. Leave blank to show &quot;Video coming soon&quot; when visitors click play.
+        </p>
+      </Section>
+
+      {/* ─── 1c. Partner Logos (scrolling marquee) ─── */}
+      <Section title="Partner Logos" badge={`${content.partner_logos.length} logos`}>
+        <p className="text-xs text-white/25 -mt-1">
+          Shown in the scrolling logo strip near the bottom of the page. Recognised names (SRM University, VIT University, Google, AWS, Microsoft, NASSCOM, ICT Academy) render with their branded mark — anything else falls back to a clean initials badge.
+        </p>
+
+        {/* Live preview */}
+        <div className="bg-black/20 border border-white/5 rounded-xl p-4 overflow-hidden">
+          <p className="text-[10px] font-bold text-white/25 uppercase tracking-widest mb-3">Live Preview</p>
+          <div className="flex gap-4 overflow-x-auto pb-1">
+            {content.partner_logos.filter(Boolean).map((name, i) => (
+              <div key={`${name}-${i}`} className="flex-shrink-0 px-4 py-3 rounded-xl border border-white/10 bg-white">
+                <PartnerLogo name={name} />
+              </div>
+            ))}
+            {content.partner_logos.filter(Boolean).length === 0 && (
+              <p className="text-xs text-white/20 py-3">Add a logo name below to see it here.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {content.partner_logos.map((name, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <input
+                value={name}
+                onChange={e => updatePartnerLogo(i, e.target.value)}
+                placeholder="Partner or institution name"
+                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-amber-500/40 transition-colors"
+              />
+              <button onClick={() => removePartnerLogo(i)} className="text-white/20 hover:text-red-400 transition-colors flex-shrink-0">
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+        <button onClick={addPartnerLogo} className="flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors">
+          <Plus size={14} /> Add Logo
+        </button>
       </Section>
 
       {/* ─── 2. Hero Stats ─── */}
@@ -372,6 +457,8 @@ export default function AcademyAdmin() {
       <div className="flex justify-end pb-8">
         <SaveBtn full />
       </div>
+
+      <VideoModal open={previewOpen} onClose={() => setPreviewOpen(false)} videoUrl={content.hero_video_url} title="Live Preview — Akronix Academy" />
     </div>
   );
 }

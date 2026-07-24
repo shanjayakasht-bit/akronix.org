@@ -1,26 +1,19 @@
 import { db } from "./db";
 
 export const DEFAULT_HOMEPAGE: Record<string, string> = {
-  "homepage.hero.badge": "Empowering Startups, Businesses & Institutions",
+  "homepage.hero.badge": "Software, Marketing & Networking for Growing Businesses",
   "homepage.hero.description":
-    "Akronix is your complete business growth ecosystem. We deliver software solutions, digital marketing, business networking, mentorship and innovation — under one roof.",
+    "We help startups and growing companies build reliable software, run practical marketing, and connect with the right people — software development, digital marketing, business networking and mentorship, from one team.",
   "homepage.hero.cta1.text": "Get Started",
   "homepage.hero.cta1.href": "/contact?type=project",
   "homepage.hero.cta2.text": "Explore Products",
   "homepage.hero.cta2.href": "/products",
-  "homepage.stats": JSON.stringify([
-    { value: "50+", label: "Businesses Empowered" },
-    { value: "15+", label: "Valuable Partnerships" },
-    { value: "98%", label: "Client Retention" },
-    { value: "60%", label: "Avg. Efficiency Gain" },
-  ]),
   "homepage.partners": JSON.stringify([
     "ZOHO", "Microsoft", "AWS", "HubSpot", "Google", "BNI", "Meta", "GitHub", "Hostinger",
   ]),
-  "homepage.cta.headline": "Ready to Build the Future of Your Business?",
+  "homepage.cta.headline": "Ready to Talk About Your Project?",
   "homepage.cta.description":
-    "Let's build software that matters, expand your network and unlock new opportunities — together.",
-  "homepage.testimonials.label": "4.9/5 from 100+ reviews",
+    "Tell us what you're building or trying to fix — we'll tell you honestly whether and how we can help.",
   "homepage.products": JSON.stringify([
     { name: "Akronix CRM", desc: "Manage leads and customers", tag: "CRM", icon: "Users" },
     { name: "Akronix HRMS", desc: "Simplify HR and employee management", tag: "HRMS", icon: "Building2" },
@@ -28,35 +21,6 @@ export const DEFAULT_HOMEPAGE: Record<string, string> = {
     { name: "Akronix Inventory", desc: "Track inventory & stock needs", tag: "INV", icon: "Cpu" },
     { name: "Akronix POS", desc: "Point-of-sale for retail businesses", tag: "POS", icon: "ShieldCheck" },
     { name: "Akronix AI", desc: "A remote assistant with AI Intelligence", tag: "AI", icon: "Zap" },
-  ]),
-  "homepage.success_stories": JSON.stringify([
-    {
-      category: "Digital Transformation",
-      title: "Retail/CRM Solution",
-      highlight: "60%",
-      highlightLabel: "increase in customer management efficiency",
-      desc: "We helped streamline CRM and increase managed customer reach.",
-      color: "#2563EB",
-      bg: "#EFF6FF",
-    },
-    {
-      category: "Performance Marketing",
-      title: "Performance Marketing",
-      highlight: "300%",
-      highlightLabel: "increase in deals with targeted campaigns",
-      desc: "Our marketing team delivered results that exceeded expectations.",
-      color: "#16A34A",
-      bg: "#F0FDF4",
-    },
-    {
-      category: "Networking Impact",
-      title: "Business Networking",
-      highlight: "15+",
-      highlightLabel: "valuable partnerships in 6 months",
-      desc: "Our networking program connected businesses to mutual success.",
-      color: "#9333EA",
-      bg: "#FDF4FF",
-    },
   ]),
 };
 

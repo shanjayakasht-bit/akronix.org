@@ -135,7 +135,7 @@ export default function ContactPage() {
   }, [requestedService, setValue]);
 
   useEffect(() => {
-    fetch("/api/admin/site-settings?prefix=contact.")
+    fetch("/api/site-settings?prefix=contact.")
       .then(r => r.json())
       .then((data: Record<string, string>) => {
         if (data["contact.faqs"]) {

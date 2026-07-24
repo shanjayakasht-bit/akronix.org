@@ -1,16 +1,16 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useRef, useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  ArrowRight, ChevronRight, Play, Star, Globe, TrendingUp, Zap,
+  ArrowRight, ChevronRight, Star, Globe, TrendingUp, Zap, Play,
   Code2, BarChart3, Users, GraduationCap, CheckCircle2, Quote,
-  ChevronLeft, ExternalLink, ShieldCheck, Lightbulb, Handshake, Rocket,
-  Building2, Package, Cpu, MailOpen, PhoneCall, MapPin, Database, Bot, Layers,
+  ChevronLeft, ShieldCheck, Lightbulb, Handshake, Rocket,
+  Building2, Package, Cpu, Database, Bot, Layers,
 } from "lucide-react";
 import type { PublishedTestimonial } from "@/lib/site-settings";
-import { generateSlug } from "@/lib/utils";
+import VideoModal from "@/components/ui/video-modal";
 
 /* ── Animation Variants ──────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
@@ -35,13 +35,6 @@ const scaleIn = (delay = 0) => ({
 });
 
 /* ── Data ─────────────────────────────────────────────────────── */
-const stats = [
-  { value: "50+", label: "Businesses Empowered" },
-  { value: "15+", label: "Valuable Partnerships" },
-  { value: "98%", label: "Client Retention" },
-  { value: "60%", label: "Avg. Efficiency Gain" },
-];
-
 const ecosystem = [
   {
     icon: Code2,
@@ -111,74 +104,6 @@ const whyChoose = [
   { icon: TrendingUp, title: "Long-Term Partnership", desc: "We grow when you grow. Your success is ours." },
 ];
 
-const successStories = [
-  {
-    category: "Digital Transformation",
-    title: "Retail/CRM Solution",
-    highlight: "60%",
-    highlightLabel: "increase in customer management efficiency",
-    desc: "We helped streamline CRM and increase managed customer reach.",
-    tag: "CRM",
-    color: "#2563EB",
-    bg: "#EFF6FF",
-  },
-  {
-    category: "Performance Marketing",
-    title: "Performance Marketing",
-    highlight: "300%",
-    highlightLabel: "increase in deals with targeted campaigns",
-    desc: "Our marketing team delivered results that exceeded expectations.",
-    tag: "MARKETING",
-    color: "#16A34A",
-    bg: "#F0FDF4",
-  },
-  {
-    category: "Networking Impact",
-    title: "Business Networking",
-    highlight: "15+",
-    highlightLabel: "valuable partnerships in 6 months",
-    desc: "Our networking program connected businesses to mutual success.",
-    tag: "NETWORK",
-    color: "#9333EA",
-    bg: "#FDF4FF",
-  },
-];
-
-const testimonials = [
-  {
-    name: "Ravi Sharma",
-    title: "CEO, ShopEasy",
-    rating: 5,
-    text: "Akronix transformed our business with an exceptional CRM solution and outstanding support. The team truly understands what we need.",
-    avatar: "RS",
-    color: "#2563EB",
-  },
-  {
-    name: "Priya Nair",
-    title: "Founder, EduBridge",
-    rating: 5,
-    text: "Their networking ecosystem introduced us to valuable partners and new opportunities. We grew our business network 5x in 6 months!",
-    avatar: "PN",
-    color: "#9333EA",
-  },
-  {
-    name: "Arjun Nair",
-    title: "CTO, HealthPlus",
-    rating: 5,
-    text: "From Akronix helped us define our long-term growth partners. Their technical expertise and mentorship is unparalleled.",
-    avatar: "AN",
-    color: "#16A34A",
-  },
-  {
-    name: "Smitha Iyer",
-    title: "Marketing Head, TechCo",
-    rating: 5,
-    text: "The marketing strategies from Akronix delivered amazing results for our brand! Our revenue grew 300% in just 3 months.",
-    avatar: "SI",
-    color: "#EA580C",
-  },
-];
-
 const partners = [
   { name: "ZOHO", logo: null },
   { name: "Microsoft", logo: null },
@@ -191,26 +116,9 @@ const partners = [
   { name: "Hostinger", logo: null },
 ];
 
-/* ── Animated Counter ─────────────────────────────────────────── */
-function AnimatedStat({ value, label }: { value: string; label: string }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="text-center"
-    >
-      <div className="text-3xl md:text-4xl font-black text-[#F59E0B] mb-1">{value}</div>
-      <div className="text-sm text-gray-500 font-medium">{label}</div>
-    </motion.div>
-  );
-}
-
 /* ── Testimonial Card ─────────────────────────────────────────── */
-function TestimonialCard({ testimonial }: { testimonial: typeof testimonials[0] }) {
+type TestimonialView = { name: string; title: string; rating: number; text: string; avatar: string; color: string };
+function TestimonialCard({ testimonial }: { testimonial: TestimonialView }) {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col gap-4 h-full">
       <div className="flex gap-1">
@@ -253,6 +161,7 @@ const TESTIMONIAL_COLORS = ["#2563EB", "#9333EA", "#16A34A", "#EA580C"];
 export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePageProps) {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [testimonialsPerPage] = useState(2);
+  const [videoOpen, setVideoOpen] = useState(false);
   const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
   const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
 
@@ -263,20 +172,15 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
   };
 
   // Resolve settings with fallbacks to hardcoded defaults
-  const heroBadge = settings["homepage.hero.badge"] || "Empowering Startups, Businesses & Institutions";
-  const heroDesc = settings["homepage.hero.description"] || "Akronix is your complete business growth ecosystem. We deliver software solutions, digital marketing, business networking, mentorship and innovation — under one roof.";
+  const heroBadge = settings["homepage.hero.badge"] || "Software, Marketing & Networking for Growing Businesses";
+  const heroDesc = settings["homepage.hero.description"] || "We help startups and growing companies build reliable software, run practical marketing, and connect with the right people — software development, digital marketing, business networking and mentorship, from one team.";
   const cta1Text = settings["homepage.hero.cta1.text"] || "Get Started";
   const cta1Href = settings["homepage.hero.cta1.href"] || "/contact?type=project";
   const cta2Text = settings["homepage.hero.cta2.text"] || "Explore Products";
   const cta2Href = settings["homepage.hero.cta2.href"] || "/products";
-  const ctaHeadline = settings["homepage.cta.headline"] || "Ready to Build the Future of Your Business?";
-  const ctaDesc = settings["homepage.cta.description"] || "Let's build software that matters, expand your network and unlock new opportunities — together.";
-  const testimonialsLabel = settings["homepage.testimonials.label"] || "4.9/5 from 100+ reviews";
-
-  let activeStats = stats;
-  try {
-    if (settings["homepage.stats"]) activeStats = JSON.parse(settings["homepage.stats"]);
-  } catch {}
+  const ctaHeadline = settings["homepage.cta.headline"] || "Ready to Talk About Your Project?";
+  const ctaDesc = settings["homepage.cta.description"] || "Tell us what you're building or trying to fix — we'll tell you honestly whether and how we can help.";
+  const heroVideoUrl = settings["homepage.video_url"] || "";
 
   let activePartners = partners;
   try {
@@ -303,25 +207,20 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
     }
   } catch {}
 
-  // Success stories — load from settings or fall back to hardcoded
-  let activeStories = successStories;
-  try {
-    if (settings["homepage.success_stories"]) {
-      activeStories = JSON.parse(settings["homepage.success_stories"]);
-    }
-  } catch {}
+  // Testimonials — real, published records only (added via the admin panel)
+  const activeTestimonialsList: TestimonialView[] = dbTestimonials.map((t, i) => ({
+    name: t.authorName,
+    title: `${t.authorTitle}${t.company ? `, ${t.company}` : ""}`,
+    rating: t.rating,
+    text: t.content,
+    avatar: t.authorName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase(),
+    color: TESTIMONIAL_COLORS[i % TESTIMONIAL_COLORS.length],
+  }));
 
-  // Testimonials — use DB records if any, else fall back to hardcoded
-  const activeTestimonialsList = dbTestimonials.length > 0
-    ? dbTestimonials.map((t, i) => ({
-        name: t.authorName,
-        title: `${t.authorTitle}${t.company ? `, ${t.company}` : ""}`,
-        rating: t.rating,
-        text: t.content,
-        avatar: t.authorName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase(),
-        color: TESTIMONIAL_COLORS[i % TESTIMONIAL_COLORS.length],
-      }))
-    : testimonials;
+  const avgRating = activeTestimonialsList.length > 0
+    ? activeTestimonialsList.reduce((sum, t) => sum + t.rating, 0) / activeTestimonialsList.length
+    : 0;
+  const testimonialsLabel = `${avgRating.toFixed(1)}/5 from ${activeTestimonialsList.length} review${activeTestimonialsList.length === 1 ? "" : "s"}`;
 
   const totalTestimonialPages = Math.ceil(activeTestimonialsList.length / testimonialsPerPage);
   const visibleTestimonials = activeTestimonialsList.slice(
@@ -402,10 +301,10 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
                 </Link>
               </motion.div>
 
-              {/* Stats row */}
-              <motion.div {...fadeUp(0.4)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-gray-100">
-                {activeStats.map((s) => (
-                  <AnimatedStat key={s.label} {...s} />
+              {/* What we do */}
+              <motion.div {...fadeUp(0.4)} className="flex flex-wrap gap-x-6 gap-y-2 pt-8 border-t border-gray-100">
+                {["Software Development", "Digital Marketing", "Business Networking", "Mentorship"].map((label) => (
+                  <span key={label} className="text-sm font-semibold text-gray-500">{label}</span>
                 ))}
               </motion.div>
             </div>
@@ -536,7 +435,7 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
       <section className="py-12 bg-gray-50 border-y border-gray-100">
         <div className="container-xl">
           <motion.p {...fadeIn(0)} className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8">
-            Trusted by 100+ Businesses &amp; Institutions
+            Tools &amp; Platforms We Work With
           </motion.p>
           <div className="relative overflow-hidden">
             <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
@@ -708,96 +607,33 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
                   <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-6">
                     We don&apos;t just build software. We build relationships, solutions and futures.
                   </h3>
-                  <button className="inline-flex items-center gap-3 text-sm font-bold text-white">
-                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
-                      <Play size={12} className="text-white fill-white ml-0.5" />
-                    </div>
-                    Play Video
-                  </button>
+                  <div className="flex items-center gap-6 flex-wrap">
+                    <Link href="/contact" className="inline-flex items-center gap-3 text-sm font-bold text-white">
+                      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+                        <ArrowRight size={14} className="text-white" />
+                      </div>
+                      Get in Touch
+                    </Link>
+                    <button onClick={() => setVideoOpen(true)} className="inline-flex items-center gap-3 text-sm font-bold text-white">
+                      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+                        <Play size={12} className="text-white ml-0.5" fill="currentColor" />
+                      </div>
+                      Watch Video
+                    </button>
+                  </div>
                 </div>
 
                 {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-white/5 translate-y-1/2 -translate-x-1/2" />
               </div>
-
-              {/* Stats floating card */}
-              <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-xl p-5 border border-gray-100">
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    { v: "500+", l: "Clients" },
-                    { v: "98%", l: "Retention" },
-                    { v: "15+", l: "Partners" },
-                  ].map((s) => (
-                    <div key={s.l} className="text-center">
-                      <p className="text-base font-black text-gray-900">{s.v}</p>
-                      <p className="text-[10px] text-gray-400">{s.l}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ── SUCCESS STORIES ─────────────────────────────────────── */}
-      <section className="py-24 bg-gray-50">
-        <div className="container-xl">
-          <motion.div {...fadeUp()} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">Case Studies</p>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900">Success Stories</h2>
-              <p className="text-gray-500 mt-2">Real Results. Real Impact.</p>
-            </div>
-            <Link href="/pricing/testimonials#success-stories" className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 whitespace-nowrap">
-              View All Stories <ArrowRight size={14} />
-            </Link>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {activeStories.map((story, i) => (
-              <motion.div
-                key={`${story.title}-${i}`}
-                {...fadeUp(i * 0.1)}
-                whileHover={{ y: -6 }}
-                className="group bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col"
-              >
-                {/* Tag */}
-                <div className="flex items-center justify-between mb-6">
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
-                    style={{ backgroundColor: story.bg, color: story.color }}
-                  >
-                    {story.category}
-                  </span>
-                  <ExternalLink size={14} className="text-gray-300 group-hover:text-gray-600 transition-colors" />
-                </div>
-
-                {/* Metric */}
-                <div className="mb-6 flex-1">
-                  <div className="text-5xl font-black mb-2" style={{ color: story.color }}>
-                    {story.highlight}
-                  </div>
-                  <p className="text-sm font-semibold text-gray-700 mb-3">{story.highlightLabel}</p>
-                  <p className="text-sm text-gray-500 leading-relaxed">{story.desc}</p>
-                </div>
-
-                {/* CTA */}
-                <Link
-                  href={`/pricing/testimonials#story-${generateSlug(story.title)}`}
-                  className="inline-flex items-center gap-2 text-sm font-bold transition-colors duration-200"
-                  style={{ color: story.color }}
-                >
-                  Read Story <ChevronRight size={14} />
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ────────────────────────────────────────── */}
+      {/* ── TESTIMONIALS (real, published records only) ─────────── */}
+      {activeTestimonialsList.length > 0 && (
       <section className="py-24 bg-white">
         <div className="container-xl">
           <motion.div {...fadeUp()} className="text-center mb-12">
@@ -853,6 +689,7 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
           </div>
         </div>
       </section>
+      )}
 
       {/* ── TRUSTED PARTNERS ────────────────────────────────────── */}
       <section className="py-16 bg-gray-50 border-y border-gray-100">
@@ -920,6 +757,7 @@ export default function HomePage({ settings = {}, dbTestimonials = [] }: HomePag
         </div>
       </section>
 
+      <VideoModal open={videoOpen} onClose={() => setVideoOpen(false)} videoUrl={heroVideoUrl} title="Akronix — Overview" />
     </div>
   );
 }

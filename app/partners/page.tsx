@@ -7,7 +7,7 @@ import {
   Code2, GraduationCap, Rocket, Building2, Share2,
   ArrowRight, Handshake, TrendingUp, Megaphone, Zap,
   Headphones, FileText, Users, BarChart3, ChevronLeft, ChevronRight,
-  Globe, Trophy,
+  Globe,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -318,33 +318,6 @@ const steps = [
   { num: "05", icon: BarChart3, title: "Grow Together", desc: "Celebrate success and continue growing together." },
 ];
 
-const spotlights = [
-  {
-    partnerName: "AWS",
-    quote: "Akronix is a valuable partner with deep technical expertise and a strong commitment to delivering innovative solutions.",
-    by: "AWS Partner Network",
-  },
-  {
-    partnerName: "SRM University",
-    quote: "Our partnership with Akronix Academy empowers students with real-world skills and industry exposure.",
-    by: "SRM Institute of Science & Technology",
-  },
-  {
-    partnerName: "T-Hub",
-    quote: "Akronix has been a catalyst for our startup community — connecting founders with the right resources and mentors.",
-    by: "T-Hub Foundation",
-  },
-  {
-    partnerName: "BNI",
-    quote: "The Akronix networking community has added tremendous value to our members' business growth.",
-    by: "BNI Partner Network",
-  },
-  {
-    partnerName: "NASSCOM Foundation",
-    quote: "Akronix's commitment to innovation aligns perfectly with NASSCOM's vision for India's digital future.",
-    by: "NASSCOM Foundation",
-  },
-];
 
 /* ─── CMS content type (matches admin/partners editor) ───── */
 type PartnersSiteContent = {
@@ -376,7 +349,7 @@ export default function PartnersPage() {
     logos: cms?.ecosystem?.[i]?.logos ?? cat.logos,
   }));
 
-  const activeSpotlights = cms?.spotlights ?? spotlights;
+  const activeSpotlights = (cms?.spotlights ?? []).filter((s) => s.partnerName && s.quote);
 
   return (
     <>
@@ -475,11 +448,10 @@ export default function PartnersPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-transparent to-gray-900/40" />
               </div>
 
-              {/* Stat overlays */}
+              {/* Info overlays */}
               {[
-                { top: "-16px", right: "-16px", icon: Users,  value: "50+",  label: "Active Partners",        delay: 0.5 },
-                { bottom: "-16px", left: "12px", icon: Globe,  value: "15+",  label: "Countries",              delay: 0.65 },
-                { bottom: "-16px", right: "12px", icon: Trophy, value: "100+", label: "Successful Collaborations", delay: 0.8 },
+                { top: "-16px", right: "-16px", icon: Users,  value: "Partners",     label: "Tech & education",  delay: 0.5 },
+                { bottom: "-16px", left: "12px", icon: Globe,  value: "Ecosystem",   label: "Startups & networks", delay: 0.65 },
               ].map(({ top, right, bottom, left, icon: Ic, value, label, delay }) => (
                 <motion.div
                   key={label}
@@ -637,7 +609,8 @@ export default function PartnersPage() {
           </div>
         </section>
 
-        {/* ════════════ PARTNER SPOTLIGHT ════════════ */}
+        {/* ════════════ PARTNER SPOTLIGHT (real quotes only, added via admin) ════════════ */}
+        {activeSpotlights.length > 0 && (
         <section className="py-20 bg-gray-50 border-t border-gray-100">
           <div className="container-xl">
             <div className="grid lg:grid-cols-3 gap-10 items-start">
@@ -722,6 +695,7 @@ export default function PartnersPage() {
             </div>
           </div>
         </section>
+        )}
 
         {/* ════════════ CTA (DARK) ════════════ */}
         <section className="py-20 relative overflow-hidden">

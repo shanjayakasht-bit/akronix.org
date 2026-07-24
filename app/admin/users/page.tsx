@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { formatDistanceToNow } from "date-fns";
 import { UserCog, CheckCircle2, XCircle, ShieldCheck, Shield, User } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 async function getUsers() {
   try {
     return await db.user.findMany({

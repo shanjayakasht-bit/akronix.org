@@ -12,7 +12,7 @@ import { useRef, useEffect, useState, useMemo } from "react";
 const features = [
   { title: "Self-Service Provisioning", desc: "Automatically creates accounts, database shards, and workspaces for new users instantly with zero manual effort." },
   { title: "Billing Lifecycle Automation", desc: "Manages the entire payment cycle—from trial periods and monthly renewals to automated seat-based billing." },
-  { title: "Scalability Engine",         desc: "Capable of scaling from 1 to 1M+ users without manual server configuration or technical bottlenecks." },
+  { title: "Scalability Engine",         desc: "Built to scale up as your user base grows, without manual server configuration or technical bottlenecks." },
   { title: "Hands-Off Management",       desc: "The backbone of your product, eliminating manual administration and operational chaos." },
 ];
 
@@ -283,7 +283,7 @@ export default function AutomationSystemPage() {
               </h2>
 
               <p className="text-base md:text-lg mb-12 max-w-xl mx-auto font-medium leading-relaxed text-white/30 uppercase tracking-widest">
-                Our architecture handles user scaling from 1 to 1M+ without a single manual touch.
+                Our architecture handles user scaling without a single manual touch.
               </p>
 
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 }}>

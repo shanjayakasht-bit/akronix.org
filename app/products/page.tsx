@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,9 +8,29 @@ import {
   Users, UserCheck, Package, Cpu, Briefcase, GraduationCap,
   PhoneCall, Zap, Clock, CheckSquare, BarChart3, Globe,
   Search, Check, ArrowRight, ShieldCheck, Cloud, Settings, HelpCircle,
-  Sparkles, X,
+  Sparkles, X, LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+
+/* ─── CMS content type (matches admin/products editor) ────────── */
+type CmsProduct = {
+  id: string;
+  name: string;
+  category: string;
+  categoryLabel: string;
+  desc: string;
+  features: string[];
+  isNew?: boolean;
+};
+
+type ProductDesign = { icon: LucideIcon; color: string; bgColor: string; accentColor: string };
+
+const FALLBACK_PALETTE: ProductDesign[] = [
+  { icon: Package, color: "#2563EB", bgColor: "#EFF6FF", accentColor: "#DBEAFE" },
+  { icon: Package, color: "#16A34A", bgColor: "#F0FDF4", accentColor: "#DCFCE7" },
+  { icon: Package, color: "#9333EA", bgColor: "#FDF4FF", accentColor: "#F3E8FF" },
+  { icon: Package, color: "#EA580C", bgColor: "#FFF7ED", accentColor: "#FFEDD5" },
+];
 
 const categories = [
   { id: "all", name: "All Products" },
@@ -184,12 +204,49 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
+/* Design (icon/colors) keyed by id — admin only manages text content */
+const PRODUCT_DESIGN: Record<string, ProductDesign> = Object.fromEntries(
+  productsList.map((p) => [p.id, { icon: p.icon, color: p.color, bgColor: p.bgColor, accentColor: p.accentColor }])
+);
+
+const DEFAULT_PRODUCTS_CMS: CmsProduct[] = productsList.map((p) => ({
+  id: p.id,
+  name: p.name,
+  category: p.category,
+  categoryLabel: p.categoryLabel,
+  desc: p.desc,
+  features: p.features,
+  isNew: p.isNew,
+}));
+
+function mergeProducts(cms: CmsProduct[] | null) {
+  const source = cms && cms.length > 0 ? cms : DEFAULT_PRODUCTS_CMS;
+  return source.map((p, i) => ({
+    ...p,
+    ...(PRODUCT_DESIGN[p.id] ?? FALLBACK_PALETTE[i % FALLBACK_PALETTE.length]),
+  }));
+}
+
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [cmsProducts, setCmsProducts] = useState<CmsProduct[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/site-settings?prefix=products.")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["products.catalog"]) {
+          try { setCmsProducts(JSON.parse(data["products.catalog"])); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const activeProducts = useMemo(() => mergeProducts(cmsProducts), [cmsProducts]);
 
   const filteredProducts = useMemo(() => {
-    return productsList.filter((product) => {
+    return activeProducts.filter((product) => {
       if (selectedCategory !== "all" && product.category !== selectedCategory) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -201,13 +258,13 @@ export default function ProductsPage() {
       }
       return true;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [activeProducts, selectedCategory, searchQuery]);
 
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: productsList.length };
-    productsList.forEach((p) => { counts[p.category] = (counts[p.category] || 0) + 1; });
+    const counts: Record<string, number> = { all: activeProducts.length };
+    activeProducts.forEach((p) => { counts[p.category] = (counts[p.category] || 0) + 1; });
     return counts;
-  }, []);
+  }, [activeProducts]);
 
   return (
     <>
@@ -324,7 +381,7 @@ export default function ProductsPage() {
                   </div>
                   <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-white rounded-xl shadow-lg border border-gray-100 p-2.5 flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[9px] font-bold text-gray-600">Trusted by 100+ Businesses</span>
+                    <span className="text-[9px] font-bold text-gray-600">Built for Growing Teams</span>
                   </div>
                 </motion.div>
               </div>
@@ -531,8 +588,8 @@ export default function ProductsPage() {
               className="grid grid-cols-2 md:grid-cols-4 gap-8"
             >
               {[
-                { title: "Enterprise Security", desc: "Bank-level security with role-based access, data encryption, and backups.", icon: ShieldCheck },
-                { title: "Cloud-Based", desc: "Access your products anytime, anywhere with 99.9% uptime and reliability.", icon: Cloud },
+                { title: "Enterprise Security", desc: "Role-based access, data encryption, and regular backups on every product.", icon: ShieldCheck },
+                { title: "Cloud-Based", desc: "Access your products anytime, anywhere — hosted and monitored by our team.", icon: Cloud },
                 { title: "Fully Customizable", desc: "White-label ready products that can be fully customized to your brand.", icon: Settings },
                 { title: "Dedicated Support", desc: "Our expert support team is always here to help you succeed.", icon: PhoneCall },
               ].map((item) => (

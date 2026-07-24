@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { formatDistanceToNow } from "date-fns";
 import FaqEditor from "./FaqEditor";
 
+export const dynamic = "force-dynamic";
+
 async function getRecentLeads() {
   try {
     return await db.lead.findMany({

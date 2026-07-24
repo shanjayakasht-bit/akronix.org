@@ -11,6 +11,8 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import VideoModal from "@/components/ui/video-modal";
+import PartnerLogo from "@/components/ui/partner-logo";
 
 /* ─── CMS content type (matches admin/academy editor) ─────────── */
 type AcademySiteContent = {
@@ -18,6 +20,9 @@ type AcademySiteContent = {
   hero_highlight?: string;
   hero_line2?: string;
   hero_subtext?: string;
+  hero_image?: string;
+  hero_video_url?: string;
+  partner_logos?: string[];
   hero_stats?: { value: string; suffix: string; label: string }[];
   programs?: { title: string; desc: string; features: string }[];
   why_headline?: string;
@@ -120,109 +125,7 @@ function TiltCard({ children, className }: { children: React.ReactNode; classNam
   );
 }
 
-/* ─── Partner logo components ──────────────────────────────────── */
-function LogoSRM() {
-  return (
-    <div className="flex items-center gap-2.5">
-      <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-blue-700 flex-shrink-0">
-        <span className="text-[9px] font-black text-blue-700 leading-none">SRM</span>
-      </div>
-      <div className="leading-tight">
-        <p className="text-[11px] font-black text-blue-800 tracking-tight">SRM</p>
-        <p className="text-[8px] text-blue-600 font-semibold uppercase tracking-wider">University</p>
-      </div>
-    </div>
-  );
-}
-function LogoVIT() {
-  return (
-    <div className="flex items-center gap-2.5">
-      <div className="w-8 h-8 rounded-sm flex items-center justify-center overflow-hidden" style={{ background: "linear-gradient(135deg,#1e3a8a,#1d4ed8)" }}>
-        <span className="text-[10px] font-black text-white">VIT</span>
-      </div>
-      <div className="leading-tight">
-        <p className="text-[11px] font-black text-blue-900 tracking-tight">VIT</p>
-        <p className="text-[8px] text-blue-500 font-semibold">University</p>
-      </div>
-    </div>
-  );
-}
-function LogoGoogle() {
-  return (
-    <div className="flex items-center gap-2">
-      {/* Coloured G */}
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M27.6 14.32c0-.96-.08-1.89-.24-2.77H14v5.24h7.62a6.5 6.5 0 01-2.83 4.27v3.55h4.58c2.68-2.47 4.23-6.1 4.23-10.29z" fill="#4285F4"/>
-        <path d="M14 28c3.83 0 7.04-1.27 9.38-3.43l-4.58-3.55c-1.27.85-2.89 1.36-4.8 1.36-3.69 0-6.82-2.49-7.93-5.84H1.4v3.67A14 14 0 0014 28z" fill="#34A853"/>
-        <path d="M6.07 16.54A8.4 8.4 0 015.64 14c0-.88.15-1.73.43-2.54V7.79H1.4A14 14 0 000 14c0 2.26.54 4.4 1.4 6.21l4.67-3.67z" fill="#FBBC05"/>
-        <path d="M14 5.58c2.08 0 3.94.71 5.41 2.12l4.05-4.05C21.03 1.4 17.82 0 14 0A14 14 0 001.4 7.79l4.67 3.67C7.18 8.07 10.31 5.58 14 5.58z" fill="#EA4335"/>
-      </svg>
-      <div className="leading-tight">
-        <p className="text-[11px] font-bold text-gray-800">Google</p>
-        <p className="text-[8px] text-gray-500 font-medium">for Developers</p>
-      </div>
-    </div>
-  );
-}
-function LogoAWS() {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex-shrink-0">
-        <svg width="36" height="22" viewBox="0 0 54 32" fill="none">
-          <path d="M15.3 11.6c0 .7.1 1.2.2 1.6.2.4.4.8.8 1.2.1.1.2.3.2.4 0 .2-.1.3-.4.5l-1.3.9c-.2.1-.3.2-.5.2-.2 0-.3-.1-.5-.2-.2-.2-.4-.5-.6-.7-.2-.3-.4-.6-.6-.9-1.5 1.8-3.4 2.7-5.7 2.7-1.6 0-2.9-.5-3.8-1.4-.9-.9-1.4-2.2-1.4-3.7 0-1.6.6-3 1.7-4 1.1-1 2.6-1.5 4.5-1.5.6 0 1.2.1 1.9.2.7.1 1.4.3 2.1.5V6c0-1.4-.3-2.4-.9-3-.6-.6-1.6-.9-3-.9-.6 0-1.3.1-2 .3-.7.2-1.3.4-2 .7-.3.1-.5.2-.6.2h-.2c-.2 0-.3-.2-.3-.5V1.9c0-.3 0-.4.1-.5.1-.1.3-.2.5-.3.7-.4 1.5-.6 2.5-.9C7 0 8.1 0 9.2 0c2.3 0 4 .5 5.1 1.6 1.1 1 1.6 2.6 1.6 4.7v6.3h-.6zm-7.9 3c.6 0 1.2-.1 1.9-.4.7-.3 1.3-.7 1.8-1.3.3-.4.5-.8.6-1.2.1-.4.2-1 .2-1.6v-.8c-.5-.1-1.1-.2-1.6-.3-.5-.1-1.1-.1-1.6-.1-1.1 0-2 .2-2.5.7-.6.5-.9 1.1-.9 2 0 .8.2 1.4.6 1.8.4.3 1 .5 1.5.5v-.3zM22.5 17c-.3 0-.5 0-.6-.1-.1-.1-.3-.3-.4-.6l-4.3-14.2c-.1-.3-.2-.5-.2-.7 0-.3.1-.4.4-.4h1.7c.3 0 .5 0 .6.1.1.1.3.3.4.6l3.1 12.1 2.8-12.1c.1-.3.2-.5.4-.6.1-.1.4-.1.6-.1h1.4c.3 0 .5 0 .7.1.1.1.3.3.3.6l2.9 12.2 3.1-12.2c.1-.3.2-.5.4-.6.1-.1.4-.1.6-.1h1.6c.3 0 .4.1.4.4 0 .1 0 .2-.1.4 0 .1-.1.2-.1.4L34.1 16.3c-.1.3-.2.5-.4.6-.1.1-.4.1-.6.1h-1.5c-.3 0-.5 0-.7-.1-.1-.1-.3-.3-.3-.6l-2.8-11.8L25.1 16.3c-.1.3-.2.5-.4.6-.1.1-.4.1-.6.1h-1.6zM40.7 17.3c-1 0-1.9-.1-2.8-.4-.9-.3-1.6-.6-2.1-1-.3-.2-.5-.4-.5-.6v-.9c0-.3.1-.5.4-.5.1 0 .2 0 .4.1l.5.3c.7.4 1.4.6 2.1.8.7.2 1.5.3 2.2.3 1.1 0 2-.2 2.6-.6.6-.4.9-1 .9-1.7 0-.5-.2-.9-.5-1.3-.3-.3-.9-.6-1.8-.9l-2.5-.8c-1.3-.4-2.2-1-2.8-1.8-.6-.8-.9-1.6-.9-2.6 0-.7.2-1.4.5-2 .3-.6.8-1.1 1.3-1.5.6-.4 1.2-.7 1.9-.9.7-.2 1.5-.3 2.3-.3.4 0 .8 0 1.2.1.4.1.8.1 1.1.2.4.1.7.2 1 .3.3.1.6.3.7.4.2.1.4.3.4.4.1.1.1.3.1.5v.9c0 .3-.1.5-.4.5-.2 0-.4-.1-.7-.2-.9-.4-1.9-.6-3-.6-1 0-1.8.2-2.4.5-.6.3-.8.8-.8 1.5 0 .5.2.9.5 1.2.3.3 1 .6 1.9.9l2.4.8c1.3.4 2.2 1 2.7 1.7.5.7.8 1.5.8 2.4 0 .7-.2 1.4-.5 2-.3.6-.8 1.1-1.4 1.6-.6.4-1.2.7-2 1-.8.2-1.7.3-2.6.3z" fill="#FF9900"/>
-          <text x="0" y="28" fontSize="8" fill="#FF9900" fontWeight="bold" fontFamily="Arial">educate</text>
-        </svg>
-      </div>
-    </div>
-  );
-}
-function LogoMicrosoft() {
-  return (
-    <div className="flex items-center gap-2">
-      <svg width="20" height="20" viewBox="0 0 21 21" fill="none">
-        <rect x="0"  y="0"  width="10" height="10" fill="#F25022"/>
-        <rect x="11" y="0"  width="10" height="10" fill="#7FBA00"/>
-        <rect x="0"  y="11" width="10" height="10" fill="#00A4EF"/>
-        <rect x="11" y="11" width="10" height="10" fill="#FFB900"/>
-      </svg>
-      <div className="leading-tight">
-        <p className="text-[11px] font-semibold text-gray-800">Microsoft</p>
-        <p className="text-[9px] font-bold text-blue-600">Learn</p>
-      </div>
-    </div>
-  );
-}
-function LogoNasscom() {
-  return (
-    <div className="leading-tight">
-      <p className="text-[12px] font-black text-blue-800 tracking-tight">NASSCOM</p>
-      <p className="text-[8px] font-bold text-blue-500 tracking-widest uppercase">Foundation</p>
-    </div>
-  );
-}
-function LogoICT() {
-  return (
-    <div className="flex items-center gap-1.5">
-      <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ background: "linear-gradient(135deg,#6d28d9,#4c1d95)" }}>
-        <span className="text-[8px] font-black text-white leading-none">ICT</span>
-      </div>
-      <div className="leading-tight">
-        <p className="text-[10px] font-black text-purple-800">ICT</p>
-        <p className="text-[8px] font-bold text-purple-500 uppercase tracking-wide">Academy</p>
-      </div>
-    </div>
-  );
-}
-
-const partnerLogos = [
-  { id: "srm",       Component: LogoSRM },
-  { id: "vit",       Component: LogoVIT },
-  { id: "google",    Component: LogoGoogle },
-  { id: "aws",       Component: LogoAWS },
-  { id: "microsoft", Component: LogoMicrosoft },
-  { id: "nasscom",   Component: LogoNasscom },
-  { id: "ict",       Component: LogoICT },
-];
+const DEFAULT_PARTNER_LOGOS = ["SRM University", "VIT University", "Google", "AWS", "Microsoft", "NASSCOM", "ICT Academy"];
 
 /* ─── Static design config (icons / colours — not CMS-editable) ── */
 const HERO_STAT_ICONS = [Users, BookOpen, Award, Star];
@@ -239,13 +142,6 @@ const PROGRAM_CONFIG = [
 ];
 
 /* ─── Default content (shown until CMS data loads) ────────────── */
-const DEFAULT_HERO_STATS = [
-  { value: 500, suffix: "+", label: "Students Mentored"   },
-  { value: 100, suffix: "+", label: "Projects Guided"     },
-  { value: 50,  suffix: "+", label: "Workshops Conducted" },
-  { value: 95,  suffix: "%", label: "Student Satisfaction"},
-];
-
 const DEFAULT_PROGRAMS = [
   { title: "Mentorship Programs",     desc: "Learn from industry experts and successful founders.",            features: ["Startup Mentorship","Career Mentorship","Personal Branding","1:1 Guidance"] },
   { title: "Academic Projects",       desc: "Guiding students in building real-world academic projects.",     features: ["Mini Projects","Final Year Projects","Research Projects","Project Documentation"] },
@@ -264,24 +160,10 @@ const DEFAULT_WHY_REASONS = [
   { title: "Supportive Community",  desc: "Collaborate, network and grow together."              },
 ];
 
-const DEFAULT_TESTIMONIALS = [
-  { name: "Karthik M.",  role: "Final Year Student",   img: "/bharath pic.jpeg",  text: "Akronix Academy helped me build my final year project and secure a great placement opportunity.", stars: 5 },
-  { name: "Sneha R.",    role: "AI/ML Intern",         img: "/Sarvika pic.jpeg",  text: "The mentorship program gave me clarity and confidence to build my own startup.", stars: 5 },
-  { name: "Rohan P.",    role: "Full Stack Developer", img: "/pranav pic.jpeg",   text: "The workshops and bootcamps improved my skills and helped me land my dream job.", stars: 5 },
-];
-
-const DEFAULT_BY_NUMBERS = [
-  { value: 500, suffix: "+", label: "Students Mentored"    },
-  { value: 100, suffix: "+", label: "Projects Guided"      },
-  { value: 50,  suffix: "+", label: "Workshops"            },
-  { value: 25,  suffix: "+", label: "Industry Experts"     },
-  { value: 95,  suffix: "%", label: "Student Satisfaction" },
-  { value: 10,  suffix: "+", label: "Partner Institutions" },
-];
-
 /* ─── Page ─────────────────────────────────────────────────────── */
 export default function AcademyPage() {
   const progRef = useRef<HTMLDivElement>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
 
   /* ── CMS data from admin ───────────────────────────────────── */
   const [cms, setCms] = useState<AcademySiteContent | null>(null);
@@ -302,20 +184,22 @@ export default function AcademyPage() {
   const heroHighlight = cms?.hero_highlight ?? "Lead";
   const heroLine2    = cms?.hero_line2    ?? "the Future.";
   const heroSubtext  = cms?.hero_subtext  ??
-    "Akronix Academy empowers students, entrepreneurs and professionals with the skills, mentorship and real-world experience to build innovative solutions and successful careers.";
+    "We help students, early founders and professionals build practical skills through mentorship, real project work and hands-on training.";
+  const heroImage    = cms?.hero_image    || "/academy image.jpg";
+  const heroVideoUrl = cms?.hero_video_url || "";
   const whyHeadline  = cms?.why_headline  ?? "Why Join Akronix Academy?";
   const ctaHeadline  = cms?.cta_headline  ?? "Start Your Learning Journey Today";
   const ctaDesc      = cms?.cta_desc      ??
-    "Join thousands of learners who are building skills, creating solutions and shaping their future with Akronix Academy.";
+    "Tell us what you want to learn or build, and we'll help you find the right program.";
 
-  const heroStats = cms?.hero_stats
-    ? cms.hero_stats.map((s, i) => ({
-        value:  parseInt(s.value)  || DEFAULT_HERO_STATS[i]?.value  || 0,
-        suffix: s.suffix           || DEFAULT_HERO_STATS[i]?.suffix || "+",
-        label:  s.label            || DEFAULT_HERO_STATS[i]?.label  || "",
-        icon:   HERO_STAT_ICONS[i] || Users,
-      }))
-    : DEFAULT_HERO_STATS.map((s, i) => ({ ...s, icon: HERO_STAT_ICONS[i] }));
+  const heroStats = (cms?.hero_stats ?? [])
+    .map((s, i) => ({
+      value:  parseInt(s.value) || 0,
+      suffix: s.suffix || "",
+      label:  s.label || "",
+      icon:   HERO_STAT_ICONS[i] || Users,
+    }))
+    .filter((s) => s.label && s.value);
 
   const programs = cms?.programs
     ? cms.programs.map((p, i) => ({
@@ -336,16 +220,17 @@ export default function AcademyPage() {
       }))
     : DEFAULT_WHY_REASONS.map((r, i) => ({ ...r, icon: WHY_REASON_ICONS[i] }));
 
-  const byNumbers = cms?.numbers
-    ? cms.numbers.map((n, i) => ({
-        value:  parseInt(n.value)  || DEFAULT_BY_NUMBERS[i]?.value  || 0,
-        suffix: n.suffix           || DEFAULT_BY_NUMBERS[i]?.suffix || "+",
-        label:  n.label            || DEFAULT_BY_NUMBERS[i]?.label  || "",
-        icon:   NUMBER_ICONS[i]    || Users,
-      }))
-    : DEFAULT_BY_NUMBERS.map((n, i) => ({ ...n, icon: NUMBER_ICONS[i] }));
+  const byNumbers = (cms?.numbers ?? [])
+    .map((n, i) => ({
+      value:  parseInt(n.value) || 0,
+      suffix: n.suffix || "",
+      label:  n.label || "",
+      icon:   NUMBER_ICONS[i] || Users,
+    }))
+    .filter((n) => n.label && n.value);
 
-  const activeTestimonials = cms?.testimonials ?? DEFAULT_TESTIMONIALS;
+  const activeTestimonials = (cms?.testimonials ?? []).filter((t) => t.name && t.text);
+  const activePartnerLogos = cms?.partner_logos?.length ? cms.partner_logos : DEFAULT_PARTNER_LOGOS;
 
   function scrollPrograms(dir: "left" | "right") {
     progRef.current?.scrollBy({ left: dir === "right" ? 280 : -280, behavior: "smooth" });
@@ -409,7 +294,8 @@ export default function AcademyPage() {
                 {heroSubtext}
               </motion.p>
 
-              {/* 4 mini stats */}
+              {/* Mini stats (only shown once real figures are added in the admin panel) */}
+              {heroStats.length > 0 && (
               <div className="grid grid-cols-4 gap-4 mb-10">
                 {heroStats.map(({ value, suffix, label, icon: Ic }, i) => (
                   <motion.div
@@ -425,6 +311,7 @@ export default function AcademyPage() {
                   </motion.div>
                 ))}
               </div>
+              )}
 
               {/* CTAs */}
               <motion.div
@@ -464,9 +351,9 @@ export default function AcademyPage() {
               className="relative hidden lg:block"
             >
               <div className="relative rounded-3xl overflow-hidden shadow-[0_28px_80px_rgba(0,0,0,0.16)]" style={{ aspectRatio: "4/3" }}>
-                <Image src="/academy image.jpg" alt="Akronix Academy" fill className="object-cover object-top" priority />
+                <Image src={heroImage} alt="Akronix Academy" fill className="object-cover object-top" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent to-transparent" />
-                <div className="absolute bottom-5 left-5 right-5 flex items-center gap-3">
+                <button onClick={() => setVideoOpen(true)} className="absolute bottom-5 left-5 right-5 flex items-center gap-3 text-left">
                   <motion.div
                     whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.96 }}
                     className="w-11 h-11 rounded-full bg-white/95 flex items-center justify-center shadow-lg cursor-pointer flex-shrink-0"
@@ -477,7 +364,7 @@ export default function AcademyPage() {
                     <p className="text-white text-sm font-bold leading-tight">Shaping innovators, building leaders</p>
                     <p className="text-white/60 text-xs">Watch Academy Overview</p>
                   </div>
-                </div>
+                </button>
               </div>
               {/* Dot grid decoration */}
               <div className="absolute -bottom-6 -right-6 w-32 h-32 opacity-25 pointer-events-none"
@@ -649,7 +536,7 @@ export default function AcademyPage() {
                     transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
                     className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg px-3 py-2 border border-green-100"
                   >
-                    <p className="text-[10px] font-bold text-green-600">500+ Graduates</p>
+                    <p className="text-[10px] font-bold text-green-600">Graduates</p>
                     <p className="text-[8px] text-gray-400">placed &amp; thriving</p>
                   </motion.div>
                 </motion.div>
@@ -659,10 +546,12 @@ export default function AcademyPage() {
         </section>
 
         {/* ════════════════ STORIES + NUMBERS ════════════════ */}
+        {(activeTestimonials.length > 0 || byNumbers.length > 0) && (
         <section className="py-24 bg-gray-50">
-          <div className="container-xl grid lg:grid-cols-2 gap-16">
+          <div className={`container-xl grid gap-16 ${activeTestimonials.length > 0 && byNumbers.length > 0 ? "lg:grid-cols-2" : ""}`}>
 
             {/* Student Success Stories */}
+            {activeTestimonials.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-7">
                 <motion.h3 {...fadeUp(0)} className="text-xl font-black text-gray-900">Student Success Stories</motion.h3>
@@ -700,8 +589,10 @@ export default function AcademyPage() {
                 ))}
               </div>
             </div>
+            )}
 
             {/* By The Numbers */}
+            {byNumbers.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-7">
                 <motion.h3 {...fadeUp(0)} className="text-xl font-black text-gray-900">By The Numbers</motion.h3>
@@ -717,8 +608,10 @@ export default function AcademyPage() {
                 ))}
               </div>
             </div>
+            )}
           </div>
         </section>
+        )}
 
         {/* ════════════════ PARTNER LOGOS — infinite marquee ════════════════ */}
         <section className="py-12 border-t border-b border-gray-100 bg-white overflow-hidden">
@@ -738,13 +631,13 @@ export default function AcademyPage() {
           <div className="relative overflow-hidden">
             <div className="marquee-track">
               {/* Render logos twice for seamless loop */}
-              {[...partnerLogos, ...partnerLogos].map(({ id, Component }, i) => (
+              {[...activePartnerLogos, ...activePartnerLogos].map((name, i) => (
                 <motion.div
-                  key={`${id}-${i}`}
+                  key={`${name}-${i}`}
                   whileHover={{ scale: 1.06, y: -2 }}
                   className="flex-shrink-0 mx-5 px-6 py-4 rounded-2xl border border-gray-100 bg-gray-50 hover:bg-amber-50 hover:border-amber-200 transition-colors cursor-default shadow-sm"
                 >
-                  <Component />
+                  <PartnerLogo name={name} />
                 </motion.div>
               ))}
               {/* "and more" pill */}
@@ -811,6 +704,7 @@ export default function AcademyPage() {
         </section>
 
       </main>
+      <VideoModal open={videoOpen} onClose={() => setVideoOpen(false)} videoUrl={heroVideoUrl} title="Akronix Academy — Overview" />
       <Footer />
     </>
   );

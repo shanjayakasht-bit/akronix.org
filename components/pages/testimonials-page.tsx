@@ -24,48 +24,6 @@ const accentPool = [
   { light: "#F5F3FF", text: "#7C3AED", border: "#DDD6FE" },
 ];
 
-const fallbackTestimonials = [
-  { id: 1, content: "Akronix transformed our legacy application into a high-performance modern SaaS platform. Their attention to detail and ability to execute rapidly was phenomenal.", author: "Sarah Jenkins",    role: "CTO",              company: "TechNova",         rating: 5 },
-  { id: 2, content: "The landing page they built for us increased our conversion rate by 300% in the first month. The design is absolutely premium and the code is pristine.",        author: "Marcus Doe",      role: "Founder",          company: "GrowthGen",        rating: 5 },
-  { id: 3, content: "Working with Akronix was the best decision we made for our MVP. They guided us through the technical complexities and delivered a week ahead of schedule.",     author: "Emily Chen",      role: "CEO",              company: "InnovateTech",     rating: 5 },
-  { id: 4, content: "Stunning attention to aesthetics without compromising on performance. Our users constantly praise how fluid and snappy the interface feels.",                    author: "James Wilson",    role: "Product Lead",     company: "Nexus AI",         rating: 5 },
-  { id: 5, content: "The dedicated team at Akronix went above and beyond to ensure our multi-tenant architecture was robust, secure, and infinitely scalable.",                      author: "Alicia Rodriguez",role: "VP Engineering",   company: "CloudScale",       rating: 5 },
-  { id: 6, content: "From wireframing to deployment, the entire process was seamless. They truly understand what it takes to build a product that stands out.",                      author: "David Kim",       role: "Director",         company: "Forward Ventures", rating: 5 },
-  { id: 7, content: "Akronix Network has introduced me to amazing business opportunities and trusted partners. It's a game changer for entrepreneurs!",                              author: "Ravi Sharma",     role: "CEO",              company: "TechNova Solutions",rating: 5 },
-  { id: 8, content: "The mentorship program gave me clarity and confidence to build my own startup. Couldn't have done it without Akronix Academy.",                                 author: "Sneha Rajan",     role: "AI/ML Intern",     company: "Startup.in",       rating: 5 },
-  { id: 9, content: "The workshops and bootcamps improved my skills dramatically and helped me land my dream job at a top product company.",                                         author: "Rohan Patel",     role: "Full Stack Dev",   company: "ProductHive",      rating: 5 },
-];
-
-const fallbackStories = [
-  {
-    category: "Digital Transformation",
-    title: "Retail/CRM Solution",
-    highlight: "60%",
-    highlightLabel: "increase in customer management efficiency",
-    desc: "We helped streamline CRM and increase managed customer reach.",
-    color: "#2563EB",
-    bg: "#EFF6FF",
-  },
-  {
-    category: "Performance Marketing",
-    title: "Performance Marketing",
-    highlight: "300%",
-    highlightLabel: "increase in deals with targeted campaigns",
-    desc: "Our marketing team delivered results that exceeded expectations.",
-    color: "#16A34A",
-    bg: "#F0FDF4",
-  },
-  {
-    category: "Networking Impact",
-    title: "Business Networking",
-    highlight: "15+",
-    highlightLabel: "valuable partnerships in 6 months",
-    desc: "Our networking program connected businesses to mutual success.",
-    color: "#9333EA",
-    bg: "#FDF4FF",
-  },
-];
-
 export default function TestimonialsPage({
   testimonialsData = [],
   successStories = [],
@@ -74,21 +32,15 @@ export default function TestimonialsPage({
   successStories?: { category: string; title: string; highlight: string; highlightLabel: string; desc: string; color: string; bg: string }[];
 }) {
   const [activeFeatured, setActiveFeatured] = useState(0);
-  const stories = successStories.length > 0 ? successStories : fallbackStories;
+  const stories = successStories;
 
-  const dynamic = testimonialsData.map((t, idx) => ({
+  const all = testimonialsData.map((t, idx) => ({
     id: t.id,
     content: t.content,
     author: t.authorName,
     role: t.authorTitle,
     company: t.company,
     rating: t.rating,
-    accent: accentPool[idx % accentPool.length],
-  }));
-
-  const all = (dynamic.length > 0 ? dynamic : fallbackTestimonials).map((t, idx) => ({
-    ...t,
-    author: (t as { author?: string; authorName?: string }).author ?? (t as { authorName?: string }).authorName ?? "",
     accent: accentPool[idx % accentPool.length],
   }));
 
@@ -147,6 +99,7 @@ export default function TestimonialsPage({
       </section>
 
       {/* ════════ SUCCESS STORIES ════════ */}
+      {stories.length > 0 && (
       <section id="success-stories" className="pb-20 scroll-mt-24">
         <div className="container-xl">
           <motion.div {...fadeUp(0)} className="text-center max-w-2xl mx-auto mb-12">
@@ -184,8 +137,10 @@ export default function TestimonialsPage({
           </div>
         </div>
       </section>
+      )}
 
       {/* ════════ FEATURED CAROUSEL ════════ */}
+      {featuredList.length > 0 && (
       <section className="pb-16">
         <div className="container-xl max-w-3xl">
           <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl border border-amber-100 p-8 md:p-10 overflow-hidden shadow-sm">
@@ -251,8 +206,10 @@ export default function TestimonialsPage({
           </div>
         </div>
       </section>
+      )}
 
       {/* ════════ ALL TESTIMONIALS GRID ════════ */}
+      {all.length > 0 && (
       <section className="pb-24 bg-gray-50 pt-16">
         <div className="container-xl">
           <motion.h2 {...fadeUp(0)} className="text-2xl font-black text-gray-900 mb-10 text-center">
@@ -307,25 +264,17 @@ export default function TestimonialsPage({
           </div>
         </div>
       </section>
+      )}
 
-      {/* ════════ STATS STRIP ════════ */}
-      <section className="py-14 bg-gray-900">
-        <div className="container-xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-            {[
-              { value: "500+", label: "Happy Clients" },
-              { value: "4.9★", label: "Average Rating" },
-              { value: "98%", label: "Would Recommend" },
-              { value: "50+", label: "Cities Served" },
-            ].map((s, i) => (
-              <motion.div key={s.label} {...fadeUp(i * 0.08)} className="text-center">
-                <p className="text-3xl font-black text-white mb-1">{s.value}</p>
-                <p className="text-xs text-gray-400 font-medium">{s.label}</p>
-              </motion.div>
-            ))}
+      {stories.length === 0 && all.length === 0 && (
+        <section className="pb-24">
+          <div className="container-xl text-center max-w-lg mx-auto">
+            <p className="text-gray-400 text-sm">
+              We&apos;re building our library of client stories and reviews here. Check back soon, or ask us directly for references.
+            </p>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ════════ CTA ════════ */}
       <section className="py-20 bg-amber-50 border-t border-amber-100">

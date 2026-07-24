@@ -26,13 +26,6 @@ const features = [
   { title: "Vendor & Cost Optimisation", desc: "Reduce cloud spend and vendor lock-in with smarter procurement strategy." },
 ];
 
-const stats = [
-  { value: "50+",  label: "Consulting Projects" },
-  { value: "100%", label: "On-Time Delivery" },
-  { value: "40%",  label: "Average Cost Savings" },
-  { value: "15+",  label: "Tech Stacks" },
-];
-
 export default function ITConsultingPage() {
   return (
     <>
@@ -51,13 +44,7 @@ export default function ITConsultingPage() {
         featureBadges={[
           { icon: ShieldCheck, label: "Trusted Advisors", sub: "Strategy grounded in experience." },
           { icon: Map,         label: "Clear Roadmaps",    sub: "No guesswork, just a plan." },
-          { icon: Award,       label: "Proven Delivery",   sub: "100% on-time track record." },
-        ]}
-        floatingStats={[
-          { icon: Award,       value: "50+",  label: "Consulting Projects" },
-          { icon: ShieldCheck, value: "100%", label: "On-Time Delivery" },
-          { icon: Map,         value: "40%",  label: "Average Cost Savings" },
-          { icon: Settings2,   value: "15+",  label: "Tech Stacks" },
+          { icon: Award,       label: "Proven Delivery",   sub: "Structured process, clear milestones." },
         ]}
         offerings={offerings}
         steps={steps}
@@ -66,7 +53,6 @@ export default function ITConsultingPage() {
         featuresTitlePost="Foundation."
         featuresIntro="We partner with your team to build resilient, secure and cost-efficient technology from the ground up."
         features={features}
-        stats={stats}
         ctaTitlePre="Ready to Transform Your"
         ctaTitleHighlight="Technology?"
         ctaHref="/contact?service=it-consulting"

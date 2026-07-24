@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getHomepageSettings, setSettings, getAllSettings } from "@/lib/site-settings";
 
+export const dynamic = "force-dynamic";
+
 async function checkAdmin() {
   const session = await auth();
   const user = session?.user as { role?: string } | undefined;

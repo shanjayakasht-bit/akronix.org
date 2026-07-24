@@ -23,38 +23,8 @@ const COLOR_PRESETS = [
   { label: "Red", color: "#DC2626", bg: "#FEF2F2" },
 ];
 
-const DEFAULT_STORIES: Story[] = [
-  {
-    category: "Digital Transformation",
-    title: "Retail/CRM Solution",
-    highlight: "60%",
-    highlightLabel: "increase in customer management efficiency",
-    desc: "We helped streamline CRM and increase managed customer reach.",
-    color: "#2563EB",
-    bg: "#EFF6FF",
-  },
-  {
-    category: "Performance Marketing",
-    title: "Performance Marketing",
-    highlight: "300%",
-    highlightLabel: "increase in deals with targeted campaigns",
-    desc: "Our marketing team delivered results that exceeded expectations.",
-    color: "#16A34A",
-    bg: "#F0FDF4",
-  },
-  {
-    category: "Networking Impact",
-    title: "Business Networking",
-    highlight: "15+",
-    highlightLabel: "valuable partnerships in 6 months",
-    desc: "Our networking program connected businesses to mutual success.",
-    color: "#9333EA",
-    bg: "#FDF4FF",
-  },
-];
-
 export default function SuccessStoriesAdmin() {
-  const [stories, setStories] = useState<Story[]>(DEFAULT_STORIES);
+  const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -110,7 +80,7 @@ export default function SuccessStoriesAdmin() {
           <Star size={16} className="text-amber-400" />
           <div>
             <h1 className="text-xl font-black text-white">Success Stories</h1>
-            <p className="text-xs text-white/30">Edit the case study cards shown on the homepage.</p>
+            <p className="text-xs text-white/30">Real client case studies only — use actual project results. This section stays hidden on the site until you add at least one.</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -180,7 +150,7 @@ export default function SuccessStoriesAdmin() {
                 <input
                   value={s.highlight}
                   onChange={e => update(i, "highlight", e.target.value)}
-                  placeholder="60% or 300% or 15+"
+                  placeholder="Use a real, verifiable figure"
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xl font-black text-white placeholder:text-white/20 focus:outline-none focus:border-amber-500/40 transition-colors"
                 />
               </div>

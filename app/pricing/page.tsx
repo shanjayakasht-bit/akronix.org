@@ -6,10 +6,31 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Check, Rocket, BarChart3, Briefcase, Building2,
   ArrowRight, Shield, Users, GraduationCap, Headphones, Gift,
-  ChevronDown, Send, Zap, X,
+  ChevronDown, Send, Zap, X, LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+/* ─── CMS content type (matches admin/pricing editor) ─────────── */
+type CmsPlan = {
+  id: string;
+  name: string;
+  price: string;
+  billingCycle: string;
+  description: string;
+  features: string[];
+  isPopular: boolean;
+  badge: string;
+  color: string;
+};
+
+const COLOR_STYLE: Record<string, { icon: LucideIcon; iconColor: string; iconBg: string }> = {
+  blue:   { icon: Rocket,    iconColor: "#2563EB", iconBg: "#EFF6FF" },
+  amber:  { icon: BarChart3, iconColor: "#F59E0B", iconBg: "#FFFBEB" },
+  purple: { icon: Briefcase, iconColor: "#8B5CF6", iconBg: "#F5F3FF" },
+  green:  { icon: Rocket,    iconColor: "#10B981", iconBg: "#ECFDF5" },
+  orange: { icon: Building2, iconColor: "#EA580C", iconBg: "#FFF7ED" },
+};
 
 /* ─── Animations ──────────────────────────────────────────── */
 const fadeUp = (delay = 0, y = 28) => ({
@@ -130,6 +151,32 @@ const plans = [
   },
 ];
 
+function mergePlans(cms: CmsPlan[] | null) {
+  if (!cms || cms.length === 0) return plans;
+  return cms.map((p, i) => {
+    const style = COLOR_STYLE[p.color] ?? COLOR_STYLE.blue;
+    const priceMonthly = Number(p.price) || 0;
+    const custom = priceMonthly === 0;
+    return {
+      key: p.id,
+      name: p.name,
+      desc: p.description,
+      icon: style.icon,
+      iconColor: style.iconColor,
+      iconBg: style.iconBg,
+      priceMonthly,
+      priceAnnual: custom ? 0 : Math.round(priceMonthly * 0.8),
+      custom,
+      popular: p.isPopular,
+      ctaLabel: custom ? "Contact Sales" : "Get Started",
+      href: `/contact?plan=${p.id}`,
+      sectionLabel: p.badge || (i === 0 ? "What's Included" : `Everything in ${cms[i - 1]?.name ?? "previous plan"}, plus`),
+      features: p.features,
+      checkColor: style.iconColor,
+    };
+  });
+}
+
 const perks = [
   { icon: Shield,       title: "Trusted & Secure",    desc: "Enterprise-grade security for your data." },
   { icon: Users,        title: "Networking Access",   desc: "Connect with entrepreneurs, founders & professionals." },
@@ -190,6 +237,20 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
 /* ─── Page ─────────────────────────────────────────────────── */
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
+  const [cmsPlans, setCmsPlans] = useState<CmsPlan[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/site-settings?prefix=pricing.")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["pricing.plans"]) {
+          try { setCmsPlans(JSON.parse(data["pricing.plans"])); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const activePlans = mergePlans(cmsPlans);
 
   return (
     <>
@@ -336,8 +397,8 @@ export default function PricingPage() {
                   <div className="w-8 h-8 rounded-xl bg-green-50 flex items-center justify-center mb-2">
                     <BarChart3 size={14} className="text-green-500" />
                   </div>
-                  <p className="text-[10px] font-bold text-green-700">↑ 42% Growth</p>
-                  <p className="text-[9px] text-gray-400">This quarter</p>
+                  <p className="text-[10px] font-bold text-green-700">Flexible Billing</p>
+                  <p className="text-[9px] text-gray-400">Upgrade anytime</p>
                 </motion.div>
 
                 <motion.div
@@ -349,8 +410,8 @@ export default function PricingPage() {
                     <Users size={12} className="text-purple-500" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-800">1,250+</p>
-                    <p className="text-[9px] text-gray-400">Members</p>
+                    <p className="text-[10px] font-bold text-gray-800">Community</p>
+                    <p className="text-[9px] text-gray-400">Access included</p>
                   </div>
                 </motion.div>
               </div>
@@ -384,7 +445,7 @@ export default function PricingPage() {
         <section className="pb-20">
           <div className="container-xl">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {plans.map((plan, i) => (
+              {activePlans.map((plan, i) => (
                 <motion.div
                   key={plan.key}
                   {...fadeUp(i * 0.1, 36)}

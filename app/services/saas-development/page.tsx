@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ServicePageTemplate from "@/components/ui/service-page-template";
-import { Layers, Key, Globe, BarChart3, ShieldCheck, Users } from "lucide-react";
+import { Layers, Key, Globe, BarChart3 } from "lucide-react";
 
 const offerings = [
   { icon: Layers,    title: "Custom SaaS Build",     desc: "End-to-end development of multi-tenant platforms from idea to production." },
@@ -24,13 +24,6 @@ const features = [
   { title: "Subscription Management",   desc: "Integrated Stripe/Paddle for tiered billing and seat-based pricing engines." },
   { title: "Advanced Analytics",        desc: "Real-time insights for your users and your business metrics via custom dashboards." },
   { title: "API-First Design",          desc: "Built with modern APIs for easy integration and third-party ecosystem growth." },
-];
-
-const stats = [
-  { value: "50+",   label: "SaaS Platforms Built" },
-  { value: "99.9%", label: "Uptime SLA" },
-  { value: "1M+",   label: "Users Handled" },
-  { value: "10+",   label: "Countries Served" },
 ];
 
 export default function SaasDevelopmentPage() {
@@ -54,12 +47,6 @@ export default function SaasDevelopmentPage() {
           { icon: Key,    label: "White-Label",        sub: "Launch under your own brand." },
           { icon: Globe,  label: "API-First",          sub: "Built for integrations." },
         ]}
-        floatingStats={[
-          { icon: Layers,      value: "50+",   label: "SaaS Platforms Built" },
-          { icon: ShieldCheck, value: "99.9%", label: "Uptime SLA" },
-          { icon: Users,       value: "1M+",   label: "Users Handled" },
-          { icon: Globe,       value: "10+",   label: "Countries Served" },
-        ]}
         offerings={offerings}
         steps={steps}
         featuresTitlePre="More Than Software."
@@ -67,7 +54,6 @@ export default function SaasDevelopmentPage() {
         featuresTitlePost="You Can Trust."
         featuresIntro="We don't just ship features — we build resilient, secure systems that scale with your business."
         features={features}
-        stats={stats}
         ctaTitlePre="Ready to Build Your"
         ctaTitleHighlight="SaaS Platform?"
         ctaHref="/contact?service=saas-development"

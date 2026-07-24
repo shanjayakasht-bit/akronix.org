@@ -2,6 +2,8 @@ import { db } from "@/lib/db";
 import { formatDistanceToNow } from "date-fns";
 import { Mail, CheckCircle2, XCircle, Download } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 async function getSubscribers() {
   try {
     return await db.newsletter.findMany({ orderBy: { createdAt: "desc" } });

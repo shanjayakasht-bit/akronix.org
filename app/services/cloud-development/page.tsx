@@ -3,7 +3,7 @@
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import ServicePageTemplate from "@/components/ui/service-page-template";
-import { CloudCog, GitBranch, Repeat, Activity, ShieldCheck, Gauge } from "lucide-react";
+import { CloudCog, GitBranch, Repeat, Activity, ShieldCheck } from "lucide-react";
 
 const offerings = [
   { icon: CloudCog,  title: "Cloud Migration",    desc: "Move legacy systems to AWS, Azure or GCP with zero-downtime cutovers." },
@@ -24,13 +24,6 @@ const features = [
   { title: "Auto-Scaling Architecture",  desc: "Systems that scale up and down automatically with real traffic demand." },
   { title: "Zero-Downtime Deployments",  desc: "Blue-green and canary release strategies that ship without breaking production." },
   { title: "24/7 Monitoring & Alerts",   desc: "Full-stack observability with proactive alerting before issues reach users." },
-];
-
-const stats = [
-  { value: "99.99%", label: "Uptime Delivered" },
-  { value: "40%",     label: "Avg Cost Reduction" },
-  { value: "50+",     label: "Cloud Migrations" },
-  { value: "24/7",    label: "Monitoring & Support" },
 ];
 
 export default function CloudDevelopmentPage() {
@@ -54,12 +47,6 @@ export default function CloudDevelopmentPage() {
           { icon: Repeat,      label: "Automated CI/CD", sub: "Ship faster, break less." },
           { icon: ShieldCheck, label: "Secure by Default", sub: "Hardened at every layer." },
         ]}
-        floatingStats={[
-          { icon: Gauge,       value: "99.99%", label: "Uptime Delivered" },
-          { icon: Activity,    value: "40%",    label: "Avg Cost Reduction" },
-          { icon: CloudCog,    value: "50+",    label: "Cloud Migrations" },
-          { icon: ShieldCheck, value: "24/7",   label: "Monitoring & Support" },
-        ]}
         offerings={offerings}
         steps={steps}
         featuresTitlePre="More Than Hosting."
@@ -67,7 +54,6 @@ export default function CloudDevelopmentPage() {
         featuresTitlePost="That Scales."
         featuresIntro="We build cloud foundations that grow with your traffic instead of breaking under it."
         features={features}
-        stats={stats}
         ctaTitlePre="Ready to Modernise Your"
         ctaTitleHighlight="Infrastructure?"
         ctaHref="/contact?service=cloud-development"

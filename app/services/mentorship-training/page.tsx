@@ -20,17 +20,10 @@ const steps = [
 ];
 
 const features = [
-  { title: "Industry Expert Network",     desc: "Access a curated network of 50+ mentors from startups, MNCs and academia." },
+  { title: "Industry Expert Network",     desc: "Access a curated network of mentors from startups, MNCs and academia." },
   { title: "Personalised Learning Paths", desc: "Tailored programs built around your unique goals, experience and timeline." },
   { title: "Real-World Projects",         desc: "Work on live projects and case studies that build your portfolio." },
   { title: "Career Placement Support",    desc: "Resume reviews, interview prep and connections to hiring partners." },
-];
-
-const stats = [
-  { value: "500+", label: "Students Mentored" },
-  { value: "50+",  label: "Expert Mentors" },
-  { value: "95%",  label: "Success Rate" },
-  { value: "30+",  label: "Workshops" },
 ];
 
 export default function MentorshipTrainingPage() {
@@ -53,12 +46,6 @@ export default function MentorshipTrainingPage() {
           { icon: Target, label: "Structured Paths", sub: "Clear roadmaps, real outcomes." },
           { icon: Users,  label: "Community",       sub: "A network that grows with you." },
         ]}
-        floatingStats={[
-          { icon: GraduationCap, value: "500+", label: "Students Mentored" },
-          { icon: Award,         value: "50+",  label: "Expert Mentors" },
-          { icon: Target,        value: "95%",  label: "Success Rate" },
-          { icon: Zap,           value: "30+",  label: "Workshops" },
-        ]}
         offerings={offerings}
         steps={steps}
         featuresTitlePre="More Than Advice."
@@ -66,7 +53,6 @@ export default function MentorshipTrainingPage() {
         featuresTitlePost="to Success."
         featuresIntro="We pair you with the right people and the right structure to turn ambition into results."
         features={features}
-        stats={stats}
         ctaTitlePre="Ready to Start Your"
         ctaTitleHighlight="Growth Journey?"
         ctaHref="/contact?service=mentorship-training"

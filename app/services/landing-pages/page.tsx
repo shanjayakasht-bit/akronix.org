@@ -26,13 +26,6 @@ const features = [
   { title: "Fully Responsive",         desc: "A flawless, high-contrast experience across desktop, ultra-wide, and mobile devices." },
 ];
 
-const stats = [
-  { value: "100+", label: "Sites Launched" },
-  { value: "<1s",  label: "Avg Load Time" },
-  { value: "5★",   label: "Client Rating" },
-  { value: "50+",  label: "UI Designs Delivered" },
-];
-
 export default function LandingPagesPage() {
   return (
     <>
@@ -53,12 +46,6 @@ export default function LandingPagesPage() {
           { icon: Palette,  label: "Pixel Perfect",  sub: "Design that converts visitors." },
           { icon: Star,     label: "5-Star Rated",   sub: "Loved by clients and users alike." },
         ]}
-        floatingStats={[
-          { icon: Monitor,     value: "100+", label: "Sites Launched" },
-          { icon: Zap,         value: "<1s",  label: "Avg Load Time" },
-          { icon: Star,        value: "5★",   label: "Client Rating" },
-          { icon: Palette,     value: "50+",  label: "UI Designs Delivered" },
-        ]}
         offerings={offerings}
         steps={steps}
         featuresTitlePre="More Than a Website."
@@ -66,7 +53,6 @@ export default function LandingPagesPage() {
         featuresTitlePost="Machine."
         featuresIntro="Every pixel is engineered with performance and persuasion in mind — not just looks."
         features={features}
-        stats={stats}
         ctaTitlePre="Ready to Launch Your"
         ctaTitleHighlight="Next Project?"
         ctaHref="/contact?service=web-mobile-development"

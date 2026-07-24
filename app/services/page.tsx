@@ -5,10 +5,30 @@ import Footer from "@/components/footer";
 import { motion } from "framer-motion";
 import {
   Code, Megaphone, Users, GraduationCap, Monitor, Zap, Cloud,
-  ShieldAlert, ShieldCheck, ArrowRight, CheckCircle2, TrendingUp,
-  Award, HeartHandshake, Eye, Map, FileText, ClipboardList
+  ShieldCheck, ArrowRight, CheckCircle2, TrendingUp,
+  Award, HeartHandshake, Eye, Map, LucideIcon
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+/* ─── CMS content type (matches admin/services editor) ───────── */
+type CmsService = {
+  name: string;
+  slug: string;
+  shortDesc: string;
+  description: string;
+  features: string[];
+  isActive: boolean;
+};
+
+type ServiceDesign = { icon: LucideIcon; color: string; bgColor: string; accentColor: string; href: string };
+
+const FALLBACK_PALETTE: Omit<ServiceDesign, "href">[] = [
+  { icon: Zap,          color: "#2563EB", bgColor: "#EFF6FF", accentColor: "#DBEAFE" },
+  { icon: ShieldCheck,  color: "#16A34A", bgColor: "#F0FDF4", accentColor: "#DCFCE7" },
+  { icon: Monitor,      color: "#9333EA", bgColor: "#FDF4FF", accentColor: "#F3E8FF" },
+  { icon: Cloud,        color: "#EA580C", bgColor: "#FFF7ED", accentColor: "#FFEDD5" },
+];
 
 /* ── Animation Variants ──────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
@@ -25,11 +45,12 @@ const fadeIn = (delay = 0) => ({
   transition: { duration: 0.5, delay },
 });
 
-/* ── Services Data ──────────────────────────────────────────── */
+/* ── Services Data (design + fallback content until CMS loads) ── */
 const mainServices = [
   {
     title: "SaaS Development",
-    desc: "Scalable, secure and future-ready SaaS solutions tailored to your business.",
+    slug: "saas-development",
+    desc: "Custom SaaS products — multi-tenant architecture, subscription billing and admin dashboards built around your workflow.",
     icon: Code,
     features: ["Custom SaaS Development", "White-Label Solutions", "API Development", "Cloud Integration"],
     color: "#2563EB",
@@ -39,7 +60,8 @@ const mainServices = [
   },
   {
     title: "Digital Marketing",
-    desc: "Data-driven marketing strategies that increase visibility and generate leads.",
+    slug: "digital-marketing",
+    desc: "SEO, paid ads and content marketing for local and B2B brands that need qualified leads, not just traffic.",
     icon: Megaphone,
     features: ["SEO & SEM", "Social Media Marketing", "Google & Meta Ads", "Content & Growth Marketing"],
     color: "#16A34A",
@@ -49,7 +71,8 @@ const mainServices = [
   },
   {
     title: "Business Networking",
-    desc: "Build meaningful relationships and unlock new business opportunities.",
+    slug: "business-networking",
+    desc: "Structured referral networking and community events connecting founders, freelancers and small business owners.",
     icon: Users,
     features: ["Referral Networking", "Founder Communities", "Monthly Networking Events", "Strategic Partnerships"],
     color: "#9333EA",
@@ -59,7 +82,8 @@ const mainServices = [
   },
   {
     title: "Mentorship & Training",
-    desc: "Empowering individuals, startups and students to learn, grow and succeed.",
+    slug: "mentorship-training",
+    desc: "1:1 mentorship and workshops for students and early founders on product, technical and career decisions.",
     icon: GraduationCap,
     features: ["Startup Mentorship", "Career Guidance", "Workshops & Bootcamps", "Corporate Training"],
     color: "#EA580C",
@@ -69,7 +93,8 @@ const mainServices = [
   },
   {
     title: "Web & Mobile Development",
-    desc: "High-performance websites and mobile apps that drive results.",
+    slug: "landing-pages",
+    desc: "Website redesigns for lead generation, e-commerce storefronts and mobile apps — built and maintained.",
     icon: Monitor,
     features: ["Web Applications", "Mobile Applications", "E-Commerce Solutions", "UI/UX Design"],
     color: "#D97706",
@@ -79,7 +104,8 @@ const mainServices = [
   },
   {
     title: "AI & Automation",
-    desc: "Automate operations and enhance productivity with AI-powered solutions.",
+    slug: "ai-automation",
+    desc: "AI workflow automation, internal chatbots and process automation that removes manual busywork.",
     icon: Zap,
     features: ["AI Chatbots", "Workflow Automation", "Business Intelligence", "AI Integrations"],
     color: "#E11D48",
@@ -89,7 +115,8 @@ const mainServices = [
   },
   {
     title: "Cloud Development",
-    desc: "Reliable cloud infrastructure and DevOps services for performance and scale.",
+    slug: "cloud-development",
+    desc: "Cloud migration, CI/CD pipelines and infrastructure setup on AWS or similar platforms.",
     icon: Cloud,
     features: ["Cloud Migration", "DevOps Automation", "CI/CD Pipelines", "Monitoring & Security"],
     color: "#0D9488",
@@ -99,7 +126,8 @@ const mainServices = [
   },
   {
     title: "IT Consulting",
-    desc: "Strategic technology consulting to help you make the right decisions.",
+    slug: "it-consulting",
+    desc: "Technical audits, architecture reviews and roadmap planning before you commit budget to a build.",
     icon: ShieldCheck,
     features: ["IT Strategy & Roadmap", "Technology Consulting", "Security & Compliance", "System Architecture"],
     color: "#4F46E5",
@@ -117,15 +145,51 @@ const approachSteps = [
   { step: "05", title: "Grow", desc: "We provide ongoing support to help you scale.", icon: TrendingUp, color: "#9333EA" },
 ];
 
-const metrics = [
-  { value: "15+", label: "Projects Delivered" },
-  { value: "15+", label: "Business Partners" },
-  { value: "500+", label: "Students Mentored" },
-  { value: "50+", label: "Networking Connections" },
-  { value: "95%", label: "Client Satisfaction" },
-];
+/* Design (icon/color/href) keyed by slug — admin only manages text content */
+const SERVICE_DESIGN: Record<string, ServiceDesign> = Object.fromEntries(
+  mainServices.map((s) => [s.slug, { icon: s.icon, color: s.color, bgColor: s.bgColor, accentColor: s.accentColor, href: s.href }])
+);
+
+const DEFAULT_SERVICES: CmsService[] = mainServices.map((s) => ({
+  name: s.title,
+  slug: s.slug,
+  shortDesc: s.desc,
+  description: s.desc,
+  features: s.features,
+  isActive: true,
+}));
+
+function mergeServices(cms: CmsService[] | null) {
+  const source = cms && cms.length > 0 ? cms : DEFAULT_SERVICES;
+  return source
+    .filter((s) => s.isActive)
+    .map((s, i) => {
+      const design = SERVICE_DESIGN[s.slug] ?? { ...FALLBACK_PALETTE[i % FALLBACK_PALETTE.length], href: `/contact?type=${s.slug}` };
+      return {
+        title: s.name,
+        desc: s.shortDesc || s.description,
+        features: s.features,
+        ...design,
+      };
+    });
+}
 
 export default function ServicesPage() {
+  const [cmsServices, setCmsServices] = useState<CmsService[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/site-settings?prefix=site.")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (data["site.services"]) {
+          try { setCmsServices(JSON.parse(data["site.services"])); } catch {}
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const activeServices = mergeServices(cmsServices);
+
   return (
     <>
       <Navigation />
@@ -145,10 +209,8 @@ export default function ServicesPage() {
           </div>
 
           <div className="container-xl relative z-10">
-            <div className="grid lg:grid-cols-12 gap-12 items-center">
-              
-              {/* Left Content */}
-              <div className="lg:col-span-7">
+            <div className="max-w-3xl">
+              <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-4">Our Services</p>
                 <h1 className="text-5xl md:text-6xl font-black text-gray-900 tracking-tight leading-[0.95] mb-6">
                   Solutions Designed <br />
@@ -178,84 +240,6 @@ export default function ServicesPage() {
                   ))}
                 </div>
               </div>
-
-              {/* Right Growth Mockup Card */}
-              <div className="lg:col-span-5 hidden lg:block">
-                <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-2xl relative">
-                  
-                  {/* Chart section */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-xs font-bold text-gray-400">Growth Overview</h4>
-                      <span className="text-xs font-black text-green-500 flex items-center gap-1">
-                        <TrendingUp size={12} /> +24.5%
-                      </span>
-                    </div>
-                    {/* Tiny visual curve */}
-                    <div className="h-16 flex items-end gap-1.5 pt-2">
-                      {[30, 45, 38, 55, 62, 50, 75, 90, 85, 100].map((h, i) => (
-                        <div key={i} className="flex-1 rounded-sm bg-blue-50 hover:bg-blue-600 transition-colors duration-300" style={{ height: `${h}%` }} />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Top Services chart representation */}
-                  <div className="space-y-3 mb-6">
-                    <h4 className="text-xs font-bold text-gray-400">Top Services</h4>
-                    {[
-                      { name: "SaaS Development", pct: 72, color: "#2563EB" },
-                      { name: "Digital Marketing", pct: 64, color: "#16A34A" },
-                      { name: "Business Networking", pct: 58, color: "#9333EA" },
-                      { name: "Mentorship & Training", pct: 48, color: "#EA580C" },
-                    ].map((s) => (
-                      <div key={s.name} className="space-y-1">
-                        <div className="flex justify-between text-[10px] font-bold text-gray-700">
-                          <span>{s.name}</span>
-                          <span>{s.pct}%</span>
-                        </div>
-                        <div className="h-1.5 bg-gray-50 rounded-full overflow-hidden">
-                          <div className="h-full rounded-full" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Activities grid */}
-                  <div className="border-t border-gray-50 pt-4 space-y-3">
-                    <h4 className="text-xs font-bold text-gray-400">Activities</h4>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        { title: "New Leads", val: "1,450", pct: "+18.5%", color: "#9333EA" },
-                        { title: "Projects Delivered", val: "320", pct: "+22.1%", color: "#16A34A" },
-                        { title: "Client Satisfaction", val: "95%", pct: "+8.3%", color: "#10B981" },
-                      ].map((act) => (
-                        <div key={act.title} className="bg-gray-50 rounded-xl p-3 text-center border border-gray-100">
-                          <p className="text-[8px] font-bold text-gray-400 uppercase tracking-tight mb-1">{act.title}</p>
-                          <p className="text-sm font-black text-gray-900 mb-0.5">{act.val}</p>
-                          <p className="text-[8px] font-bold" style={{ color: act.color }}>{act.pct}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Floating Action CTA Card */}
-                  <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-xl p-4 flex items-center gap-3 border border-gray-100">
-                    <div>
-                      <p className="text-xs font-black text-gray-900">Let&apos;s Build</p>
-                      <p className="text-[10px] text-gray-400">Something Amazing</p>
-                    </div>
-                    <button
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white"
-                      style={{ background: "linear-gradient(135deg, #F59E0B, #EA580C)" }}
-                      aria-label="Build"
-                    >
-                      <ArrowRight size={14} />
-                    </button>
-                  </div>
-
-                </div>
-              </div>
-
             </div>
           </div>
         </section>
@@ -270,7 +254,7 @@ export default function ServicesPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mainServices.map((service, i) => (
+            {activeServices.map((service, i) => (
               <motion.div
                 key={service.title}
                 {...fadeUp(i * 0.08)}
@@ -362,18 +346,6 @@ export default function ServicesPage() {
                   <p className="text-xs text-gray-500 leading-relaxed">{step.desc}</p>
                 </motion.div>
               ))}
-            </div>
-
-            {/* Metric counters band */}
-            <div className="mt-16 bg-gray-900 text-white rounded-3xl p-8 shadow-xl">
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center items-center justify-center">
-                {metrics.map((m) => (
-                  <div key={m.label} className="space-y-1">
-                    <p className="text-3xl font-black text-yellow-400">{m.value}</p>
-                    <p className="text-[10px] uppercase font-bold tracking-wider text-gray-400">{m.label}</p>
-                  </div>
-                ))}
-              </div>
             </div>
 
           </div>
